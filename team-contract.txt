@@ -1,0 +1,29 @@
+Goals:
+- Make a sweet pingball that is SFB, RFC, ETU!
+- We all want to practice having a functional team that works together with minimal toe-stepping and has fun.
+
+Meetings:
+- We will meet in our dorm.
+- We will use class time to work on the project or explicitly spend that amount of time working later in the next few days if we miss the time.
+- We will meet at least 3 times a week outside of class.
+- Jess will take minutes of our meetings and distribute them via email.
+
+Work:
+- The project will take ~10 hours per person / I have no idea / We will see after our first meeting when reviewing the spec together.
+- In our meetings we will determine milestones with deadlines for specs, tests, implementation, and debugging.
+- We will distribute work evenly by carving the problem into discrete modules. We will spend some time together creating specs for the interfaces and then each dive in to implement. We will use the nose game to resolve serious disputes.
+- If someone misses a deadline or cannot fulfill a commitment they will be forgiven immediately and we will find another way.
+- Every commit will be code reviewed by at least one other member of the team. We will make a private repo on github. Every commit will have an endorsement comment before it is pushed to the athena repo. If this strategy turns out to be crazy, we'll find a less complicated solution to code reviewing, but the code will be reviewed!
+- Some people like to work up against a deadline. Those people will be given earlier deadlines.
+
+Decision Making:
+- If there is a design decision dispute then we will enumerate a list of pros and cons and make a decision as a team.
+
+Misc:
+- All of our email communication will be gpg encrypted.
+- If the gpg encryption thing turns out to infeasible, we will resort to physical letters that combust after reading.
+- If the letters are also not a plan, we can just talk to each other and accept the security risk of emailing our TA in the clear.
+- We will give our TA access to our github repo so that she can stay in the know about our process including code that has not yet been reviewed and is thus not on athena.
+
+Look, we have our first deadline:
+- Each member will complete their own warmup by Wednesday at 10pm which will be code reviewed that night.
