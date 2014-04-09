@@ -7,15 +7,38 @@ public class WarmupBoard {
     private int width;
     private int height;
     private Circle ball;
+    private Vect velocity;
     private List<LineSegment> walls;
 
     public WarmupBoard(int width, int height, Vect initialBallPos, Vect initialBallVel) {
         // initialize the board.
+        this.width = width;
+        this.height = height;
+        LineSegment wallLeft = new LineSegment(0.,0.,0.,height);
+        LineSegment wallRight = new LineSegment(20.,0.,20.,20.);
+        LineSegment wallUp = new LineSegment(0.,0.,20.,0.);
+        LineSegment wallDown = new LineSegment(0.,20.,20.,20.);
+        ball = new Circle(initialBallPos, 0.5); //0.5 = radius of ball
+        this.velocity = initialBallVel;
+        
+        //create walls
+        walls.add(wallLeft);
+        walls.add(wallRight);
+        walls.add(wallUp);
+        walls.add(wallDown);
     }
 
     public void run() {
         // start the infinite main loop
-        // does physics, does print: every so often
+        while(true){
+            try {
+                Thread.sleep(200);
+                this.updatePhysics();
+                System.out.println(this.toString());
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private void updatePhysics() {
