@@ -1,5 +1,6 @@
 package warmup;
 
+import java.util.ArrayList;
 import java.util.List;
 import physics.*;
 
@@ -8,7 +9,9 @@ public class WarmupBoard {
     private int height;
     private Circle ball;
     private Vect velocity;
-    private List<LineSegment> walls;
+    private final List<LineSegment> walls;
+//    private static final double timestamp = 1d/2d;
+    private static final double timestamp = 1d/20d;
 
     public WarmupBoard(int width, int height, Vect initialBallPos, Vect initialBallVel) {
         // initialize the board.
@@ -22,6 +25,7 @@ public class WarmupBoard {
         this.velocity = initialBallVel;
         
         //create walls
+        walls = new ArrayList<LineSegment>();
         walls.add(wallLeft);
         walls.add(wallRight);
         walls.add(wallUp);
@@ -32,7 +36,7 @@ public class WarmupBoard {
         // start the infinite main loop
         while(true){
             try {
-                Thread.sleep(200);
+                Thread.sleep((int) (timestamp * 1000));
                 this.updatePhysics();
                 System.out.println(this.toString());
             } catch(InterruptedException ex) {
@@ -44,7 +48,14 @@ public class WarmupBoard {
     private void updatePhysics() {
         // move stuff around one tick.
         // handle collisions
+        for (LineSegment wall : walls) {
+            if (Geometry.timeUntilWallCollision(wall, ball, velocity) < timestamp) {
+                // we will collide this step! Reflect and update velocity. 
+                velocity = Geometry.reflectWall(wall, velocity);
+            }
+        }
         // step
+        ball = new Circle(ball.getCenter().plus(velocity.times(timestamp)), ball.getRadius());
     }
 
     @Override
@@ -57,15 +68,16 @@ public class WarmupBoard {
         // Create rep string
         String boardString = "";
         for (int y = 0; y < width; y++) {
-        for (int x = 0; x < width; x++) {
-            if (ballX == x && ballY == y) {
-                boardString += "*";
-            } else if (isOnBoundary(x,y)) {
-                boardString += ".";
-            } else {
-                boardString += " ";
+            for (int x = 0; x < width; x++) {
+                if (ballX == x && ballY == y) {
+                    boardString += "*";
+                } else if (isOnBoundary(x,y)) {
+                    boardString += ".";
+                } else {
+                    boardString += " ";
+                }
             }
-        }
+            boardString += "\n";
         }
         return boardString;
     }

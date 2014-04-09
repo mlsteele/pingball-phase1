@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         // make a board and run it
         Angle velocityAngle = new Angle(1.2);
-        double velocityMagnitude = 1; //L/s
+        double velocityMagnitude = 20d; //L/s
         Vect initialBallPosition = new Vect(10,10);
         Vect initialBallVelocity = new Vect(velocityAngle, velocityMagnitude);
         
