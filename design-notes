@@ -1,0 +1,43 @@
+Gadgets
+- square bumper
+- circular bumper
+- triangular bumper
+- flipper
+- absorber
+- outer wall (one of four)
+
+Gadgets Methods
+- handleBall -> return an event or null
+- action
+- getSize
+- toString
+
+Board
+- width and height
+- list of gadgets
+- event queue
+- step
+
+Wall
+- knows whether it is transport
+- knows which wall it is on
+
+BoardParser
+- effectively a constructor for boards
+- static method which reads a file and return a constructed board
+
+PingballClient class
+- has main method
+- parses arguments
+
+ServerConnection
+- wraps the socket layer of communication
+- gives us a java api to communicating.
+
+
+---
+
+Server
+
+Thin server class
+- just routes messages about ball transfer between client and server
