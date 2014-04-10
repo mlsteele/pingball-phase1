@@ -1,6 +1,10 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import client.gadgets.Gadget;
 
 /**
  * Board class to contain and run physics and interaction in a pingball board.
@@ -22,25 +26,28 @@ import java.util.Collections;
 public class Board {
     /*
      * Rep Invariant:
-     * - list of gadgets is never changed.
+     * - gadgets are never added or removed from the list.
      */
     private final String name;
     private final int width;
     private final int height;
-    private final List<Gadgets>
+    private final List<Gadget> gadgets;
+    private List<Ball> balls;
 
     /**
      * Create a new board.
      * @param name board name
      * @param width board width
      * @param height board height
-     * @param gadgets list of gadgets on the board
+     * @param gadgets list of gadgets on the board.
+     *                caller must never modify this list.
      */
     public Board(String name, int width, int height, List<Gadget> gadgets) {
         this.name = name;
         this.width = width;
         this.height = height;
-        Collections.unmodifiableList(gadgets);
+        this.gadgets = Collections.unmodifiableList(gadgets);
+        this.balls = new ArrayList<Ball>();
     }
 
     public void addBall(Ball ball) {
