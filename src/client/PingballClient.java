@@ -1,5 +1,10 @@
 package client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * Pingball game client.
  *
@@ -16,10 +21,24 @@ package client;
 public class PingballClient {
     public static void main(String[] args) {
         Board board;
-        BlockingQueue<InterBoardEvent> = new ArrayBlockingQueue<InterBoardEvent>();
+        BlockingQueue<BoardEvent> eventQueue = new LinkedBlockingQueue<BoardEvent>();
+        List<Subscription> subscriptions = new ArrayList<Subscription>();
 
         // parse command line arguments
         // load board
         // start client
+
+        while(true) {
+
+            // process events in queue (last step of loop)
+            for (BoardEvent e : eventQueue) {
+                for (Subscription s : subscriptions) {
+                    if (s.getTriggerer() == e.getTriggerer()) {
+                        // process the event with the subscriber
+                    }
+                }
+            }
+        }
+
     }
 }
