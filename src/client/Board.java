@@ -2,7 +2,9 @@ package client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import client.gadgets.Gadget;
 
@@ -33,6 +35,8 @@ public class Board {
     private final int height;
     private final List<Gadget> gadgets;
     private List<Ball> balls;
+    private Queue<BoardEvent> eventQueue;
+    private List<BoardEventSubscription> subscriptions;
 
     /**
      * Create a new board.
@@ -48,9 +52,27 @@ public class Board {
         this.height = height;
         this.gadgets = Collections.unmodifiableList(gadgets);
         this.balls = new ArrayList<Ball>();
+        this.eventQueue = new LinkedList<BoardEvent>();
+        this.subscriptions = new ArrayList<BoardEventSubscription>();
     }
 
     public void addBall(Ball ball) {
 
+    }
+    public void step() {
+
+
+        // process events in queue (last part of step)
+        while (!eventQueue.isEmpty()) {
+            /* beware of infinite looping here. Maybe we need an invariant saying that
+             * no event-based action can add an event to the queue.
+             */
+            BoardEvent e = eventQueue.remove();
+            for (BoardEventSubscription s : subscriptions) {
+                if (s.getTriggerer() == e.getTriggerer()) {
+                    // process the event with the subscriber
+                }
+            }
+        }
     }
 }
