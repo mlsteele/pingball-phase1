@@ -9,4 +9,8 @@ public class Constants {
     public static final int BOARD_WIDTH = 20;
     public static final int BOARD_HEIGHT = 20;
     /* TODO there will probably be more of these */
+
+    public enum BoardSide {
+        LEFT, RIGHT, TOP, BOTTOM;
+    }
 }
