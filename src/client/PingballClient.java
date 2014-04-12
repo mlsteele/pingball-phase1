@@ -22,7 +22,7 @@ public class PingballClient {
     public static void main(String[] args) {
         Board board;
         BlockingQueue<BoardEvent> eventQueue = new LinkedBlockingQueue<BoardEvent>();
-        List<Subscription> subscriptions = new ArrayList<Subscription>();
+        List<BoardEventSubscription> subscriptions = new ArrayList<BoardEventSubscription>();
 
         // parse command line arguments
         // load board
@@ -32,7 +32,7 @@ public class PingballClient {
 
             // process events in queue (last step of loop)
             for (BoardEvent e : eventQueue) {
-                for (Subscription s : subscriptions) {
+                for (BoardEventSubscription s : subscriptions) {
                     if (s.getTriggerer() == e.getTriggerer()) {
                         // process the event with the subscriber
                     }

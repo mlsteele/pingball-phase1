@@ -7,7 +7,7 @@ import client.gadgets.Gadget;
  * creates BoardEvents and a Gadget that acts on those events.
  *
  */
-public class Subscription {
+public class BoardEventSubscription {
     private final Gadget subscriber;
     private final Gadget triggerer;
 
@@ -16,7 +16,7 @@ public class Subscription {
      * @param subscriber
      * @param triggerer
      */
-    public Subscription(Gadget subscriber, Gadget triggerer) {
+    public BoardEventSubscription(Gadget subscriber, Gadget triggerer) {
         this.subscriber = subscriber;
         this.triggerer = triggerer;
     }
