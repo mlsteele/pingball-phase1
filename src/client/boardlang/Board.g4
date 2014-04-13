@@ -31,7 +31,7 @@ package client.boardlang;
  */
 ORIENTATION  : '0' | '90' | '180' | '270' ;
 COMMENTSTART : '#' ;
-COMMENTSTUFF : .* ;
+COMMENTSTUFF : .*? ;
 
 FIELD_NAME        : 'name=' ;
 FIELD_GRAVITY     : 'gravity=' ;
@@ -57,10 +57,10 @@ START_LEFTFLIPPER    : 'leftFlipper' ;
 START_ABSORBER       : 'absorber' ;
 START_FIRE           : 'fire' ;
 
-INTEGER    : [0-9]+ ;
-FLOAT      : -?[0-9]*(.[0-9]+)? ;
-NAME       : [A-Za-z_][A-Za-z_0-9]* ;
-NEWLINE    : \r?\n ;
+INTEGER    : ('0'..'9')+ ;
+FLOAT      : '-'? ('0'..'9')* ('.' ('0'..'9')+)? ;
+NAME       : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+NEWLINE    : '\r'? '\n' ;
 WHITESPACE : [ \t]+ -> skip ;
 
 /*
