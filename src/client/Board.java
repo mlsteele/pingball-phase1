@@ -61,8 +61,6 @@ public class Board {
 
     }
     public void step() {
-
-
         // process events in queue (last part of step)
         while (!eventQueue.isEmpty()) {
             /* beware of infinite looping here. Maybe we need an invariant saying that

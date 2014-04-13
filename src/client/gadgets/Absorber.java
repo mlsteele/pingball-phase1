@@ -2,7 +2,6 @@ package client.gadgets;
 
 import java.util.List;
 
-import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -51,12 +50,12 @@ public class Absorber implements Gadget {
     public BoardEvent handleBall(Ball ball) {
         //if the ball hits
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.c, ball.vel) < TIMESTAMP) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
                 //position for ball according to specs
                 Vect absorberBottom = new Vect(this.getPosition().x() + width - (balls.size()) - 0.25, this.getPosition().y() - height + .25);
                 //places ball in the right place and updates contained information
-                ball.setVel(new Vect(0, 0));
-                ball.setCircle(new Circle(absorberBottom, ball.c.getRadius()));
+                ball.setVelocity(new Vect(0, 0));
+                ball.setPosition(absorberBottom);
                 ballContained = true;
                 balls.add(ball);
                 return new BoardEvent(this);
@@ -102,11 +101,10 @@ public class Absorber implements Gadget {
      * Shoots out ball if a ball is contained
      */
     public void specialAction() {
-        Vect shootVelocity = new Vect(Math.PI/2, 20d); //20 L/s, straight up in the air
         if (ballContained){
             Ball newBall = balls.get(0);
-            newBall.setVel(shootVelocity);
-            newBall.setCircle(new Circle(newBall.c.getCenter().plus(shootVelocity.times(TIMESTAMP)), newBall.c.getRadius()));
+            newBall.setVelocity(SHOOT_VELOCITY);
+            newBall.setPosition(newBall.getCircle().getCenter().plus(SHOOT_VELOCITY.times(TIMESTEP)));
         }
     }
 

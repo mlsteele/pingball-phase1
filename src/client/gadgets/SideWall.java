@@ -1,6 +1,5 @@
 package client.gadgets;
 
-import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -21,7 +20,7 @@ import client.BoardEvent;
  *
  */
 
-public class Wall implements Gadget{
+public class SideWall implements Gadget{
     private Vect startingPoint;
     private String name;
     private final LineSegment wall;
@@ -32,7 +31,7 @@ public class Wall implements Gadget{
      * The first LineSegment listed in geometry must begin at the origin point (position.x(), position.y())
      * of the bumper
      */
-    private Wall(String name, boolean invisible, LineSegment wall) {
+    private SideWall(String name, boolean invisible, LineSegment wall) {
         this.name = name;
         this.invisible = invisible;
         startingPoint = wall.p1();
@@ -42,10 +41,10 @@ public class Wall implements Gadget{
 
     @Override
     public BoardEvent handleBall(Ball ball) {
-        if (Geometry.timeUntilWallCollision(wall, ball.c, ball.vel) < TIMESTAMP && !invisible) {
-            Vect velocity = Geometry.reflectWall(wall, ball.vel);
-            ball.setVel(velocity);
-            ball.setCircle(new Circle(ball.c.getCenter().plus(velocity.times(TIMESTAMP)), ball.c.getRadius()));
+        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < TIMESTEP && !invisible) {
+            Vect velocity = Geometry.reflectWall(wall, ball.getVelocity());
+            ball.setVelocity(velocity);
+            ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
             return new BoardEvent(this);
         }
         return null;

@@ -1,4 +1,5 @@
 package client.gadgets;
+
 import physics.Vect;
 import client.Ball;
 import client.BoardEvent;
@@ -10,7 +11,7 @@ import client.BoardEvent;
  */
 public interface Gadget {
 
-    static final double TIMESTAMP = .05;
+
     /**
      * The name of the gadget
      * @return name

@@ -3,7 +3,6 @@ package client.gadgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -91,10 +90,10 @@ public class StaticBumper implements Gadget {
     @Override
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.c, ball.vel) < TIMESTAMP) {
-                Vect velocity = Geometry.reflectWall(line, ball.vel);
-                ball.setVel(velocity);
-                ball.setCircle(new Circle(ball.c.getCenter().plus(velocity.times(TIMESTAMP)), ball.c.getRadius()));
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
+                Vect velocity = Geometry.reflectWall(line, ball.getVelocity());
+                ball.setVelocity(velocity);
+                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
                 return new BoardEvent(this);
             }
         }

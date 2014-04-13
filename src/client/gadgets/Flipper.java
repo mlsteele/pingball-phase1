@@ -2,7 +2,6 @@ package client.gadgets;
 
 import java.util.List;
 
-import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -49,17 +48,14 @@ public class Flipper implements Gadget{
     @Override
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.c, ball.vel) < TIMESTAMP) {
-                double angularRotation;
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
+                double angularRotation = ANGULAR_ROTATION;
                 if (type == "left" && !rotated || type == "right" && rotated){
-                    angularRotation = -18.849555922; //from specs; counter-clockwise rotation
-                } else{
-                    angularRotation = 18.849555922; //from specs; clockwise rotation
+                    angularRotation *= -1; //from specs; counter-clockwise rotation
                 }
-
-                Vect velocity = Geometry.reflectRotatingWall(line, ball.c.getCenter(), angularRotation, ball.c, ball.vel, 0.95);
-                ball.setVel(velocity);
-                ball.setCircle(new Circle(ball.c.getCenter().plus(velocity.times(TIMESTAMP)), ball.c.getRadius()));
+                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), ANGULAR_ROTATION, ball.getCircle(), ball.getVelocity(), 0.95);
+                ball.setVelocity(velocity);
+                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
                 rotated = !rotated;
                 return new BoardEvent(this);
             }
