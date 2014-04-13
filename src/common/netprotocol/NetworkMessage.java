@@ -8,13 +8,18 @@ import common.Constants.BoardSide;
 
 
 /**
- * NetworkMessageBuilder is a static class which
- * creates messages to pass between the client and server.
+ * NetworkMessage is an abstract base class for messages
+ * passing over the network. It also contains static methods
+ * for deserializing messages.
  *
- * The wire protocol is completely contained within this class
+ * The serialization specification is in the spec
+ * for the serialize method.
  *
  */
 public abstract class NetworkMessage {
+    // Standard separator for message units.
+    protected static final String STD_SEP = "#";
+
     /**
      * Decode from a message received to an instance of a NetworkMessage.
      * See NetworkMessage.serialize for a description of the serialization grammar.
@@ -32,12 +37,15 @@ public abstract class NetworkMessage {
      */
     public static NetworkMessage deserialize(String message) throws DecodeException {
         // Extract the header
-        Pattern headerPattern = Pattern.compile("(.*)\n");
+        Pattern headerPattern = Pattern.compile("^(.*?)" + STD_SEP);
         Matcher headerMatcher = headerPattern.matcher(message);
         if (! headerMatcher.find()) {
             throw new DecodeException("No valid header found.");
         }
         String header = headerMatcher.group(1);
+        if (message.length() <= header.length()) {
+            throw new DecodeException("Message body missing.");
+        }
         String body = message.substring(header.length() + 1);
 
         if (header.equals(BallInMessage.class.getSimpleName())) {
@@ -58,18 +66,19 @@ public abstract class NetworkMessage {
      *
      * This is the grammar for a NetworkMessage:
      * serialization ::= header body
-     * header ::= messagetype newline
+     * header ::= messagetype headerend
+     * headerend ::= '#'
      * messagetype ::= <message class name>
      * body ::= <anything decodeable>
-     * newline ::= '\n'
      *
-     * body is not well specified because each implementation
-     * of NetworkMessage will handle the body within its
-     * own specific serialize and deserialize methods.
+     * The message body is not well specified because each
+     * implementation of NetworkMessage will handle the body
+     * within its own specific serialize and deserialize methods.
+     * Body CANNOT, however, contain any newline characters.
      *
      * For example, for a hypothetical FooMessage,
      * a serialization could be:
-     * "FooMessage\nx: 1, y: 2, c: 3"
+     * "FooMessage|1|2|3.4"
      *
      * @return string serialization of NetworkMessage
      */

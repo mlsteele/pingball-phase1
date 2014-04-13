@@ -21,7 +21,7 @@ public class BallInMessage extends NetworkMessage {
      * @param body body of the message
      */
     public static NetworkMessage deserialize(String body) throws DecodeException {
-        String units[] = body.split("\n");
+        String units[] = body.split(STD_SEP);
         if (units.length != 3) {
             throw new DecodeException("Wrong body length: " + units.length);
         }
@@ -44,9 +44,9 @@ public class BallInMessage extends NetworkMessage {
     }
 
     public String serialize() {
-        String message = this.getClass().getSimpleName() + "\n";
-        message += serializeVect(ballPos) + "\n";
-        message += serializeVect(ballVel) + "\n";
+        String message = this.getClass().getSimpleName() + STD_SEP;
+        message += serializeVect(ballPos) + STD_SEP;
+        message += serializeVect(ballVel) + STD_SEP;
         message += serializeBoardSide(toSide);
         return message;
     }

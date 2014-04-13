@@ -32,6 +32,13 @@ import common.netprotocol.NetworkMessage.DecodeException;
  * - Test Vects with zero components
  * - Test Vects with negative components
  *
+ * Testing strategy for malformed serializations:
+ * (these tests cause various DecodeExceptions)
+ * - No header
+ * - Bad header
+ * - Wrong body data
+ * - Missing all body data
+ *
  * Testing strategy for BoardSides in NetworkMessages:
  * - Test serialization for each of left, right, top, and bottom sides
  * - Test deserialization for each of left, right, top, and bottom sides
@@ -44,12 +51,12 @@ public class NetworkMessageTests {
     private static final Vect vPos = new Vect(0, 0);
     private static final Vect vNeg = new Vect(0, 0);
 
-    private static final String ballInMessageString = "BallInMessage\n0.0 0.0\n0.0 0.0\nL";
-    private static final String ballInMessageStringBad = "BallInMessage\n0.0 0.0\nL";
+    private static final String ballInMessageString = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String ballInMessageStringBad = "BallInMessage#0.0 0.0#L";
 
     @Test(expected=NetworkMessage.DecodeException.class)
     public void testDeserializeBadHeader() throws DecodeException {
-        NetworkMessage.deserialize("thisisnotavalidheader\nballPos 0.0\nballVel 0.0\ntoSide L");
+        NetworkMessage.deserialize("thisisnotavalidheader#ballPos 0.0#ballVel 0.0#toSide L");
     }
 
     @Test public void testBallInMessageSerialize() {
