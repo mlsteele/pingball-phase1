@@ -25,23 +25,25 @@ import common.netprotocol.NetworkMessage.DecodeException;
  * - test constructor and serialization into known string
  * - test data after deserialization from know string
  * - test for exception when deserializing bad data (with correct header)
- * - just once, test deserializing data with a bad header.
  *
  * Testing strategy for Vects in NetworkMessages:
  * - Test Vects with positive components
  * - Test Vects with zero components
  * - Test Vects with negative components
  *
- * Testing strategy for malformed serializations:
- * (these tests cause various DecodeExceptions)
- * - No header
- * - Bad header
- * - Wrong body data
- * - Missing all body data
- *
  * Testing strategy for BoardSides in NetworkMessages:
  * - Test serialization for each of left, right, top, and bottom sides
  * - Test deserialization for each of left, right, top, and bottom sides
+ *
+ * Testing strategy for malformed serializations:
+ * (these tests cause various DecodeExceptions)
+ * - Empty message
+ * - No header
+ * - Bad header
+ * - Missing some body data
+ * - Wrong body data
+ * - Missing all body data
+ * - Extra body data
  *
  * TODO write tests for the other NetworkMessage types.
  *
@@ -51,8 +53,29 @@ public class NetworkMessageTests {
     private static final Vect vPos = new Vect(0, 0);
     private static final Vect vNeg = new Vect(0, 0);
 
-    private static final String ballInMessageString = "BallInMessage#0.0 0.0#0.0 0.0#L";
-    private static final String ballInMessageStringBad = "BallInMessage#0.0 0.0#L";
+    private static final String ballInMessageString               = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String ballInMessageStringBad            = "BallInMessage#0.0 0.0#L"; // missing data
+    private static final String ballOutMessageString              = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String ballOutMessageStringBad           = "BallInMessage#0.0 0.0#0.0 0.0#L"; // extra data
+    private static final String boardFuseMessageString            = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String boardFuseMessageStringBad         = "BallInMessage#0.0 0.0#0.0 0.0#L"; // missing body
+    private static final String boardUnfuseMessageString          = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String boardUnfuseMessageStringBad       = "BallInMessage#0.0 0.0#0.0 0.0#L"; // wrong data
+    private static final String clientConnectMessageString        = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String clientConnectMessageStringBad     = "BallInMessage#0.0 0.0#0.0 0.0#L"; // wrong data
+    private static final String connectionRefusedMessageString    = "BallInMessage#0.0 0.0#0.0 0.0#L";
+    private static final String connectionRefusedMessageStringBad = "BallInMessage#0.0 0.0#0.0 0.0#L"; // missing data
+
+
+    @Test(expected=NetworkMessage.DecodeException.class)
+    public void testDeserializeEmptyMessage() throws DecodeException {
+        NetworkMessage.deserialize("");
+    }
+
+    @Test(expected=NetworkMessage.DecodeException.class)
+    public void testDeserializeNoHeader() throws DecodeException {
+        NetworkMessage.deserialize("ballPos 0.0#ballVel 0.0#toSide L");
+    }
 
     @Test(expected=NetworkMessage.DecodeException.class)
     public void testDeserializeBadHeader() throws DecodeException {
