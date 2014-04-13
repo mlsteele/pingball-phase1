@@ -1,5 +1,7 @@
 package common.netprotocol;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,14 @@ import common.Constants.BoardSide;
  *
  * The serialization specification is in the spec
  * for the serialize method.
+ *
+ * NetworkMessage can only deserialize messages with headers
+ * that it knows about. For this reason, every implementation
+ * must have a correspoding entry in the known message type
+ * list in the deserialize method.
+ * This is an unfortunate compromise. It was deemed better
+ * than the alternative of using fragile language introspection
+ * to find implementations.
  *
  */
 public abstract class NetworkMessage {
@@ -48,8 +58,19 @@ public abstract class NetworkMessage {
         }
         String body = message.substring(header.length() + 1);
 
+        // Pass work on to NetworkMessage implementations.
         if (header.equals(BallInMessage.class.getSimpleName())) {
             return BallInMessage.deserialize(body);
+        } else if (header.equals(BallOutMessage.class.getSimpleName())) {
+            return BallOutMessage.deserialize(body);
+        } else if (header.equals(BoardFuseMessage.class.getSimpleName())) {
+            return BoardFuseMessage.deserialize(body);
+        } else if (header.equals(BoardUnfuseMessage.class.getSimpleName())) {
+            return BoardUnfuseMessage.deserialize(body);
+        } else if (header.equals(ClientConnectMessage.class.getSimpleName())) {
+            return ClientConnectMessage.deserialize(body);
+        } else if (header.equals(ConnectionRefusedMessage.class.getSimpleName())) {
+            return ConnectionRefusedMessage.deserialize(body);
         } else {
             throw new DecodeException("Unrecognized header: " + header);
         }
@@ -78,7 +99,7 @@ public abstract class NetworkMessage {
      *
      * For example, for a hypothetical FooMessage,
      * a serialization could be:
-     * "FooMessage|1|2|3.4"
+     * "FooMessage#1#2#3.4"
      *
      * @return string serialization of NetworkMessage
      */
