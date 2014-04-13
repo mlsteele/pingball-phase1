@@ -20,10 +20,10 @@ import java.util.Queue;
 
 public class PingballServer {
 
-    private final ServerSocket serverSocket;
     private static final int DEFAULT_PORT = 10987;
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
+    private final ServerSocket serverSocket;
 
     public PingballServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);

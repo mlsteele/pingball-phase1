@@ -8,10 +8,14 @@ import java.net.Socket;
 
 /**
  * Creates thread to handle client's requests. These include ball out messages
- * and client connect/disconnect
+ * and client connect/disconnect.
  *
  * Thread safety argument:
- * A queue will receive client requests and process them in order.
+ * * A queue will receive client requests and process them in order.
+ * * Only client thread will read from the input stream,
+ * * and only the server thread will write to the output stream
+ * * (though both will do so through this class).
+ * * Sockets are thread-safe for concurrent input and output.
  */
 
 public class ClientHandler implements Runnable{
@@ -19,18 +23,18 @@ public class ClientHandler implements Runnable{
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private boolean running;
+
 
     /**
      * Make a new ClientHandler
      * @param socket the socket through which we communicate with the client
-     * @throws IOException
+     * @throws IOException if we are unable to open the input or output stream with the client
      */
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
-        this.running = false;
+
     }
 
     /**
@@ -38,7 +42,6 @@ public class ClientHandler implements Runnable{
      */
     @Override
     public void run() {
-        running = true;
         // handle the client
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -47,16 +50,8 @@ public class ClientHandler implements Runnable{
                 // handle it
             }
         } catch (IOException e) {
-            e.printStackTrace();
         } finally {
-            running = false;
-            try {
-                in.close();
-                out.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            this.kill();
         }
     }
 
@@ -65,10 +60,20 @@ public class ClientHandler implements Runnable{
      * @param message the message to send to the client
      */
     public void send(NetworkMessage message) {
-        if (running) {
-            String strMessage = message.serialize();
-            out.println(strMessage);
-        }
+        String strMessage = message.serialize();
+        out.println(strMessage);
+    }
+
+    /**
+     * Stops the clientHandler thread and termitates the connection to the client
+     */
+    public void kill() {
+        try {
+            out.close();
+            in.close();
+            socket.close();
+        } catch (IOException e) {}
+
     }
 
 
