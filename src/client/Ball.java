@@ -1,6 +1,7 @@
 package client;
 
-import physics.*;
+import physics.Circle;
+import physics.Vect;
 
 /**
  * Mutable ball class
@@ -8,11 +9,21 @@ import physics.*;
  * Mutable wrapper for Circle to make it easier to work with as a mutable object.
  */
 public class Ball {
-    private Circle c;
-    private Vect vel; // velocity
+    public Circle c;
+    public Vect vel; // velocity
 
-    Ball(double radius, Vect pos, Vect vel) {
+    public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
         this.vel = vel;
     }
+
+    public void setVel(Vect vel) {
+        this.vel = vel;
+    }
+
+    public void setCircle(Circle c) {
+        this.c = c;
+    }
+
+
 }

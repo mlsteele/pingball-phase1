@@ -1,6 +1,10 @@
 package client.gadgets;
 
+import physics.Circle;
+import physics.Geometry;
+import physics.LineSegment;
 import physics.Vect;
+import client.Ball;
 import client.BoardEvent;
 
 /**
@@ -18,25 +22,44 @@ import client.BoardEvent;
  */
 
 public class Wall implements Gadget{
-
+    private Vect startingPoint;
+    private String name;
+    private final LineSegment wall;
     private boolean invisible;
 
+    /**
+     * Constructor that takes the shape of the bumper.
+     * The first LineSegment listed in geometry must begin at the origin point (position.x(), position.y())
+     * of the bumper
+     */
+    private Wall(String name, boolean invisible, LineSegment wall) {
+        this.name = name;
+        this.invisible = invisible;
+        startingPoint = wall.p1();
+        this.wall = wall; // only one wall?
+    }
+
+
     @Override
-    public BoardEvent handleBall() {
-        // TODO Auto-generated method stub
+    public BoardEvent handleBall(Ball ball) {
+        if (Geometry.timeUntilWallCollision(wall, ball.c, ball.vel) < TIMESTAMP && !invisible) {
+            Vect velocity = Geometry.reflectWall(wall, ball.vel);
+            ball.setVel(velocity);
+            ball.setCircle(new Circle(ball.c.getCenter().plus(velocity.times(TIMESTAMP)), ball.c.getRadius()));
+            return new BoardEvent(this);
+        }
         return null;
     }
 
     @Override
     public int getSize() {
-        // TODO Auto-generated method stub
+        // TODO What are a set of walls' size?
         return 0;
     }
 
     @Override
     public Vect getPosition() {
-        // TODO Auto-generated method stub
-        return null;
+        return startingPoint;
     }
 
     @Override
@@ -47,8 +70,14 @@ public class Wall implements Gadget{
 
     @Override
     public void specialAction() {
-        // TODO Auto-generated method stub
+        // TODO Walls generate no special action: maybe we should handle invisible walls here
 
+    }
+
+
+    @Override
+    public String getName() {
+        return name;
     }
 
 }

@@ -30,6 +30,7 @@ public class Board {
      * Rep Invariant:
      * - gadgets are never added or removed from the list.
      */
+
     private final String name;
     private final int width;
     private final int height;
