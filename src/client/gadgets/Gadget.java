@@ -1,11 +1,16 @@
 package client.gadgets;
 
+import physics.Vect;
+import client.Ball;
+import client.BoardEvent;
+
 /**
  * Gadgets include the three kinds of bumpers, flippers, absorbers,
  * and the board's four walls. These object classes are in the client package
  * and implement Gadget.
  */
 public interface Gadget {
+
 
     /**
      * The name of the gadget
@@ -15,7 +20,7 @@ public interface Gadget {
 
     //returns a BoardEvent that will be queued and handled by Board class
     //  after the gadget is hit by a ball
-    public BoardEvent handleBall();
+    public BoardEvent handleBall(Ball ball);
 
     //returns size of gadget in Ls for rendering purposes
     public int getSize();
@@ -29,7 +34,6 @@ public interface Gadget {
 
     //debugging String that includes information about the Gadget object
     //  like size, position, and type
-    @Override;
     public String toString();
 
     //for those gadgets (absorbers, invisible/fused walls, and flippers)

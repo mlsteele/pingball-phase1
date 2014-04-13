@@ -30,6 +30,7 @@ public class Board {
      * Rep Invariant:
      * - gadgets are never added or removed from the list.
      */
+
     private final String name;
     private final int width;
     private final int height;
@@ -60,8 +61,6 @@ public class Board {
 
     }
     public void step() {
-
-
         // process events in queue (last part of step)
         while (!eventQueue.isEmpty()) {
             /* beware of infinite looping here. Maybe we need an invariant saying that

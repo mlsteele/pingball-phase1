@@ -1,6 +1,11 @@
 package client.gadgets;
 
+import java.util.List;
+
+import physics.Geometry;
+import physics.LineSegment;
 import physics.Vect;
+import client.Ball;
 import client.BoardEvent;
 
 /**
@@ -21,35 +26,78 @@ import client.BoardEvent;
  */
 
 public class Flipper implements Gadget{
+    private Vect startingPoint;
+    private String name;
+    private String type;
+    private final List<LineSegment> geometry;
+    private boolean rotated;
+
+    /**
+     * Constructor that dictates the position of the flipper.
+     * The first LineSegment listed in geometry must begin at the origin point (position.x(), position.y())
+     * of the bumper
+     */
+    private Flipper(String name, String type, List<LineSegment> geometry, boolean rotated) {
+        this.name = name;
+        this.type = type; //left or right
+        startingPoint = geometry.get(0).p1();
+        this.geometry = geometry;
+        this.rotated = rotated; //rotated indicates that the flipper is horizontal
+    }
+
+    @Override
+    public BoardEvent handleBall(Ball ball) {
+        for (LineSegment line : geometry){
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
+                double angularRotation = ANGULAR_ROTATION;
+                if (type == "left" && !rotated || type == "right" && rotated){
+                    angularRotation *= -1; //from specs; counter-clockwise rotation
+                }
+                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), ANGULAR_ROTATION, ball.getCircle(), ball.getVelocity(), 0.95);
+                ball.setVelocity(velocity);
+                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
+                rotated = !rotated;
+                return new BoardEvent(this);
+            }
+        }
+        return null;
+    }
 
     @Override
     public int getSize() {
-        // TODO Auto-generated method stub
-        return 0;
+        //if flipper is rotated, it is 1 in width and 2 in height, so we return 1
+        //if it is not rotated, it is 2 in width and 1 in height, so we return 2
+        //to be interpreted by caller
+        //might be easier to just have a 'is rotated' function that could be more easily interpreted
+        if (rotated){
+            return 1;
+        }else{
+            return 2;
+        }
     }
 
     @Override
     public String stringRepresentation() {
-        // TODO Auto-generated method stub
-        return null;
+        if (rotated){
+            return "|" + "\n" + "|";
+        }else{
+            return "--";
+        }
     }
 
     @Override
     public void specialAction() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public BoardEvent handleBall() {
-        // TODO Auto-generated method stub
-        return null;
+        // already did flipper rotation in handleBall...
     }
 
     @Override
     public Vect getPosition() {
-        // TODO Auto-generated method stub
-        return null;
+        return startingPoint;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
 }
