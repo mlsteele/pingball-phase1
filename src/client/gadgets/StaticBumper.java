@@ -13,17 +13,23 @@ import client.BoardEvent;
  * StaticBumper is a stationary geometric bumper.
  * Could by any of SquareBumper, CircularBumper, TriangularBumper.
  *
+ * Rep invariant: bumper must have a position within the board's boundaries
+ *
+ * Thread safety: All elements are final and confined.
  */
 public class StaticBumper implements Gadget {
-    private Vect startingPoint;
-    private String name;
-    private String type;
+    private final Vect startingPoint;
+    private final String name;
+    private final String type;
     private final List<LineSegment> geometry;
 
     /**
-     * Constructor that takes the shape of the bumper.
-     * The first LineSegment listed in geometry must begin at the origin point (position.x(), position.y())
-     * of the bumper
+     * Constructor that indicates the shape of the bumper.
+     *
+     * @param name unique String identifier for this bumper
+     * @param type String representing what kind of bumper this is. Used for getting stringRepresentation later
+     * @param geometry List of line segments that ball can reflect off of. The first LineSegment listed in geometry
+     * must begin at the origin point (position.x(), position.y()) of the bumper
      */
     private StaticBumper(String name, String type, List<LineSegment> geometry) {
         this.name = name;
@@ -34,6 +40,8 @@ public class StaticBumper implements Gadget {
 
     /**
      * Factory method for creating SquareBumpers
+     * @param name unique String identifier for this bumper
+     * @param position starting point (upper left corner) of bumper
      */
     public static StaticBumper createSquareBumper(String name, Vect position) {
         LineSegment top = new LineSegment(position.x(), position.y(), position.x() + 1, position.y());
@@ -52,6 +60,8 @@ public class StaticBumper implements Gadget {
 
     /**
      * Factory method for creating TriangularBumpers
+     * @param name unique String identifier for this bumper
+     * @param position starting point (upper left corner) of bumper
      */
     public static StaticBumper createTriangularBumper(String name, Vect position, int orientation) {
         //TriUp v. TriDown distinguishes between / and \ respectively
@@ -71,6 +81,8 @@ public class StaticBumper implements Gadget {
 
     /**
      * Factory method for creating CircularBumpers
+     * @param name unique String identifier for this bumper
+     * @param position starting point (upper left corner) of bumper
      */
     public static StaticBumper createCircularBumper(String name, Vect position) {
         LineSegment top = new LineSegment(position.x(), position.y(), position.x() + 1, position.y());
@@ -88,6 +100,12 @@ public class StaticBumper implements Gadget {
     }
 
     @Override
+    /**
+     * When physics' timeUntilWallCollision method detects that a ball from Board will hit the bumper,
+     * the bumper will reflect the ball off of the appropriate lineSegment
+     *
+     * @param Ball object from Board
+     */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
@@ -102,16 +120,28 @@ public class StaticBumper implements Gadget {
     }
 
     @Override
+    /**
+     * @return 1; all bumpers take up only one square on a board
+     */
     public int getSize() {
         return 1;
     }
 
     @Override
+    /**
+     * @return startingPoint Vector representation of point at the top left corner of the bumper
+     */
     public Vect getPosition() {
         return startingPoint;
     }
 
     @Override
+    /**
+     * Called during Board's step function. Each type of bumper has a different
+     * representation. Square = "#"; Triangle = "/" or "\", Circle = "0"
+     *
+     * @return string representation of absorber for print out
+     */
     public String stringRepresentation() {
         String repString = "";
         if (type == "Square"){
@@ -132,6 +162,9 @@ public class StaticBumper implements Gadget {
     }
 
     @Override
+    /**
+     * @return unique String representation of bumper
+     */
     public String getName() {
         return name;
     }

@@ -4,9 +4,13 @@ import physics.Circle;
 import physics.Vect;
 
 /**
- * Mutable ball class
+ * Ball is a mutable class that represents a ball on the Pingball board.
+ * Circle, a physics object, is a major part of Ball's construction, and
+ * Ball acts as a mutable wrapper for Circle to make it easier to change
+ * Balls' positions and velocity.
  *
- * Mutable wrapper for Circle to make it easier to work with as a mutable object.
+ * Rep invariant: position must occur within board
+ * Thread safety: everything is confined or final
  */
 public class Ball {
     private Circle c;
