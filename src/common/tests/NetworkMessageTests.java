@@ -40,6 +40,10 @@ import common.netprotocol.NetworkMessage.DecodeException;
  * - Test serialization for each of left, right, top, and bottom sides
  * - Test deserialization for each of left, right, top, and bottom sides
  *
+ * Testing strategy for Strings in NetworkMessages:
+ * - Test normal string
+ * - Test string with STD_SEP ('#')
+ *
  * Testing strategy for malformed serializations:
  * (these tests cause various DecodeExceptions)
  * - Empty message
@@ -199,5 +203,10 @@ public class NetworkMessageTests {
     @Test(expected=NetworkMessage.DecodeException.class)
     public void testConnectionRefusedMessageDeserializeBad() throws DecodeException {
         NetworkMessage.deserialize(connectionRefusedMessageStringBad);
+    }
+
+    @Test(expected=NetworkMessage.EncodeException.class)
+    public void testConnectionRefusedMessageSerializeIllegalChars() throws DecodeException {
+        new ConnectionRefusedMessage("I'm afraid I can't do that ####, Dave.").serialize();
     }
 }

@@ -1,7 +1,5 @@
 package common.netprotocol;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,14 +8,12 @@ import common.Constants.BoardSide;
 
 
 /**
- * NetworkMessage is an abstract base class for messages
- * passing over the network. It also contains static methods
- * for deserializing messages.
+ * NetworkMessage is an abstract base class for messages passed over the network.
+ * It also contains static helper methods for deserializing messages.
  *
- * The serialization specification is in the spec
- * for the serialize method.
+ * The serialization specification is in the spec for the serialize method below.
  *
- * NetworkMessage can only deserialize messages with headers
+ * NetworkMessage.deserialize can only deserialize messages with headers
  * that it knows about. For this reason, every implementation
  * must have a correspoding entry in the known message type
  * list in the deserialize method.
@@ -56,9 +52,10 @@ public abstract class NetworkMessage {
         if (message.length() <= header.length()) {
             throw new DecodeException("Message body missing.");
         }
+        // Extract the message body
         String body = message.substring(header.length() + 1);
 
-        // Pass work on to NetworkMessage implementations.
+        // Pass work on to a known NetworkMessage implementation.
         if (header.equals(BallInMessage.class.getSimpleName())) {
             return BallInMessage.deserialize(body);
         } else if (header.equals(BallOutMessage.class.getSimpleName())) {
@@ -87,19 +84,28 @@ public abstract class NetworkMessage {
      *
      * This is the grammar for a NetworkMessage:
      * serialization ::= header body
-     * header ::= messagetype headerend
-     * headerend ::= '#'
+     * header ::= messagetype separator
      * messagetype ::= <message class name>
-     * body ::= <anything decodeable>
+     * body ::= (field separator)* field
+     * field ::= <data specific serialization>
+     * separator ::= '#'
      *
-     * The message body is not well specified because each
-     * implementation of NetworkMessage will handle the body
-     * within its own specific serialize and deserialize methods.
-     * Body CANNOT, however, contain any newline characters.
+     * No data encoded in a message can contain the standard separator '#'.
+     * If data to be serialized includes the standard separator, a EncodeException is thrown.
+     * If data to be decoded includes the standard separator, behavior is undefined,
+     * but the message will probably not successfully decode.
      *
-     * For example, for a hypothetical FooMessage,
+     * The field component is incompletely specified because each
+     * data type (String, BoardSide, etc.) is handled differently.
+     * How the fields in the body are handled is up to the implementation
+     * of the NetworkMessage subclass.
+     * Some recommended data serializers are described in the static
+     * helper methods in this class.
+     *
+     * Here is a simple reference example:
+     * For a hypothetical FooMessage containing a string and a vector
      * a serialization could be:
-     * "FooMessage#1#2#3.4"
+     * "FooMessage#hello world#1.0 0.0"
      *
      * @return string serialization of NetworkMessage
      */
@@ -131,8 +137,37 @@ public abstract class NetworkMessage {
     }
 
     /**
+     * Exception thrown when a NetworkMessage message cannot be encoded.
+     * Note that this is an UNCHECKED exception, because it is a programming
+     * error to attempt to encode a message that would throw an EncodeException.
+     */
+    public static class EncodeException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Constructs a EncodeException with a detail message.
+         * @param message description of the error
+         */
+        public EncodeException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructs a EncodeException with a detail message and cause.
+         * @param message description of the error
+         * @param cause exception that caused this error
+         */
+        public EncodeException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
      * Serialize a Vect.
      * Helper method for message serialization.
+     *
+     * Converts a Vect into the form:
+     * "1.0 2.0"
      *
      * @param v Vect to serialize
      * @return string representation of Vect
@@ -144,6 +179,9 @@ public abstract class NetworkMessage {
     /**
      * Deserialize a Vect.
      * Helper method for message serialization.
+     *
+     * Converts a Vect serialized using serializeVect
+     * back into the original Vect.
      *
      * @param v string representation of Vect
      * @return deserialized Vect
@@ -170,6 +208,9 @@ public abstract class NetworkMessage {
      * Serialize a BoardSide.
      * Helper method for message serialization.
      *
+     * Converts a BoardSide into the form:
+     * "L", "R", "T", or "B"
+     *
      * @param bs BoardSide to serialize
      * @return string representation of BoardSide
      */
@@ -192,6 +233,9 @@ public abstract class NetworkMessage {
      * Deserialize a BoardSide.
      * Helper method for message deserialization.
      *
+     * Converts a BoardSide serialized using serializeBoardSide
+     * back into the original BoardSide.
+     *
      * @param bs string representation of BoardSide
      * @return deserialized BoardSide
      * @throws DecodeException indicator of failure
@@ -209,4 +253,25 @@ public abstract class NetworkMessage {
             throw new DecodeException("Could not deserialize BoardSide: " + bs);
         }
     }
+
+    /**
+     * Serialize a String.
+     * Helper method for message serialization.
+     *
+     * Passes through a string verbatim.
+     * Detects invalid characters ('#') and throws
+     * and EncodeException if they are present.
+     *
+     * @param s String to serialize
+     * @return encoded string
+     * @throws EncodeException indication of failure
+     */
+    protected static String serializeString(String s) throws EncodeException {
+        if (s.contains(STD_SEP)) {
+            throw new EncodeException("Invalid string character for encoding: " + STD_SEP);
+        } else {
+            return s;
+        }
+    }
+
 }
