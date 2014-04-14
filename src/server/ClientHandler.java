@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+
+import common.netprotocol.NetworkMessage;
 
 /**
  * Creates thread to handle client's requests. These include ball out messages
- * and client connect/disconnect.
+ * and client connect/disconnect. The Server also calls ClientHandler methods
+ * (from the Server thread), but only to send messages to the client.
  *
  * Thread safety argument:
- * * A queue will receive client requests and process them in order.
+ * * The many ClientHandler threads will all add NetworkMessages to the Server's BlockingQueue (thread safe datatype)
  * * Only client thread will read from the input stream,
  * * and only the server thread will write to the output stream
  * * (though both will do so through this class).
@@ -23,17 +27,20 @@ public class ClientHandler implements Runnable{
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
+    private final BlockingQueue<NetworkMessage> queue;
 
 
     /**
      * Make a new ClientHandler
      * @param socket the socket through which we communicate with the client
+     * @param queue the Server's queue of messages, on which to put incoming messages
      * @throws IOException if we are unable to open the input or output stream with the client
      */
-    public ClientHandler(Socket socket) throws IOException {
+    public ClientHandler(Socket socket, BlockingQueue<NetworkMessage> queue) throws IOException {
         this.socket = socket;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
+        this.queue = queue;
 
     }
 
@@ -45,9 +52,9 @@ public class ClientHandler implements Runnable{
         // handle the client
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
-                // deserialize line
+                // TODO deserialize line
 
-                // handle it
+                // add to queue
             }
         } catch (IOException e) {
         } finally {
@@ -65,7 +72,8 @@ public class ClientHandler implements Runnable{
     }
 
     /**
-     * Stops the clientHandler thread and termitates the connection to the client
+     * Terminates the connection to the client.
+     * This also causes the run() method to finish.
      */
     public void kill() {
         try {
