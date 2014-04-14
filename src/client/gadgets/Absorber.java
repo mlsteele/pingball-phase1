@@ -1,5 +1,5 @@
 package client.gadgets;
-
+import common.Constants;
 import java.util.List;
 
 import physics.Geometry;
@@ -74,7 +74,7 @@ public class Absorber implements Gadget {
     public BoardEvent handleBall(Ball ball) {
         //if the ball hits
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 //position for ball according to specs;
                 Vect absorberBottom = new Vect(this.getPosition().x() + width - (balls.size()) -
                         0.25, this.getPosition().y() - height + .25);
@@ -145,8 +145,8 @@ public class Absorber implements Gadget {
     public void specialAction() {
         if (ballContained){
             Ball newBall = balls.get(0);
-            newBall.setVelocity(SHOOT_VELOCITY);
-            newBall.setPosition(newBall.getCircle().getCenter().plus(SHOOT_VELOCITY.times(TIMESTEP)));
+            newBall.setVelocity(Constants.SHOOT_VELOCITY);
+            newBall.setPosition(newBall.getCircle().getCenter().plus(Constants.SHOOT_VELOCITY.times(Constants.TIMESTEP)));
             if (!checkRep()){
                 System.out.println("Error: rep invariant broken");
                 System.exit(0);
@@ -176,7 +176,7 @@ public class Absorber implements Gadget {
      *
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
-    private boolean checkRep(){
+    public boolean checkRep(){
         if (geometry.size() == 4){
             return false;
         }

@@ -1,5 +1,7 @@
 package client;
 
+import java.util.concurrent.BlockingQueue;
+
 
 /**
  * Pingball game client.
@@ -14,7 +16,7 @@ package client;
  * - incomingMessages is a threadsafe datatype.
  */
 public class PingballClient {
-    private final BlockingQueue incomingMessages;
+    private BlockingQueue incomingMessages; //will be final when implemented
 
     /**
      * Start a PingballClient using the given arguments.

@@ -1,5 +1,5 @@
 package client.gadgets;
-
+import common.Constants;
 import physics.Vect;
 import client.Ball;
 import client.BoardEvent;
@@ -13,8 +13,8 @@ import client.BoardEvent;
  *
  * Each gadget may have a trigger and an action. A trigger is an event that happens
  * at the gadget, such as a ball colliding with it. An action is a response that a gadget
- * can make to a trigger happening somewhere on the board. A gadget’s action can be hooked
- * up to another gadget’s trigger, in order to produce Rube Goldberg machines. These hookups
+ * can make to a trigger happening somewhere on the board. A gadget���s action can be hooked
+ * up to another gadget���s trigger, in order to produce Rube Goldberg machines. These hookups
  * are specified by the board file format.
  *
  *
@@ -26,7 +26,7 @@ public interface Gadget {
     /**
      * When a ball collides with a Gadget, the Gadget will handle the physics
      * and reflection according to its Spec and return a BoardEvent to the Board
-     * class—the Board class can then trigger other events if necessary.
+     * class���the Board class can then trigger other events if necessary.
      *
      * @param ball Any legal ball can be handled
      * @return BoardEvent to be queued and handled by the Board class

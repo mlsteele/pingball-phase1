@@ -1,5 +1,5 @@
 package client.gadgets;
-
+import common.Constants;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -28,7 +28,7 @@ import client.BoardEvent;
 public class SideWall implements Gadget{
     private final Vect startingPoint;
     private final String name;
-    private final WallType type;
+    private final Constants.BoardSide type;
     private boolean invisible;
 
     /**
@@ -42,11 +42,12 @@ public class SideWall implements Gadget{
      * (BoardSide enum contained in common.Constants class)
      * @param startingPoint indicates where the wall should begin so SideWall can construct line segments
      */
-    public SideWall(String name, boolean invisible, BoardSide wallType, Vect startingPoint) {
+    public SideWall(String name, boolean invisible, Constants.BoardSide wallType, Vect startingPoint) {
         this.name = name;
         this.invisible = invisible;
         this.startingPoint = startingPoint;
         type = wallType;
+        //TODO: Create LineSegments
     }
 
     /**
@@ -57,12 +58,8 @@ public class SideWall implements Gadget{
      */
     @Override
     public BoardEvent handleBall(Ball ball) {
-        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < TIMESTEP && !invisible) {
-            Vect velocity = Geometry.reflectWall(wall, ball.getVelocity());
-            ball.setVelocity(velocity);
-            ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
-            return new BoardEvent(this);
-        }
+        //TODO: Check if ball is going to collide with a wall within a timestep. If so, reflect it off of the appropriate
+        //lineSegment and update Ball's velocity and position
         return null;
     }
 

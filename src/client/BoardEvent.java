@@ -18,7 +18,7 @@ public class BoardEvent {
      * Create a new event.
      * @param triggerer object responsible for triggering
      */
-    BoardEvent(Gadget triggerer) {
+    public BoardEvent(Gadget triggerer) {
         this.triggerer = triggerer;
     }
 

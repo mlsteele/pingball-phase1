@@ -92,5 +92,6 @@ public class Board {
      */
     public boolean checkRep(){
         //TODO: implement checkRep for Board
+        return true;
     }
 }

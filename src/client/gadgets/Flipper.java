@@ -1,7 +1,7 @@
 package client.gadgets;
 
 import java.util.List;
-
+import common.Constants;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -63,14 +63,14 @@ public class Flipper implements Gadget{
      */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
-                double angularRotation = ANGULAR_ROTATION;
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+                double angularRotation = Constants.ANGULAR_ROTATION;
                 if (type == "left" && !rotated || type == "right" && rotated){
                     angularRotation *= -1; //from specs; counter-clockwise rotation
                 }
-                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), ANGULAR_ROTATION, ball.getCircle(), ball.getVelocity(), 0.95);
+                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), Constants.ANGULAR_ROTATION, ball.getCircle(), ball.getVelocity(), 0.95);
                 ball.setVelocity(velocity);
-                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
+                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
                 rotated = !rotated;
                 return new BoardEvent(this);
             }

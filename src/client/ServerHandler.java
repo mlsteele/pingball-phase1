@@ -1,6 +1,9 @@
 package client;
 
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+
+import common.netprotocol.NetworkMessage;
 
 /**
  * ServerHandler is a runnable meant to run as a thread.
@@ -43,6 +46,6 @@ public class ServerHandler implements Runnable {
      */
     public void send(NetworkMessage message) {
         String strMessage = message.serialize();
-        out.println(strMessage);
+        //out.println(strMessage);
     }
 }

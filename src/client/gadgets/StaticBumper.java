@@ -1,5 +1,5 @@
 package client.gadgets;
-
+import common.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,10 +109,10 @@ public class StaticBumper implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 Vect velocity = Geometry.reflectWall(line, ball.getVelocity());
                 ball.setVelocity(velocity);
-                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(TIMESTEP)));
+                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
                 return new BoardEvent(this);
             }
         }
