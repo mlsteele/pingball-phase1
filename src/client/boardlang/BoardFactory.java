@@ -12,7 +12,10 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import common.Constants;
+
 import client.Board;
+import client.gadgets.Gadget;
 
 
 /**
@@ -25,13 +28,13 @@ public class BoardFactory {
         CharStream stream = new ANTLRInputStream(input);
         BoardLexer lexer = new BoardLexer(stream);
         // TODO report as errors
-        // lexer.reportErrorsAsExceptions();
+        lexer.reportErrorsAsExceptions();
         TokenStream tokens = new CommonTokenStream(lexer);
 
         // Feed the tokens into the parser.
         BoardParser parser = new BoardParser(tokens);
         // TODO report as errors
-        // parser.reportErrorsAsExceptions();
+        parser.reportErrorsAsExceptions();
 
         // Generate the parse tree using the starter rule.
         ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
@@ -40,7 +43,7 @@ public class BoardFactory {
         // System.err.println(tree.toStringTree(parser));
 
         // debugging option #2: show the tree in a window
-        ((RuleContext)tree).inspect(parser);
+        // ((RuleContext)tree).inspect(parser);
 
         // debugging option #3: walk the tree with a listener
         // new ParseTreeWalker().walk(new PrintEverythingListener(), tree);
@@ -73,8 +76,8 @@ public class BoardFactory {
         @Override public void exitBoardfile(BoardParser.BoardfileContext ctx) { }
 
         public Board getBoard() {
-            // TODO
-            return null;
+            // TODO make work
+            return new Board("TODO", Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, new ArrayList<Gadget>());
         }
     }
 }

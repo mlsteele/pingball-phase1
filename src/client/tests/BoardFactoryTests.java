@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import client.boardlang.BoardFactory;
+
 /**
  * Tests for BoardFactory.
  * These tests cover parsing of files describing Boards.
@@ -21,6 +23,8 @@ public class BoardFactoryTests {
         lines.put("ball1", "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
         lines.put("fire1", "fire trigger=Square action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipL");
+        lines.put("comment1", "# just a regular comment");
+        lines.put("comment2", "# a comment with some rEa11y exc!t!ng s@mb0l$. ");
     }
 
     /**
@@ -35,7 +39,9 @@ public class BoardFactoryTests {
     private static String buildBF(String... keys) {
         String bf = "";
         for (String key : keys) {
-            bf += lines.get(key) + "\n";
+            String line = lines.get(key);
+            assertNotNull(line);
+            bf += line + "\n";
         }
         return bf;
     }
@@ -50,5 +56,25 @@ public class BoardFactoryTests {
             "fire trigger=Square action=FlipL\n" +
             "fire trigger=SquareB action=FlipL\n";
         assertEquals(expected, buildBF("boardinfo1", "ball1", "fire1", "fire2"));
+    }
+
+    @Test public void testBoardNoComments() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "fire1", "fire1")));
+    }
+
+    @Test public void testBoardCommentsAtEnd() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "fire1", "fire1", "comment1", "comment2")));
+    }
+
+    @Test public void testBoardCommentsAfterBoardInfo() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "comment2", "ball1", "fire1", "fire1")));
+    }
+
+    @Test public void testBoardCommentsAtStart() {
+        assertNotNull(BoardFactory.parse(buildBF("comment1", "comment2", "boardinfo1", "ball1", "fire1", "fire1")));
+    }
+
+    @Test public void testBoardCommentsWithEntries() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "ball1", "fire1", "comment2", "fire1")));
     }
 }

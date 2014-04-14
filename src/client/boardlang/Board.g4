@@ -72,7 +72,7 @@ WHITESPACE : [ \t]+ -> skip ;
  * *** ANTLR requires grammar nonterminals to be lowercase, like html, normal, and italic.
  */
 /* boardfile : comments boardinfo entries_and_comments ; */
-boardfile : boardinfo entries EOF ;
+boardfile : comments boardinfo (comment | entry)* EOF ;
 boardinfo : entry_board NEWLINE ;
 entry     : (entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire) NEWLINE;
 entries   : entry* ;
