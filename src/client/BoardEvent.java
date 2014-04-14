@@ -1,25 +1,27 @@
-package client;
+ package client;
+
+import client.gadgets.Gadget;
 
 /**
  * Immutable class for events that happen on the board.
- * These events are generally fired by gadgets.
+ * These events are fired by gadgets.
  */
 public class BoardEvent {
     /**
      * Rep invariant:
      * - all data is immutable.
      */
-    private final String triggeredBy;
+    private final Gadget triggerer;
 
     /**
      * Create a new event.
-     * @param triggeredBy name of object responsible for triggering
+     * @param triggerer object responsible for triggering
      */
-    BoardEvent(String triggeredBy) {
-        this.triggeredBy = triggeredBy;
+    BoardEvent(Gadget triggerer) {
+        this.triggerer = triggerer;
     }
 
-    public String getTriggeredBy() {
-        return triggeredBy;
+    public Gadget getTriggerer() {
+        return triggerer;
     }
 }

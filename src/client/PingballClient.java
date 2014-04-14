@@ -1,5 +1,6 @@
 package client;
 
+
 /**
  * Pingball game client.
  *
@@ -16,10 +17,11 @@ package client;
 public class PingballClient {
     public static void main(String[] args) {
         Board board;
-        BlockingQueue<InterBoardEvent> = new ArrayBlockingQueue<InterBoardEvent>();
 
         // parse command line arguments
         // load board
         // start client
+
+
     }
 }
