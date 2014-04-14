@@ -54,7 +54,7 @@ public class BoardFuseMessage extends NetworkMessage {
      */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
-        message += boardName + STD_SEP;
+        message += serializeString(boardName) + STD_SEP;
         message += serializeBoardSide(side);
         return message;
     }

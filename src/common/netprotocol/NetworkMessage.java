@@ -1,7 +1,5 @@
 package common.netprotocol;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,7 +91,9 @@ public abstract class NetworkMessage {
      * separator ::= '#'
      *
      * No data encoded in a message can contain the standard separator '#'.
-     * Behavior if data includes a standard separator is unsupported and undefined.
+     * If data to be serialized includes the standard separator, a EncodeException is thrown.
+     * If data to be decoded includes the standard separator, behavior is undefined,
+     * but the message will probably not successfully decode.
      *
      * The field component is incompletely specified because each
      * data type (String, BoardSide, etc.) is handled differently.
@@ -132,6 +132,32 @@ public abstract class NetworkMessage {
          * @param cause exception that caused this error
          */
         public DecodeException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
+     * Exception thrown when a NetworkMessage message cannot be encoded.
+     * Note that this is an UNCHECKED exception, because it is a programming
+     * error to attempt to encode a message that would throw an EncodeException.
+     */
+    public static class EncodeException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Constructs a EncodeException with a detail message.
+         * @param message description of the error
+         */
+        public EncodeException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructs a EncodeException with a detail message and cause.
+         * @param message description of the error
+         * @param cause exception that caused this error
+         */
+        public EncodeException(String message, Throwable cause) {
             super(message, cause);
         }
     }
@@ -227,4 +253,25 @@ public abstract class NetworkMessage {
             throw new DecodeException("Could not deserialize BoardSide: " + bs);
         }
     }
+
+    /**
+     * Serialize a String.
+     * Helper method for message serialization.
+     *
+     * Passes through a string verbatim.
+     * Detects invalid characters ('#') and throws
+     * and EncodeException if they are present.
+     *
+     * @param s String to serialize
+     * @return encoded string
+     * @throws EncodeException indication of failure
+     */
+    protected static String serializeString(String s) throws EncodeException {
+        if (s.contains(STD_SEP)) {
+            throw new EncodeException("Invalid string character for encoding: " + STD_SEP);
+        } else {
+            return s;
+        }
+    }
+
 }

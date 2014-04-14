@@ -48,7 +48,7 @@ public class ClientConnectMessage extends NetworkMessage {
      */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
-        message += boardName;
+        message += serializeString(boardName);
         return message;
     }
 

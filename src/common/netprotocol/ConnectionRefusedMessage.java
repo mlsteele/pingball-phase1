@@ -44,7 +44,7 @@ public class ConnectionRefusedMessage extends NetworkMessage {
      */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
-        message += reason;
+        message += serializeString(reason);
         return message;
     }
 
