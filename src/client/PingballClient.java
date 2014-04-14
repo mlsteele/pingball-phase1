@@ -10,11 +10,29 @@ package client;
  * transfers.
  *
  * Thread Safety Argument:
- * - board is confined to the main thread
- * - socket is confined to the ServerHandler thread
- * - messages are passed between the two threads using a threadsafe queue.
+ * - board is confined to the main thread.
+ * - incomingMessages is a threadsafe datatype.
  */
 public class PingballClient {
+    private final BlockingQueue incomingMessages;
+
+    /**
+     * Start a PingballClient using the given arguments.
+     *
+     * Usage: PingballClient [--host HOST] [--port PORT] FILE
+     *
+     * HOST is an optional hostname or IP address of the server to connect to.
+     * If no HOST is provided, then the client starts in single-machine play mode.
+     *
+     * PORT is an optional integer in the range 0 to 65535 inclusive, specifying the port
+     * where the server is listening for incoming connections. The default port is 10987.
+     *
+     * FILE is a required argument specifying a file pathname
+     * of the Pingball board that this client should run.
+     *
+     * If no port is specified, the default port 10987 will be used.
+     *
+     */
     public static void main(String[] args) {
         Board board;
 
