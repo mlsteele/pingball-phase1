@@ -4,8 +4,15 @@ package common.netprotocol;
  * Client -> Server
  * Message sent when a client wants to connect to a server.
  * This is an immutable class.
+ *
+ * Thread Safety Argument:
+ * - all data is immutable.
  */
 public class ClientConnectMessage extends NetworkMessage {
+    /**
+     * Rep invariant:
+     * - all data is immutable (enforced by type system)
+     */
     private final String boardName;
 
     /**
@@ -35,6 +42,10 @@ public class ClientConnectMessage extends NetworkMessage {
         this.boardName = boardName;
     }
 
+    /**
+     * Serialize the message according to specs in NetworkMessage.serialize
+     * @return string serialization of message
+     */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
         message += boardName;

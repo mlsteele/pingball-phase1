@@ -7,9 +7,16 @@ import common.Constants.BoardSide;
  * Client -> Server
  * Message sent when a ball leaves a board.
  * This is an immutable class.
- * The position and velocity of the ball are cached when the message is construccted.
+ * The position and velocity of the ball are cached when the message is constructed.
+ *
+ * Thread Safety Argument:
+ * - all data is immutable.
  */
 public class BallOutMessage extends NetworkMessage {
+    /**
+     * Rep invariant:
+     * - all data is immutable (enforced by type system)
+     */
     private final Vect ballPos; // position of the ball
     private final Vect ballVel; // velocity of the ball
     private final BoardSide fromSide; // which side the ball departs from
@@ -44,6 +51,10 @@ public class BallOutMessage extends NetworkMessage {
         this.fromSide = fromSide;
     }
 
+    /**
+     * Serialize the message according to specs in NetworkMessage.serialize
+     * @return string serialization of message
+     */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
         message += serializeVect(ballPos) + STD_SEP;

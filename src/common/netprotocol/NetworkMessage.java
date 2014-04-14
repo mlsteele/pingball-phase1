@@ -10,14 +10,12 @@ import common.Constants.BoardSide;
 
 
 /**
- * NetworkMessage is an abstract base class for messages
- * passing over the network. It also contains static methods
- * for deserializing messages.
+ * NetworkMessage is an abstract base class for messages passed over the network.
+ * It also contains static helper methods for deserializing messages.
  *
- * The serialization specification is in the spec
- * for the serialize method.
+ * The serialization specification is in the spec for the serialize method below.
  *
- * NetworkMessage can only deserialize messages with headers
+ * NetworkMessage.deserialize can only deserialize messages with headers
  * that it knows about. For this reason, every implementation
  * must have a correspoding entry in the known message type
  * list in the deserialize method.
@@ -56,9 +54,10 @@ public abstract class NetworkMessage {
         if (message.length() <= header.length()) {
             throw new DecodeException("Message body missing.");
         }
+        // Extract the message body
         String body = message.substring(header.length() + 1);
 
-        // Pass work on to NetworkMessage implementations.
+        // Pass work on to a known NetworkMessage implementation.
         if (header.equals(BallInMessage.class.getSimpleName())) {
             return BallInMessage.deserialize(body);
         } else if (header.equals(BallOutMessage.class.getSimpleName())) {
@@ -87,19 +86,26 @@ public abstract class NetworkMessage {
      *
      * This is the grammar for a NetworkMessage:
      * serialization ::= header body
-     * header ::= messagetype headerend
-     * headerend ::= '#'
+     * header ::= messagetype separator
      * messagetype ::= <message class name>
-     * body ::= <anything decodeable>
+     * body ::= (field separator)* field
+     * field ::= <data specific serialization>
+     * separator ::= '#'
      *
-     * The message body is not well specified because each
-     * implementation of NetworkMessage will handle the body
-     * within its own specific serialize and deserialize methods.
-     * Body CANNOT, however, contain any newline characters.
+     * No data encoded in a message can contain the standard separator '#'.
+     * Behavior if data includes a standard separator is unsupported and undefined.
      *
-     * For example, for a hypothetical FooMessage,
+     * The field component is incompletely specifeid because each
+     * data type (String, BoardSide, etc.) is handled differently.
+     * How the fields in the body are handled is up to the implementation
+     * of the NetworkMessage subclass.
+     * Some recommended data serializers are described in the static
+     * helper methods in this class.
+     *
+     * Here is a simple reference example:
+     * For a hypothetical FooMessage containing a string and a vector
      * a serialization could be:
-     * "FooMessage#1#2#3.4"
+     * "FooMessage#hello world#1.0 0.0"
      *
      * @return string serialization of NetworkMessage
      */
@@ -134,6 +140,9 @@ public abstract class NetworkMessage {
      * Serialize a Vect.
      * Helper method for message serialization.
      *
+     * Converts a Vect into the form:
+     * "1.0 2.0"
+     *
      * @param v Vect to serialize
      * @return string representation of Vect
      */
@@ -144,6 +153,9 @@ public abstract class NetworkMessage {
     /**
      * Deserialize a Vect.
      * Helper method for message serialization.
+     *
+     * Converts a Vect serialized using serializeVect
+     * back into the original Vect.
      *
      * @param v string representation of Vect
      * @return deserialized Vect
@@ -170,6 +182,9 @@ public abstract class NetworkMessage {
      * Serialize a BoardSide.
      * Helper method for message serialization.
      *
+     * Converts a BoardSide into the form:
+     * "L", "R", "T", or "B"
+     *
      * @param bs BoardSide to serialize
      * @return string representation of BoardSide
      */
@@ -191,6 +206,9 @@ public abstract class NetworkMessage {
     /**
      * Deserialize a BoardSide.
      * Helper method for message deserialization.
+     *
+     * Converts a BoardSide serialized using serializeBoardSide
+     * back into the original BoardSide.
      *
      * @param bs string representation of BoardSide
      * @return deserialized BoardSide

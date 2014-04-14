@@ -7,8 +7,15 @@ import common.Constants.BoardSide;
  * Server -> Client
  * Message sent when a ball should enter a board.
  * This is an immutable class.
+ *
+ * Thread Safety Argument:
+ * - all data is immutable.
  */
 public class BallInMessage extends NetworkMessage {
+    /**
+     * Rep invariant:
+     * - all data is immutable (enforced by type system)
+     */
     private final Vect ballPos; // position of the ball
     private final Vect ballVel; // velocity of the ball
     private final BoardSide toSide; // which side the ball enters
@@ -43,6 +50,10 @@ public class BallInMessage extends NetworkMessage {
         this.toSide = toSide;
     }
 
+    /**
+     * Serialize the message according to specs in NetworkMessage.serialize
+     * @return string serialization of message
+     */
     public String serialize() {
         String message = this.getClass().getSimpleName() + STD_SEP;
         message += serializeVect(ballPos) + STD_SEP;
