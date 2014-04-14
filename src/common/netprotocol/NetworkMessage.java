@@ -95,7 +95,7 @@ public abstract class NetworkMessage {
      * No data encoded in a message can contain the standard separator '#'.
      * Behavior if data includes a standard separator is unsupported and undefined.
      *
-     * The field component is incompletely specifeid because each
+     * The field component is incompletely specified because each
      * data type (String, BoardSide, etc.) is handled differently.
      * How the fields in the body are handled is up to the implementation
      * of the NetworkMessage subclass.
