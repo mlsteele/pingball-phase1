@@ -1,6 +1,7 @@
 package client.gadgets;
 
 import java.util.List;
+
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -20,9 +21,8 @@ import common.Constants;
  * in the bottom right-hand corner of the absorber. The ball's center is .25L from the
  * bottom of the absorber and .25L from the right side of the absorber.
  *
- * Rep invariant: geometry (the list) must have four lines. All horizontal
- * LineSegments must be less than the width of the board, all vertical LineSegments must be shorter
- * than the height of the board.
+ * Rep invariant: geometry (the list) must have four lines. The four corners of the lineSegments
+ * must occur within the board (their x and y coordinates are less than 20 and greater than 0)
  *
  * Thread safety: The only mutable elements of Absorber are the list of Ball objects and the
  * the boolean ballContained. Each is only mutated when appropriate (when a Ball collides with the
@@ -49,7 +49,7 @@ public class Absorber implements Gadget {
      * than the height of the board.
      *
      */
-    private Absorber(String name, List<LineSegment> geometry){
+    public Absorber(String name, List<LineSegment> geometry){
         this.name = name;
         this.width = (int) geometry.get(0).length();
         this.height = (int) geometry.get(1).length();
@@ -57,6 +57,11 @@ public class Absorber implements Gadget {
         ballContained = false;
         balls = null;
         this.geometry = geometry;
+
+        if (!checkRep()){
+            System.out.println("Error: rep invariant broken");
+            System.exit(0);
+        }
 
     }
 
@@ -68,7 +73,7 @@ public class Absorber implements Gadget {
      *
      * @param Ball object from Board
      */
-    public synchronized BoardEvent handleBall(Ball ball) {
+    public BoardEvent handleBall(Ball ball) {
         //if the ball hits
         for (LineSegment line : geometry){
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < TIMESTEP) {
@@ -80,6 +85,11 @@ public class Absorber implements Gadget {
                 ball.setPosition(absorberBottom);
                 ballContained = true;
                 balls.add(ball);
+
+                if (!checkRep()){
+                    System.out.println("Error: rep invariant broken");
+                    System.exit(0);
+                }
                 return new BoardEvent(this);
             }
         }
@@ -87,10 +97,18 @@ public class Absorber implements Gadget {
     }
 
     /**
+     * @return height of absorber
+     */
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    /**
      * @return width of absorber
      */
     @Override
-    public int getSize() {
+    public int getWidth() {
         return width;
     }
 
@@ -131,6 +149,10 @@ public class Absorber implements Gadget {
             Ball newBall = balls.get(0);
             newBall.setVelocity(SHOOT_VELOCITY);
             newBall.setPosition(newBall.getCircle().getCenter().plus(SHOOT_VELOCITY.times(TIMESTEP)));
+            if (!checkRep()){
+                System.out.println("Error: rep invariant broken");
+                System.exit(0);
+            }
         }
     }
 
@@ -149,4 +171,27 @@ public class Absorber implements Gadget {
         return name;
     }
 
+    /**
+     * Rep invariant: geometry (the list) must have four lines. The four
+     * corners of the lineSegments must occur within the board (their x and y
+     * coordinates are less than 20 and greater than 0)
+     *
+     * @return boolean indicating whether the Absorber adheres to the rep invariant
+     */
+    private boolean checkRep(){
+        boolean safe = true;
+        if (geometry.size() == 4){
+            safe = false;
+        }
+        //check status of all corners of line segments
+        for (int i = 0; i < geometry.size(); i++){
+            if (!((geometry.get(i).p1().x() > 0 && geometry.get(i).p1().x() < 20) &&
+                    (geometry.get(i).p1().y() > 0 && geometry.get(i).p1().y() < 20))){
+                safe = false;
+            }
+        }
+
+
+        return safe;
+    }
 }

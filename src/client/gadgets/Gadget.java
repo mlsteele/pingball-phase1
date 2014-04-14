@@ -5,43 +5,76 @@ import client.Ball;
 import client.BoardEvent;
 
 /**
- * Gadgets include the three kinds of bumpers, flippers, absorbers,
- * and the board's four walls. These object classes are in the client package
- * and implement Gadget.
+ * Gadgets include: bumpers, flippers, absorbers, and walls. These object classes
+ * are in the client package and implement Gadget.
+ *
+ * These objects are initialized on the board before play begins, and stay on the board
+ * throughout gameplay.
+ *
+ * Each gadget may have a trigger and an action. A trigger is an event that happens
+ * at the gadget, such as a ball colliding with it. An action is a response that a gadget
+ * can make to a trigger happening somewhere on the board. A gadget’s action can be hooked
+ * up to another gadget’s trigger, in order to produce Rube Goldberg machines. These hookups
+ * are specified by the board file format.
  */
 public interface Gadget {
 
-
     /**
-     * @return name
-     */
-    public String getName();
-
-    /**
+     * When a ball collides with a Gadget, the Gadget will handle the physics
+     * and reflection according to its Spec and return a BoardEvent to the Board
+     * class—the Board class can then trigger other events if necessary.
      *
-     * @param ball
-     * @return
+     * @param ball Any legal ball can be handled
+     * @return BoardEvent to be queued and handled by the Board class
      */
     //returns a BoardEvent that will be queued and handled by Board class
     //  after the gadget is hit by a ball
     public BoardEvent handleBall(Ball ball);
 
-    //returns size of gadget in Ls for rendering purposes
-    public int getSize();
+    /**
+     * @return height of Gadget in L unit lengths for rendering purposes
+     */
+    public int getHeight();
 
-    //returns position of gadget for physics
+    /**
+     * @return width of Gadget in L unit lengths for rendering purposes
+     */
+    public int getWidth();
+
+    /**
+     * @return unique String representation of Gadget
+     */
+    public String getName();
+
+    /**
+     * @return starting point for the Gadget. For most gadgets, it will be
+     * the upper left corner of their object's location. For flippers, it will
+     * be the point around which the flipper rotates.
+     */
     public Vect getPosition();
 
-    //for rendering
-    //  Example: Square bumper will return "#"
+    /**
+     *
+     * @return
+     */
     public String stringRepresentation();
 
     //debugging String that includes information about the Gadget object
     //  like size, position, and type
     public String toString();
 
-    //for those gadgets (absorbers, invisible/fused walls, and flippers)
-    //    that respond to a trigger with an action
+    /**
+     * Completes an action if Gadget triggers an Action when hit. For example, absorbers
+     * absorb the ball upon being hit and release a new Ball if it was contained. Flippers
+     * and SideWalls may also generate
+     */
     public void specialAction();
+
+    /**
+     * @return boolean indicating whether the Gadget adheres to the rep invariant
+     */
+    public boolean checkRep();
+
+
 
 }

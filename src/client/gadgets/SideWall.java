@@ -7,7 +7,7 @@ import client.Ball;
 import client.BoardEvent;
 
 /**
- * Sidewalls lie indicate the boundaries of the playing board, and lie just beyond its edge.
+ * Sidewalls indicate the boundaries of the playing board, and lie just beyond its edge.
  * One horizontal wall just above y = 0L, one just below y = 20L. One vertical wall just left
  * of x = 0L, one just right of x = 20L.
  *
@@ -19,7 +19,8 @@ import client.BoardEvent;
  * depending on how the client's playing area is currently attached to other clients'
  * playing areas.
  *
- * Rep Invariant: covered by Java type considerations
+ * Rep Invariant: Length of line Segments must be equal to BOARD_WIDTH and BOARD_HEIGHT.
+ * Walls cannot tilt at an angle.
  *
  * Thread safety: The only mutable element of SideWall is the boolean invisible. It is only
  * mutated when appropriate (when a Client receives a Board Fuse/Unfuse message), and there will only
@@ -29,7 +30,7 @@ import client.BoardEvent;
 public class SideWall implements Gadget{
     private final Vect startingPoint;
     private final String name;
-    private final LineSegment wall;
+    private final WallType type;
     private boolean invisible;
 
     /**
@@ -39,13 +40,15 @@ public class SideWall implements Gadget{
      *
      * @param name unique String identifier for SideWall object
      * @param invisible Indicates whether wall is visible (false) or invisible (true)
-     * @param wall Vector with start and end points of side wall
+     * @param wallType BoardSide enum indicating if the wall is top, bottom, left, or right
+     * (BoardSide enum contained in common.Constants class)
+     * @param startingPoint indicates where the wall should begin so SideWall can construct line segments
      */
-    private SideWall(String name, boolean invisible, LineSegment wall) {
+    public SideWall(String name, boolean invisible, BoardSide wallType, Vect startingPoint) {
         this.name = name;
         this.invisible = invisible;
-        startingPoint = wall.p1();
-        this.wall = wall; // only one wall?
+        this.startingPoint = startingPoint;
+        type = wallType;
     }
 
     /**
@@ -69,10 +72,20 @@ public class SideWall implements Gadget{
      * @return height of SideWall
      */
     @Override
-    public int getSize() {
-        // TODO What are a set of walls' size?
+    public int getHeight() {
+        // 0 if TOP or BOTTOM, length of line segment otherwise
         return 0;
     }
+
+    /**
+     * @return width of SideWall
+     */
+    @Override
+    public int getWidth() {
+        //0 if LEFT or RIGHT, length of line segment otherwise
+        return 0;
+    }
+
 
 
     /**
@@ -109,6 +122,20 @@ public class SideWall implements Gadget{
      */
     public String getName() {
         return name;
+    }
+
+    public enum WallType {
+        TOP, BOTTOM, LEFT, RIGHT
+    }
+
+    /**
+     * Rep Invariant: Length of line Segments must be equal to BOARD_WIDTH and BOARD_HEIGHT.
+     * Walls cannot tilt at an angle.
+     * @return boolean indicating whether the SideWall adheres to the rep invariant
+     */
+    public boolean checkRep(){
+        //TODO: implement checkRep
+        return true;
     }
 
 }

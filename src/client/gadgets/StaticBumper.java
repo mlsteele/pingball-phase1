@@ -10,28 +10,29 @@ import client.Ball;
 import client.BoardEvent;
 
 /**
- * StaticBumper is a stationary geometric bumper.
+ * StaticBumper is a stationary geometric bumper. They are composed of
+ * LineSegments and will reflect the ball at its same velocity when it hits a lineSegment
  * Could by any of SquareBumper, CircularBumper, TriangularBumper.
  *
  * Rep invariant: bumper must have a position within the board's boundaries
  *
- * Thread safety: All elements are final and confined.
+ * Thread safety: All elements are final and confined. ??
  */
 public class StaticBumper implements Gadget {
     private final Vect startingPoint;
     private final String name;
-    private final String type;
+    private final bumperType type;
     private final List<LineSegment> geometry;
 
     /**
-     * Constructor that indicates the shape of the bumper.
+     * Constructor that indicates the shape and starting point of the bumper.
      *
      * @param name unique String identifier for this bumper
-     * @param type String representing what kind of bumper this is. Used for getting stringRepresentation later
+     * @param type bumperType representing what kind of bumper this is. Used for getting stringRepresentation later
      * @param geometry List of line segments that ball can reflect off of. The first LineSegment listed in geometry
      * must begin at the origin point (position.x(), position.y()) of the bumper
      */
-    private StaticBumper(String name, String type, List<LineSegment> geometry) {
+    public StaticBumper(String name, bumperType type, List<LineSegment> geometry) {
         this.name = name;
         this.type = type;
         startingPoint = geometry.get(0).p1();
@@ -55,7 +56,7 @@ public class StaticBumper implements Gadget {
         squareBumper.add(left);
         squareBumper.add(right);
 
-        return new StaticBumper(name, "Square", squareBumper);
+        return new StaticBumper(name, bumperType.SQUARE, squareBumper);
     }
 
     /**
@@ -69,12 +70,12 @@ public class StaticBumper implements Gadget {
             LineSegment Triangle = new LineSegment(position.x(), position.y(), position.x() + 1, position.y() + 1);
             List<LineSegment> triBumper = new ArrayList<LineSegment>();
             triBumper.add(Triangle);
-            return new StaticBumper(name, "TriUp", triBumper);
+            return new StaticBumper(name, bumperType.TRIUP, triBumper);
         } else{
             LineSegment Triangle = new LineSegment(position.x(), position.y(), position.x() + 1, position.y() - 1);
             List<LineSegment> triBumper = new ArrayList<LineSegment>();
             triBumper.add(Triangle);
-            return new StaticBumper(name, "TriDown", triBumper);
+            return new StaticBumper(name, bumperType.TRIDOWN, triBumper);
         }
 
     }
@@ -96,7 +97,7 @@ public class StaticBumper implements Gadget {
         circleBumper.add(left);
         circleBumper.add(right);
 
-        return new StaticBumper(name, "circle", circleBumper);
+        return new StaticBumper(name, bumperType.CIRCLE, circleBumper);
     }
 
     @Override
@@ -123,7 +124,15 @@ public class StaticBumper implements Gadget {
     /**
      * @return 1; all bumpers take up only one square on a board
      */
-    public int getSize() {
+    public int getWidth() {
+        return 1;
+    }
+
+    @Override
+    /**
+     * @return 1; all bumpers take up only one square on a board
+     */
+    public int getHeight() {
         return 1;
     }
 
@@ -144,19 +153,22 @@ public class StaticBumper implements Gadget {
      */
     public String stringRepresentation() {
         String repString = "";
-        if (type == "Square"){
+        if (type == bumperType.SQUARE){
             repString = "#";
-        } else if (type == "TriUp"){
+        } else if (type == bumperType.TRIUP){
             repString = "/";
-        } else if (type == "TriDown"){
+        } else if (type == bumperType.TRIDOWN){
             repString = "\\";
-        } else if (type == "Circle"){
+        } else if (type == bumperType.CIRCLE){
             repString = "0";
         }
         return repString;
     }
 
     @Override
+    /**
+     * Bumpers perform no special action, so this initiates nothing
+     */
     public void specialAction() {
 
     }
@@ -167,6 +179,19 @@ public class StaticBumper implements Gadget {
      */
     public String getName() {
         return name;
+    }
+
+    public enum bumperType{
+        SQUARE, TRIDOWN, TRIUP, CIRCLE
+    }
+
+    /**
+     * Rep invariant: bumper must have a position within the board's boundaries
+     * @return boolean indicating whether the Bumper adheres to the rep invariant
+     */
+    public boolean checkRep(){
+        //TODO: implement checkRep
+        return true;
     }
 
 }

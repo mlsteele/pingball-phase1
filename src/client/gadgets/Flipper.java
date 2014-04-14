@@ -43,12 +43,17 @@ public class Flipper implements Gadget{
      * @param geometry list LineSegments (probably one) that describe and enclose the Flipper. The first LineSegment
      * listed in geometry must begin at the origin point (around which the Flipper rotates).
      */
-    private Flipper(String name, String type, List<LineSegment> geometry, boolean rotated) {
+    public Flipper(String name, String type, List<LineSegment> geometry, boolean rotated) {
         this.name = name;
-        this.type = type; //left or right
+        this.type = type; //left or right; I'll make this an enum soon
         startingPoint = geometry.get(0).p1();
         this.geometry = geometry;
         this.rotated = rotated; //rotated indicates that the flipper is horizontal
+
+        if (!checkRep()){
+            System.out.println("Error: rep invariant broken");
+            System.exit(0);
+        }
     }
 
     @Override
@@ -77,15 +82,29 @@ public class Flipper implements Gadget{
 
     @Override
     /**
-     *@return size if flipper is rotated, it is 1 in width and 2 in height, so getSize() returns 1
-     *             if it is not rotated, it is 2 in width and 1 in height, so getSize() returns 2
+     *@return height if flipper is rotated, it is 2 squares in height
+     *             if it is not rotated,  it is 1 square in height
      *             to be interpreted by caller
      */
-    public int getSize() {
+    public int getHeight() {
         if (rotated){
-            return 1;
-        }else{
             return 2;
+        }else{
+            return 1;
+        }
+    }
+
+    @Override
+    /**
+     *@return width if flipper is rotated, it is 1 square in width
+     *             if it is not rotated, it is 2 squares in width
+     *             to be interpreted by caller
+     */
+    public int getWidth() {
+        if (rotated){
+            return 2;
+        }else{
+            return 1;
         }
     }
 
@@ -123,6 +142,26 @@ public class Flipper implements Gadget{
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Rep invariant: starting position of Flipper must allow full rotation within board boundaries
+     * @return boolean indicating whether the Flipper adheres to the rep invariant
+     */
+    public boolean checkRep() {
+        //flippers must be allowed to rotate 2 below their rotation point
+        if (startingPoint.y() < 0 || startingPoint.y() > 18){
+            return false;
+        }
+        //check safety of left flipper
+        if (type == "left" && (startingPoint.x() > 18 || startingPoint.x() < 0)){
+            return false;
+        }
+        //check safety of right flipper
+        if (type == "right" && (startingPoint.x() > 20 || startingPoint.x() < 2)){
+            return false;
+        }
+        return true;
     }
 
 }
