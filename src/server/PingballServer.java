@@ -1,8 +1,11 @@
 package server;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -19,12 +22,12 @@ import common.netprotocol.NetworkMessage;
  *
  *  Thread Safety Argument:
  *  * Many different threads are used on the Pingball Server. They are:
- *      * This, the main thread, which gets data from other threads via queues
+ *      * The main thread, which gets data from other threads via queues
  *      * The CommandLineInterface thread, which sends commands from System.in to the main thread via a queue
  *      * The SocketAcceptor thread, which creates ClientHandler threads when clients connect
  *      * The ClientHandler threads, which send NetworkMessages to the main thread via a queue
  *  * All data is transferred by passing to constructors or through BlockingQueues.
- *  * No immutable data is passed to constructors or sent through BlockingQueues.
+ *  * No mutable data is passed between threads.
  *
  */
 
@@ -40,6 +43,7 @@ public class PingballServer {
     private final int port;
     private final BlockingQueue<String> cliQueue;
     private final BlockingQueue<NetworkMessage> messageQueue;
+    private final List<ClientHandler> clients;
 
     /**
      * Instantiate a PingballServer
@@ -50,6 +54,7 @@ public class PingballServer {
         this.port = port;
         this.cliQueue = new LinkedBlockingQueue<String>();
         this.messageQueue = new LinkedBlockingQueue<NetworkMessage>();
+        this.clients = Collections.synchronizedList(new ArrayList<ClientHandler>());
     }
 
     /**
@@ -70,6 +75,7 @@ public class PingballServer {
             // TODO empty cliQueue
 
             // TODO empty messageQueue
+            // this will include adding new clients to the clients list
         }
     }
 

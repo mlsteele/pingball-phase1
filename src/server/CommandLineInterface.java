@@ -10,20 +10,18 @@ import java.util.concurrent.BlockingQueue;
  *
  *
  * Thread safety argument:
- * * This is the only thread putting things onto the blocking queue.
- * * The main thread is the only one taking things off the blocking queue.
- * * No other data is shared.
+ * * Immutable data is shared by a thread safe queue.
  */
 public class CommandLineInterface implements Runnable {
 
-    BlockingQueue<String> queue;
+    BlockingQueue<String> cliQueue;
 
     /**
      * Create a new CommandLineInterface
      * @param queue the queue on which to place string commands received from System.in
      */
     public CommandLineInterface(BlockingQueue<String> queue) {
-        this.queue = queue;
+        this.cliQueue = queue;
     }
 
     /**
@@ -34,7 +32,7 @@ public class CommandLineInterface implements Runnable {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
             for (String line = br.readLine(); line != null; line = br.readLine()) {
-                queue.add(line);
+                cliQueue.add(line);
             }
         } catch (IOException e) {
         } finally {

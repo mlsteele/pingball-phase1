@@ -27,7 +27,7 @@ public class ClientHandler implements Runnable{
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private final BlockingQueue<NetworkMessage> queue;
+    private final BlockingQueue<NetworkMessage> messageQueue;
 
 
     /**
@@ -40,7 +40,7 @@ public class ClientHandler implements Runnable{
         this.socket = socket;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
-        this.queue = queue;
+        this.messageQueue = queue;
 
     }
 

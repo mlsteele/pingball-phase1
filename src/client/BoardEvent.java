@@ -24,7 +24,7 @@ public class BoardEvent {
 
     /**
      * get the triggerer
-     * @return the triggerer, i.e. the Gadget who triggered this Event
+     * @return the Gadget who triggered this Event
      */
     public Gadget getTriggerer() {
         return triggerer;
