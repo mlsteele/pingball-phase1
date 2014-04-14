@@ -29,22 +29,21 @@ package client.boardlang;
  * These are the lexical rules. They define the tokens used by the lexer.
  * *** ANTLR requires tokens to be CAPITALIZED, like START_ITALIC, END_ITALIC, and TEXT.
  */
-ORIENTATION  : '0' | '90' | '180' | '270' ;
 COMMENT : '#' ~( '\r' | '\n' )* ;
 
-FIELD_NAME        : 'name=' ;
-FIELD_GRAVITY     : 'gravity=' ;
-FIELD_FRICTION1   : 'friction1=' ;
-FIELD_FRICTION2   : 'friction2=' ;
-FIELD_X           : 'x=' ;
-FIELD_Y           : 'y=' ;
-FIELD_XVELOCITY   : 'xVelocity=' ;
-FIELD_YVELOCITY   : 'yVelocity=' ;
-FIELD_ORIENTATION : 'orientation=' ;
-FIELD_WIDTH       : 'width=' ;
-FIELD_HEIGHT      : 'height=' ;
-FIELD_TRIGGER     : 'trigger=' ;
-FIELD_ACTION      : 'action=' ;
+FIELD_NAME        : 'name' ASSIGN ;
+FIELD_GRAVITY     : 'gravity' ASSIGN ;
+FIELD_FRICTION1   : 'friction1' ASSIGN ;
+FIELD_FRICTION2   : 'friction2' ASSIGN ;
+FIELD_X           : 'x' ASSIGN ;
+FIELD_Y           : 'y' ASSIGN ;
+FIELD_XVELOCITY   : 'xVelocity' ASSIGN ;
+FIELD_YVELOCITY   : 'yVelocity' ASSIGN ;
+FIELD_ORIENTATION : 'orientation' ASSIGN ;
+FIELD_WIDTH       : 'width' ASSIGN ;
+FIELD_HEIGHT      : 'height' ASSIGN ;
+FIELD_TRIGGER     : 'trigger' ASSIGN ;
+FIELD_ACTION      : 'action' ASSIGN ;
 
 START_BOARD          : 'board' ;
 START_BALL           : 'ball' ;
@@ -56,12 +55,15 @@ START_LEFTFLIPPER    : 'leftFlipper' ;
 START_ABSORBER       : 'absorber' ;
 START_FIRE           : 'fire' ;
 
+NAME       : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+ASSIGN     : '=' ;
 INTEGER    : ('0'..'9')+ ;
 FLOAT      : '-'? (FlOAT1 | FlOAT2 | FlOAT3) ;
 FlOAT1     : INTEGER ;
 FlOAT2     : INTEGER '.' INTEGER ;
 FlOAT3     : '.' INTEGER ;
-NAME       : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+ORIENTATION  : '0' | '90' | '180' | '270' ;
+
 NEWLINE    : '\r'? '\n' ;
 WHITESPACE : [ \t]+ -> skip ;
 
@@ -69,14 +71,16 @@ WHITESPACE : [ \t]+ -> skip ;
  * These are the parser rules. They define the structures used by the parser.
  * *** ANTLR requires grammar nonterminals to be lowercase, like html, normal, and italic.
  */
-boardfile : comments boardinfo comments entries comments EOF ;
+/* boardfile : comments boardinfo entries_and_comments ; */
+boardfile : boardinfo entries EOF ;
+boardinfo : entry_board NEWLINE ;
 entry     : (entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire) NEWLINE;
 entries   : entry* ;
-comment   : COMMENT NEWLINE ;
 comments  : comment* ;
+comment   : COMMENT NEWLINE ;
 
 /* board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT */
-boardinfo : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
+entry_board : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
 
 /* ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT */
 entry_ball : START_BALL FIELD_NAME NAME FIELD_X FLOAT FIELD_Y FLOAT FIELD_XVELOCITY FLOAT FIELD_YVELOCITY FLOAT ;

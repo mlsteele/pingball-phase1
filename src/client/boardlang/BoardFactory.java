@@ -24,21 +24,23 @@ public class BoardFactory {
         // Create a stream of tokens using the lexer.
         CharStream stream = new ANTLRInputStream(input);
         BoardLexer lexer = new BoardLexer(stream);
-        lexer.reportErrorsAsExceptions();
+        // TODO report as errors
+        // lexer.reportErrorsAsExceptions();
         TokenStream tokens = new CommonTokenStream(lexer);
 
         // Feed the tokens into the parser.
         BoardParser parser = new BoardParser(tokens);
-        parser.reportErrorsAsExceptions();
+        // TODO report as errors
+        // parser.reportErrorsAsExceptions();
 
         // Generate the parse tree using the starter rule.
-        ParseTree tree = parser.boardfile(); // "board" is the starter rule
+        ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
 
         // debugging option #1: print the tree to the console
         // System.err.println(tree.toStringTree(parser));
 
         // debugging option #2: show the tree in a window
-        // ((RuleContext)tree).inspect(parser);
+        ((RuleContext)tree).inspect(parser);
 
         // debugging option #3: walk the tree with a listener
         // new ParseTreeWalker().walk(new PrintEverythingListener(), tree);

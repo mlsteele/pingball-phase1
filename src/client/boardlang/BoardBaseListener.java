@@ -12,6 +12,9 @@ public class BoardBaseListener implements BoardListener {
 	@Override public void enterEntry_ball(BoardParser.Entry_ballContext ctx) { }
 	@Override public void exitEntry_ball(BoardParser.Entry_ballContext ctx) { }
 
+	@Override public void enterEntry_board(BoardParser.Entry_boardContext ctx) { }
+	@Override public void exitEntry_board(BoardParser.Entry_boardContext ctx) { }
+
 	@Override public void enterEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx) { }
 	@Override public void exitEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx) { }
 

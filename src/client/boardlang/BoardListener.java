@@ -9,6 +9,9 @@ public interface BoardListener extends ParseTreeListener {
 	void enterEntry_ball(BoardParser.Entry_ballContext ctx);
 	void exitEntry_ball(BoardParser.Entry_ballContext ctx);
 
+	void enterEntry_board(BoardParser.Entry_boardContext ctx);
+	void exitEntry_board(BoardParser.Entry_boardContext ctx);
+
 	void enterEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx);
 	void exitEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx);
 
