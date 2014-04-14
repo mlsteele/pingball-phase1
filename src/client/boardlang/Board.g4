@@ -30,8 +30,7 @@ package client.boardlang;
  * *** ANTLR requires tokens to be CAPITALIZED, like START_ITALIC, END_ITALIC, and TEXT.
  */
 ORIENTATION  : '0' | '90' | '180' | '270' ;
-COMMENTSTART : '#' ;
-COMMENTSTUFF : .*? ;
+COMMENT : '#' ~( '\r' | '\n' )* ;
 
 FIELD_NAME        : 'name=' ;
 FIELD_GRAVITY     : 'gravity=' ;
@@ -58,7 +57,10 @@ START_ABSORBER       : 'absorber' ;
 START_FIRE           : 'fire' ;
 
 INTEGER    : ('0'..'9')+ ;
-FLOAT      : '-'? ('0'..'9')* ('.' ('0'..'9')+)? ;
+FLOAT      : '-'? (FlOAT1 | FlOAT2 | FlOAT3) ;
+FlOAT1     : INTEGER ;
+FlOAT2     : INTEGER '.' INTEGER ;
+FlOAT3     : '.' INTEGER ;
 NAME       : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 NEWLINE    : '\r'? '\n' ;
 WHITESPACE : [ \t]+ -> skip ;
@@ -68,13 +70,13 @@ WHITESPACE : [ \t]+ -> skip ;
  * *** ANTLR requires grammar nonterminals to be lowercase, like html, normal, and italic.
  */
 boardfile : comments boardinfo comments entries comments EOF ;
-entry     : entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire ;
+entry     : (entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire) NEWLINE;
 entries   : entry* ;
-comment   : COMMENTSTART COMMENTSTUFF NEWLINE ;
+comment   : COMMENT NEWLINE ;
 comments  : comment* ;
 
 /* board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT */
-entry_board : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
+boardinfo : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
 
 /* ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT */
 entry_ball : START_BALL FIELD_NAME NAME FIELD_X FLOAT FIELD_Y FLOAT FIELD_XVELOCITY FLOAT FIELD_YVELOCITY FLOAT ;
