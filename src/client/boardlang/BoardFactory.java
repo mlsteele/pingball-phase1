@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
@@ -15,7 +16,8 @@ import client.Board;
 
 
 /**
- * Wraps the clean and concise (LOL) ANTLR boilerplate.
+ * Wraps the ANTLR boilerplate into a factory
+ * which converts a String into a Board.
  */
 public class BoardFactory {
     public static Board parse(String input) {
@@ -58,8 +60,19 @@ public class BoardFactory {
         @Override public void exitEntry_leftflipper(BoardParser.Entry_leftflipperContext ctx) { }
         @Override public void exitEntry_squarebumper(BoardParser.Entry_squarebumperContext ctx) { }
         @Override public void exitEntry_trianglebumper(BoardParser.Entry_trianglebumperContext ctx) { }
-        @Override public void exitEntry_fire(BoardParser.Entry_fireContext ctx) { }
+
+        // fire trigger=NAME action=NAME
+        @Override public void exitEntry_fire(BoardParser.Entry_fireContext ctx) {
+            String hmm = ctx.FIELD_TRIGGER().getText();
+            System.out.println(hmm);
+        }
+
         @Override public void exitBoardinfo(BoardParser.BoardinfoContext ctx) { }
         @Override public void exitBoardfile(BoardParser.BoardfileContext ctx) { }
+
+        public Board getBoard() {
+            // TODO
+            return null;
+        }
     }
 }
