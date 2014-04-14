@@ -10,6 +10,7 @@ import physics.Vect;
  * Balls' positions and velocity.
  *
  * Rep invariant: Ball position.x and Ball position.y must be between 0 and 20
+ *
  * Thread safety: everything is confined or final
  */
 public class Ball {
@@ -54,7 +55,7 @@ public class Ball {
      * @return boolean indicating whether the ball adheres to the rep invariant
      */
     private boolean checkRep(){
-        if (position.x() > 0 && position.x() < 20 && position.y() > 0 && position.y() < 20){
+        if (position.x() >= 0 && position.x() <= 20 && position.y() >= 0 && position.y() <= 20){
             return true;
         } else{
             return false;

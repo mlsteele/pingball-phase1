@@ -22,9 +22,7 @@ import client.BoardEvent;
  * Rep Invariant: Length of line Segments must be equal to BOARD_WIDTH and BOARD_HEIGHT.
  * Walls cannot tilt at an angle.
  *
- * Thread safety: The only mutable element of SideWall is the boolean invisible. It is only
- * mutated when appropriate (when a Client receives a Board Fuse/Unfuse message), and there will only
- * ever be one Client thread at a time to enter the method to change it. Otherwise it is confined.
+ * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
  */
 
 public class SideWall implements Gadget{

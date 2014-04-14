@@ -26,9 +26,7 @@ import client.BoardEvent;
  *
  * Rep invariant: starting position must allow full rotation within board boundaries
  *
- * Thread safety: The only mutable element of Flipper is the boolean rotated. It is only
- * mutated when appropriate (when a Ball collides with the Flipper), and there will only
- * ever be one Client thread at a time to enter the method.
+ * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
  */
 public class Flipper implements Gadget{
     private final Vect startingPoint;
@@ -150,15 +148,15 @@ public class Flipper implements Gadget{
      */
     public boolean checkRep() {
         //flippers must be allowed to rotate 2 below their rotation point
-        if (startingPoint.y() < 0 || startingPoint.y() > 18){
+        if (startingPoint.y() <= 0 || startingPoint.y() >= 18){
             return false;
         }
         //check safety of left flipper
-        if (type == "left" && (startingPoint.x() > 18 || startingPoint.x() < 0)){
+        if (type == "left" && (startingPoint.x() >= 18 || startingPoint.x() <= 0)){
             return false;
         }
         //check safety of right flipper
-        if (type == "right" && (startingPoint.x() > 20 || startingPoint.x() < 2)){
+        if (type == "right" && (startingPoint.x() >= 20 || startingPoint.x() <= 2)){
             return false;
         }
         return true;

@@ -22,14 +22,13 @@ import client.gadgets.Gadget;
  * The board can accept new balls from other clients, and
  * can be notified when it is fused or separated from other boards.
  *
+ * Rep Invariant: Gadgets are never added or removed from the list of Board gadgets.
+ * No gadgets can overlap.
+ *
  * Thread Safety Argument:
  * The instance of Board in a client is confined to one thread.
  */
 public class Board {
-    /*
-     * Rep Invariant:
-     * - gadgets are never added or removed from the list.
-     */
 
     private final String name;
     private final int width;
@@ -57,9 +56,20 @@ public class Board {
         this.subscriptions = new ArrayList<BoardEventSubscription>();
     }
 
+    /**
+     * Called by the server when a ball from a neighboring board enters this board
+     * @param ball Any legal ball can be handled
+     */
     public void addBall(Ball ball) {
 
     }
+
+    /**
+     * Receives events from handleBall Gadget methods and adds them to eventQueue.
+     * BoardEventSubscription contains a list of the alternate and self triggers
+     * that some BoardEvents generate. eventQueue will always empty because BoardEvents
+     * are only produced in one method (handleBall) by each gadget.
+     */
     public void step() {
         // process events in queue (last part of step)
         while (!eventQueue.isEmpty()) {
@@ -73,5 +83,14 @@ public class Board {
                 }
             }
         }
+    }
+
+    /**
+     * Rep Invariant: Gadgets are never added or removed from the list of Board gadgets.
+     * No gadgets can overlap.
+     * @return boolean indicating whether the Gadget adheres to the rep invariant
+     */
+    public boolean checkRep(){
+        //TODO: implement checkRep for Board
     }
 }

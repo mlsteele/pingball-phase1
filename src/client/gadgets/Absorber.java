@@ -24,9 +24,7 @@ import common.Constants;
  * Rep invariant: geometry (the list) must have four lines. The four corners of the lineSegments
  * must occur within the board (their x and y coordinates are less than 20 and greater than 0)
  *
- * Thread safety: The only mutable elements of Absorber are the list of Ball objects and the
- * the boolean ballContained. Each is only mutated when appropriate (when a Ball collides with the
- * Absorber), and there will only ever be one Client thread at a time to enter the method.
+ * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
  */
 
 public class Absorber implements Gadget {
@@ -179,19 +177,18 @@ public class Absorber implements Gadget {
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
     private boolean checkRep(){
-        boolean safe = true;
         if (geometry.size() == 4){
-            safe = false;
+            return false;
         }
         //check status of all corners of line segments
         for (int i = 0; i < geometry.size(); i++){
-            if (!((geometry.get(i).p1().x() > 0 && geometry.get(i).p1().x() < 20) &&
-                    (geometry.get(i).p1().y() > 0 && geometry.get(i).p1().y() < 20))){
-                safe = false;
+            if (!((geometry.get(i).p1().x() >= 0 && geometry.get(i).p1().x() <= 20) &&
+                    (geometry.get(i).p1().y() >= 0 && geometry.get(i).p1().y() <= 20))){
+                return false;
             }
         }
 
 
-        return safe;
+        return true;
     }
 }

@@ -16,6 +16,10 @@ import client.BoardEvent;
  * can make to a trigger happening somewhere on the board. A gadget’s action can be hooked
  * up to another gadget’s trigger, in order to produce Rube Goldberg machines. These hookups
  * are specified by the board file format.
+ *
+ *
+ * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread,
+ * so we do not have to worry about concurrent calls on methods or mutable objects.
  */
 public interface Gadget {
 
@@ -71,7 +75,7 @@ public interface Gadget {
     public void specialAction();
 
     /**
-     * @return boolean indicating whether the Gadget adheres to the rep invariant
+     * @return boolean indicating whether the Gadget adheres to its class's rep invariant
      */
     public boolean checkRep();
 

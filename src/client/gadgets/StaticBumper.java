@@ -16,7 +16,7 @@ import client.BoardEvent;
  *
  * Rep invariant: bumper must have a position within the board's boundaries
  *
- * Thread safety: All elements are final and confined. ??
+ * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
  */
 public class StaticBumper implements Gadget {
     private final Vect startingPoint;
