@@ -1,4 +1,6 @@
-board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
+
+<!-- saved from url=(0069)http://web.mit.edu/6.005/www/sp14/projects/gb1/boards/sampleBoard1.pb -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><style type="text/css"></style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for stand-alone play. It is a loose 
 # representation of the screenshot in the project handout.
 
@@ -37,8 +39,8 @@ board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
   circleBumper name=Circle15 x=15 y=3
   
   # define some triangular bumpers
-  triangleBumper name=Tri1 x=8 y=8 orientation=270
-  triangleBumper name=Tri2 x=11 y=8 orientation=180
+  triangleBumper name=Tri1 x=8 y=9 orientation=270
+  triangleBumper name=Tri2 x=11 y=9 orientation=180
   
   # add some flippers
   leftFlipper name=FlipL1 x=8 y=2 orientation=0
@@ -52,3 +54,4 @@ board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
   # make the absorber self-triggering
   fire trigger=Abs action=Abs 
 
+</pre></body></html>
