@@ -1,3 +1,4 @@
+
 board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for multiple players. It is a loose 
 # representation of the screenshot in the project handout, with
@@ -35,8 +36,8 @@ board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020
   circleBumper name=Circle9 x=9 y=3
   
   # define some triangular bumpers
-  triangleBumper name=Tri1 x=1 y=11 orientation=180
-  triangleBumper name=Tri2 x=2 y=10 orientation=180
+  triangleBumper name=Tri1 x=1 y=12 orientation=180
+  triangleBumper name=Tri2 x=2 y=11 orientation=180
   
   # add some flippers
   rightFlipper name=FlipR1 x=3 y=2 orientation=0

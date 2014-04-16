@@ -1,3 +1,4 @@
+
 board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for stand-alone play. It is a loose 
 # representation of the screenshot in the project handout.
@@ -37,8 +38,8 @@ board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
   circleBumper name=Circle15 x=15 y=3
   
   # define some triangular bumpers
-  triangleBumper name=Tri1 x=8 y=8 orientation=270
-  triangleBumper name=Tri2 x=11 y=8 orientation=180
+  triangleBumper name=Tri1 x=8 y=9 orientation=270
+  triangleBumper name=Tri2 x=11 y=9 orientation=180
   
   # add some flippers
   leftFlipper name=FlipL1 x=8 y=2 orientation=0
