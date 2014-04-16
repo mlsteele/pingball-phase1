@@ -26,28 +26,32 @@ import client.BoardEvent;
  */
 
 public class SideWall implements Gadget{
-    private final Vect startingPoint;
     private final String name;
     private final Constants.BoardSide type;
     private boolean invisible;
+    private final LineSegment wall;
 
     /**
-     * Constructor that takes the shape of the bumper.
-     * The first LineSegment listed in geometry must begin at the origin point (position.x(), position.y())
-     * of the bumper
+     * Constructor that takes the shape of the wall.
      *
      * @param name unique String identifier for SideWall object
      * @param invisible Indicates whether wall is visible (false) or invisible (true)
      * @param wallType BoardSide enum indicating if the wall is top, bottom, left, or right
      * (BoardSide enum contained in common.Constants class)
-     * @param startingPoint indicates where the wall should begin so SideWall can construct line segments
      */
-    public SideWall(String name, boolean invisible, Constants.BoardSide wallType, Vect startingPoint) {
+    public SideWall(String name, boolean invisible, Constants.BoardSide wallType) {
         this.name = name;
         this.invisible = invisible;
-        this.startingPoint = startingPoint;
         type = wallType;
-        //TODO: Create LineSegments
+        if (type == Constants.BoardSide.TOP){
+            wall = new LineSegment(0, 0, Constants.BOARD_WIDTH, 0);
+        } else if (type == Constants.BoardSide.BOTTOM){
+            wall = new LineSegment(0, Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
+        } else if (type == Constants.BoardSide.LEFT){
+            wall = new LineSegment(0, 0, 0, Constants.BOARD_HEIGHT);
+        }else{
+            wall = new LineSegment(Constants.BOARD_WIDTH, 0, Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
+        }
     }
 
     /**
@@ -58,8 +62,12 @@ public class SideWall implements Gadget{
      */
     @Override
     public BoardEvent handleBall(Ball ball) {
-        //TODO: Check if ball is going to collide with a wall within a timestep. If so, reflect it off of the appropriate
-        //lineSegment and update Ball's velocity and position
+        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+            Vect velocity = Geometry.reflectWall(wall, ball.getVelocity());
+            ball.setVelocity(velocity);
+            ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
+            return new BoardEvent(this);
+        }
         return null;
     }
 
@@ -84,10 +92,10 @@ public class SideWall implements Gadget{
 
 
     /**
-     * @return Vect point at the top of the sideWall indicating its beginning
+     * @return null because getPosition is never called for walls
      */
     public Vect getPosition() {
-        return startingPoint;
+        return null;
     }
 
     @Override
@@ -98,7 +106,8 @@ public class SideWall implements Gadget{
      * @return string representation of sideWall for print out
      */
     public String stringRepresentation() {
-        // TODO Auto-generated method stub
+        // unnecessary for SideWall gadget; walls generated automatically by StringCanvas
+        // we might want to change this
         return null;
     }
 

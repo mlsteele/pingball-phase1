@@ -18,4 +18,12 @@ public class Constants {
     public enum BoardSide {
         LEFT, RIGHT, TOP, BOTTOM;
     }
+
+    public enum bumperType{
+        SQUARE, TRIDOWN, TRIUP, CIRCLE
+    }
+
+    public enum flipperType{
+        LEFT, RIGHT
+    }
 }

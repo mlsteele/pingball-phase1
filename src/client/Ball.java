@@ -18,9 +18,11 @@ public class Ball {
     private Vect vel; // velocity
     private Vect position;
     private double radius;
+    private Vect center;
 
     public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
+        this.center = c.getCenter();
         this.vel = vel;
         position = pos;
         this.radius = radius;
@@ -48,6 +50,10 @@ public class Ball {
 
     public Vect getVelocity() {
         return this.vel;
+    }
+
+    public Vect getCenter(){
+        return this.center;
     }
 
     /**
