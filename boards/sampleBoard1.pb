@@ -1,6 +1,5 @@
 
-<!-- saved from url=(0069)http://web.mit.edu/6.005/www/sp14/projects/gb1/boards/sampleBoard1.pb -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><style type="text/css"></style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
+board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for stand-alone play. It is a loose 
 # representation of the screenshot in the project handout.
 
@@ -54,4 +53,3 @@
   # make the absorber self-triggering
   fire trigger=Abs action=Abs 
 
-</pre></body></html>
