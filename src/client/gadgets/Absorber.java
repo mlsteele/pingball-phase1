@@ -183,16 +183,15 @@ public class Absorber implements Gadget {
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
     public void checkRep(){
-        if (startingPoint.x() + width > Constants.BOARD_WIDTH ||
-                startingPoint.y() + height > Constants.BOARD_HEIGHT ||
+        if (startingPoint.x() + width >= Constants.BOARD_WIDTH ||
+                startingPoint.y() + height >= Constants.BOARD_HEIGHT ||
                 startingPoint.x() < 0 ||
                 startingPoint.y() < 0) {
             throw new RepInvariantException("Rep invariant violated.");
         }
     }
 
-    @Override
-    public String toString(){
-        return "Absorber with " + balls.size() +" ball(s)";
+    public int ballsContained(){
+        return balls.size();
     }
 }
