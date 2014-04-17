@@ -33,6 +33,8 @@ import client.gadgets.StaticBumper;
  * trailing newline, but that BoardFactory takes
  * care of this detail so that the caller of parse
  * does not need to worry about the end of the string at all.
+ *
+ * TODO fix 90/180/270/0 INTEGER bug!
  */
 public class BoardFactory {
     /**
