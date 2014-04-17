@@ -34,7 +34,6 @@ import client.gadgets.StaticBumper;
  * care of this detail so that the caller of parse
  * does not need to worry about the end of the string at all.
  *
- * TODO fix 90/180/270/0 INTEGER bug!
  * TODO tell syntaxError to throw a more descriptive exception.
  */
 public class BoardFactory {
@@ -144,12 +143,12 @@ public class BoardFactory {
             gadgets.put(name, new StaticBumper(name, Constants.BumperType.CIRCLE, new Vect(x, y)));
         }
 
-        // triangleBumper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION
+        // triangleBumper name=NAME x=INTEGER y=INTEGER f=ORIENTATION
         @Override public void exitEntry_trianglebumper(BoardParser.Entry_trianglebumperContext ctx) {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("triangleBumper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             if (orientation == 0 || orientation == 180) {
                 gadgets.put(name, new StaticBumper(name, Constants.BumperType.TRIUP, new Vect(x, y)));
@@ -166,7 +165,7 @@ public class BoardFactory {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("rightFlipper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             gadgets.put(name, new Flipper(name, new Vect(x, y), orientation, Constants.FlipperType.RIGHT));
         }
@@ -176,7 +175,7 @@ public class BoardFactory {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("leftFlipper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             gadgets.put(name, new Flipper(name, new Vect(x, y), orientation, Constants.FlipperType.LEFT));
         }
@@ -228,6 +227,22 @@ public class BoardFactory {
             }
 
             return board;
+        }
+
+        /**
+         * Parse an orientation string and or throw an exception if the orientation is
+         * not one of '0' | '90' | '180' | '270'.s
+         * @param  orientation string of the orientation, must be a valid integer.s
+         * @return int of the orientation if it is valid.
+         */
+        private static int getAndCheckOrientation(String orientation) {
+            int v = Integer.parseInt(orientation);
+            if (v == 0 || v == 90 || v == 180 || v == 270) {
+                return v;
+            } else {
+                // TODO what exception?
+                throw new RuntimeException("Invalid orientation: " + orientation);
+            }
         }
     }
 }

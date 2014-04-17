@@ -58,7 +58,7 @@ public class BoardFactoryTests {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        lines.put("boardinfo1", "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0");
+        lines.put("boardinfo1", "board name=ExampleB gravity=10.0 friction1=1.0 friction2=90.0");
         lines.put("boardinfo2", "board name=ExampleB");
         lines.put("boardinfo3", "board name=ExampleB gravity=-4.3 friction2=3.4");
         lines.put("ball1", "ball name=B_ll2A x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
@@ -66,11 +66,11 @@ public class BoardFactoryTests {
         lines.put("square1", "squareBumper name=SquareA x=7 y=10");
         lines.put("square2", "squareBumper name=SquareB x=2 y=5");
         lines.put("square3", "     squareBumper name=SquareB x=2 y=5");
-        lines.put("square4", "squareBumper name=SquareB x=2 y=5     ");
+        lines.put("square4", "squareBumper name=SquareB x=0 y=5     ");
         lines.put("circle1", "circleBumper name=Circle4 x=4 y=3");
         lines.put("triangle1", "triangleBumper name=Tri1 x=8 y=9 orientation=270");
         lines.put("flipperL1", "leftFlipper name=FlipL x=10 y=7 orientation=90");
-        lines.put("flipperR1", "leftFlipper name=FlipR x=3 y=17 orientation=270");
+        lines.put("flipperR1", "leftFlipper name=FlipR x=3 y=14 orientation=270");
         lines.put("absorber1", "absorber name=Abs x=1 y=19 width=20 height=1 ");
         lines.put("fire1", "fire trigger=SquareA action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipR");
@@ -103,7 +103,7 @@ public class BoardFactoryTests {
      */
     @Test public void testBuildBF() {
         String expected =
-            "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0\n" +
+            "board name=ExampleB gravity=10.0 friction1=1.0 friction2=90.0\n" +
             "ball name=B_ll2A x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3\n" +
             "fire trigger=SquareA action=FlipL\n" +
             "fire trigger=SquareB action=FlipR\n";

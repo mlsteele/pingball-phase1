@@ -22,15 +22,15 @@ public class BoardParser extends Parser {
 		FIELD_WIDTH=11, FIELD_HEIGHT=12, FIELD_TRIGGER=13, FIELD_ACTION=14, START_BOARD=15, 
 		START_BALL=16, START_SQUAREBUMPER=17, START_CIRCLEBUMPER=18, START_TRIANGLEBUMPER=19, 
 		START_RIGHTFLIPPER=20, START_LEFTFLIPPER=21, START_ABSORBER=22, START_FIRE=23, 
-		ASSIGN=24, ORIENTATION=25, NAME=26, INTEGER=27, FLOAT=28, FlOAT1=29, FlOAT2=30, 
-		FlOAT3=31, NEWLINE=32, WHITESPACE=33;
+		ASSIGN=24, NAME=25, INTEGER=26, FLOAT=27, FlOAT1=28, FlOAT2=29, FlOAT3=30, 
+		NEWLINE=31, WHITESPACE=32;
 	public static final String[] tokenNames = {
 		"<INVALID>", "COMMENT", "FIELD_NAME", "FIELD_GRAVITY", "FIELD_FRICTION1", 
 		"FIELD_FRICTION2", "FIELD_X", "FIELD_Y", "FIELD_XVELOCITY", "FIELD_YVELOCITY", 
 		"FIELD_ORIENTATION", "FIELD_WIDTH", "FIELD_HEIGHT", "FIELD_TRIGGER", "FIELD_ACTION", 
 		"'board'", "'ball'", "'squareBumper'", "'circleBumper'", "'triangleBumper'", 
-		"'rightFlipper'", "'leftFlipper'", "'absorber'", "'fire'", "'='", "ORIENTATION", 
-		"NAME", "INTEGER", "FLOAT", "FlOAT1", "FlOAT2", "FlOAT3", "NEWLINE", "WHITESPACE"
+		"'rightFlipper'", "'leftFlipper'", "'absorber'", "'fire'", "'='", "NAME", 
+		"INTEGER", "FLOAT", "FlOAT1", "FlOAT2", "FlOAT3", "NEWLINE", "WHITESPACE"
 	};
 	public static final int
 		RULE_boardfile = 0, RULE_boardinfo = 1, RULE_entry = 2, RULE_entries = 3, 
@@ -821,7 +821,6 @@ public class BoardParser extends Parser {
 	public static class Entry_trianglebumperContext extends ParserRuleContext {
 		public TerminalNode FIELD_Y() { return getToken(BoardParser.FIELD_Y, 0); }
 		public List<TerminalNode> INTEGER() { return getTokens(BoardParser.INTEGER); }
-		public TerminalNode ORIENTATION() { return getToken(BoardParser.ORIENTATION, 0); }
 		public TerminalNode NAME() { return getToken(BoardParser.NAME, 0); }
 		public TerminalNode FIELD_NAME() { return getToken(BoardParser.FIELD_NAME, 0); }
 		public TerminalNode FIELD_X() { return getToken(BoardParser.FIELD_X, 0); }
@@ -858,7 +857,7 @@ public class BoardParser extends Parser {
 			setState(133); match(FIELD_Y);
 			setState(134); match(INTEGER);
 			setState(135); match(FIELD_ORIENTATION);
-			setState(136); match(ORIENTATION);
+			setState(136); match(INTEGER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -875,7 +874,6 @@ public class BoardParser extends Parser {
 	public static class Entry_rightflipperContext extends ParserRuleContext {
 		public TerminalNode FIELD_Y() { return getToken(BoardParser.FIELD_Y, 0); }
 		public List<TerminalNode> INTEGER() { return getTokens(BoardParser.INTEGER); }
-		public TerminalNode ORIENTATION() { return getToken(BoardParser.ORIENTATION, 0); }
 		public TerminalNode NAME() { return getToken(BoardParser.NAME, 0); }
 		public TerminalNode FIELD_NAME() { return getToken(BoardParser.FIELD_NAME, 0); }
 		public TerminalNode START_RIGHTFLIPPER() { return getToken(BoardParser.START_RIGHTFLIPPER, 0); }
@@ -912,7 +910,7 @@ public class BoardParser extends Parser {
 			setState(143); match(FIELD_Y);
 			setState(144); match(INTEGER);
 			setState(145); match(FIELD_ORIENTATION);
-			setState(146); match(ORIENTATION);
+			setState(146); match(INTEGER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -929,7 +927,6 @@ public class BoardParser extends Parser {
 	public static class Entry_leftflipperContext extends ParserRuleContext {
 		public TerminalNode FIELD_Y() { return getToken(BoardParser.FIELD_Y, 0); }
 		public List<TerminalNode> INTEGER() { return getTokens(BoardParser.INTEGER); }
-		public TerminalNode ORIENTATION() { return getToken(BoardParser.ORIENTATION, 0); }
 		public TerminalNode NAME() { return getToken(BoardParser.NAME, 0); }
 		public TerminalNode FIELD_NAME() { return getToken(BoardParser.FIELD_NAME, 0); }
 		public TerminalNode FIELD_X() { return getToken(BoardParser.FIELD_X, 0); }
@@ -966,7 +963,7 @@ public class BoardParser extends Parser {
 			setState(153); match(FIELD_Y);
 			setState(154); match(INTEGER);
 			setState(155); match(FIELD_ORIENTATION);
-			setState(156); match(ORIENTATION);
+			setState(156); match(INTEGER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1083,7 +1080,7 @@ public class BoardParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3#\u00b3\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4"+
+		"\2\3\"\u00b3\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4"+
 		"\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20"+
 		"\4\21\t\21\4\22\t\22\4\23\t\23\3\2\3\2\3\2\3\2\7\2+\n\2\f\2\16\2.\13\2"+
 		"\3\2\3\2\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4=\n\4\3\4\3\4"+
@@ -1101,35 +1098,35 @@ public class BoardParser extends Parser {
 		"\3\2\2\2 \u0096\3\2\2\2\"\u00a0\3\2\2\2$\u00ac\3\2\2\2&\'\5\n\6\2\',\5"+
 		"\4\3\2(+\5\f\7\2)+\5\6\4\2*(\3\2\2\2*)\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3"+
 		"\2\2\2-/\3\2\2\2.,\3\2\2\2/\60\7\1\2\2\60\3\3\2\2\2\61\62\5\16\b\2\62"+
-		"\63\7\"\2\2\63\5\3\2\2\2\64=\5\26\f\2\65=\5\30\r\2\66=\5\32\16\2\67=\5"+
+		"\63\7!\2\2\63\5\3\2\2\2\64=\5\26\f\2\65=\5\30\r\2\66=\5\32\16\2\67=\5"+
 		"\34\17\28=\5\36\20\29=\5 \21\2:=\5\"\22\2;=\5$\23\2<\64\3\2\2\2<\65\3"+
 		"\2\2\2<\66\3\2\2\2<\67\3\2\2\2<8\3\2\2\2<9\3\2\2\2<:\3\2\2\2<;\3\2\2\2"+
-		"=>\3\2\2\2>?\7\"\2\2?\7\3\2\2\2@B\5\6\4\2A@\3\2\2\2BE\3\2\2\2CA\3\2\2"+
-		"\2CD\3\2\2\2D\t\3\2\2\2EC\3\2\2\2FH\5\f\7\2GF\3\2\2\2HK\3\2\2\2IG\3\2"+
-		"\2\2IJ\3\2\2\2J\13\3\2\2\2KI\3\2\2\2LM\7\3\2\2MP\7\"\2\2NP\7\"\2\2OL\3"+
-		"\2\2\2ON\3\2\2\2P\r\3\2\2\2QR\7\21\2\2RS\7\4\2\2SU\7\34\2\2TV\5\20\t\2"+
-		"UT\3\2\2\2UV\3\2\2\2VX\3\2\2\2WY\5\22\n\2XW\3\2\2\2XY\3\2\2\2Y[\3\2\2"+
-		"\2Z\\\5\24\13\2[Z\3\2\2\2[\\\3\2\2\2\\\17\3\2\2\2]^\7\5\2\2^_\7\36\2\2"+
-		"_\21\3\2\2\2`a\7\6\2\2ab\7\36\2\2b\23\3\2\2\2cd\7\7\2\2de\7\36\2\2e\25"+
-		"\3\2\2\2fg\7\22\2\2gh\7\4\2\2hi\7\34\2\2ij\7\b\2\2jk\7\36\2\2kl\7\t\2"+
-		"\2lm\7\36\2\2mn\7\n\2\2no\7\36\2\2op\7\13\2\2pq\7\36\2\2q\27\3\2\2\2r"+
-		"s\7\23\2\2st\7\4\2\2tu\7\34\2\2uv\7\b\2\2vw\7\35\2\2wx\7\t\2\2xy\7\35"+
-		"\2\2y\31\3\2\2\2z{\7\24\2\2{|\7\4\2\2|}\7\34\2\2}~\7\b\2\2~\177\7\35\2"+
-		"\2\177\u0080\7\t\2\2\u0080\u0081\7\35\2\2\u0081\33\3\2\2\2\u0082\u0083"+
-		"\7\25\2\2\u0083\u0084\7\4\2\2\u0084\u0085\7\34\2\2\u0085\u0086\7\b\2\2"+
-		"\u0086\u0087\7\35\2\2\u0087\u0088\7\t\2\2\u0088\u0089\7\35\2\2\u0089\u008a"+
-		"\7\f\2\2\u008a\u008b\7\33\2\2\u008b\35\3\2\2\2\u008c\u008d\7\26\2\2\u008d"+
-		"\u008e\7\4\2\2\u008e\u008f\7\34\2\2\u008f\u0090\7\b\2\2\u0090\u0091\7"+
-		"\35\2\2\u0091\u0092\7\t\2\2\u0092\u0093\7\35\2\2\u0093\u0094\7\f\2\2\u0094"+
-		"\u0095\7\33\2\2\u0095\37\3\2\2\2\u0096\u0097\7\27\2\2\u0097\u0098\7\4"+
-		"\2\2\u0098\u0099\7\34\2\2\u0099\u009a\7\b\2\2\u009a\u009b\7\35\2\2\u009b"+
-		"\u009c\7\t\2\2\u009c\u009d\7\35\2\2\u009d\u009e\7\f\2\2\u009e\u009f\7"+
-		"\33\2\2\u009f!\3\2\2\2\u00a0\u00a1\7\30\2\2\u00a1\u00a2\7\4\2\2\u00a2"+
-		"\u00a3\7\34\2\2\u00a3\u00a4\7\b\2\2\u00a4\u00a5\7\35\2\2\u00a5\u00a6\7"+
-		"\t\2\2\u00a6\u00a7\7\35\2\2\u00a7\u00a8\7\r\2\2\u00a8\u00a9\7\35\2\2\u00a9"+
-		"\u00aa\7\16\2\2\u00aa\u00ab\7\35\2\2\u00ab#\3\2\2\2\u00ac\u00ad\7\31\2"+
-		"\2\u00ad\u00ae\7\17\2\2\u00ae\u00af\7\34\2\2\u00af\u00b0\7\20\2\2\u00b0"+
-		"\u00b1\7\34\2\2\u00b1%\3\2\2\2\13*,<CIOUX[";
+		"=>\3\2\2\2>?\7!\2\2?\7\3\2\2\2@B\5\6\4\2A@\3\2\2\2BE\3\2\2\2CA\3\2\2\2"+
+		"CD\3\2\2\2D\t\3\2\2\2EC\3\2\2\2FH\5\f\7\2GF\3\2\2\2HK\3\2\2\2IG\3\2\2"+
+		"\2IJ\3\2\2\2J\13\3\2\2\2KI\3\2\2\2LM\7\3\2\2MP\7!\2\2NP\7!\2\2OL\3\2\2"+
+		"\2ON\3\2\2\2P\r\3\2\2\2QR\7\21\2\2RS\7\4\2\2SU\7\33\2\2TV\5\20\t\2UT\3"+
+		"\2\2\2UV\3\2\2\2VX\3\2\2\2WY\5\22\n\2XW\3\2\2\2XY\3\2\2\2Y[\3\2\2\2Z\\"+
+		"\5\24\13\2[Z\3\2\2\2[\\\3\2\2\2\\\17\3\2\2\2]^\7\5\2\2^_\7\35\2\2_\21"+
+		"\3\2\2\2`a\7\6\2\2ab\7\35\2\2b\23\3\2\2\2cd\7\7\2\2de\7\35\2\2e\25\3\2"+
+		"\2\2fg\7\22\2\2gh\7\4\2\2hi\7\33\2\2ij\7\b\2\2jk\7\35\2\2kl\7\t\2\2lm"+
+		"\7\35\2\2mn\7\n\2\2no\7\35\2\2op\7\13\2\2pq\7\35\2\2q\27\3\2\2\2rs\7\23"+
+		"\2\2st\7\4\2\2tu\7\33\2\2uv\7\b\2\2vw\7\34\2\2wx\7\t\2\2xy\7\34\2\2y\31"+
+		"\3\2\2\2z{\7\24\2\2{|\7\4\2\2|}\7\33\2\2}~\7\b\2\2~\177\7\34\2\2\177\u0080"+
+		"\7\t\2\2\u0080\u0081\7\34\2\2\u0081\33\3\2\2\2\u0082\u0083\7\25\2\2\u0083"+
+		"\u0084\7\4\2\2\u0084\u0085\7\33\2\2\u0085\u0086\7\b\2\2\u0086\u0087\7"+
+		"\34\2\2\u0087\u0088\7\t\2\2\u0088\u0089\7\34\2\2\u0089\u008a\7\f\2\2\u008a"+
+		"\u008b\7\34\2\2\u008b\35\3\2\2\2\u008c\u008d\7\26\2\2\u008d\u008e\7\4"+
+		"\2\2\u008e\u008f\7\33\2\2\u008f\u0090\7\b\2\2\u0090\u0091\7\34\2\2\u0091"+
+		"\u0092\7\t\2\2\u0092\u0093\7\34\2\2\u0093\u0094\7\f\2\2\u0094\u0095\7"+
+		"\34\2\2\u0095\37\3\2\2\2\u0096\u0097\7\27\2\2\u0097\u0098\7\4\2\2\u0098"+
+		"\u0099\7\33\2\2\u0099\u009a\7\b\2\2\u009a\u009b\7\34\2\2\u009b\u009c\7"+
+		"\t\2\2\u009c\u009d\7\34\2\2\u009d\u009e\7\f\2\2\u009e\u009f\7\34\2\2\u009f"+
+		"!\3\2\2\2\u00a0\u00a1\7\30\2\2\u00a1\u00a2\7\4\2\2\u00a2\u00a3\7\33\2"+
+		"\2\u00a3\u00a4\7\b\2\2\u00a4\u00a5\7\34\2\2\u00a5\u00a6\7\t\2\2\u00a6"+
+		"\u00a7\7\34\2\2\u00a7\u00a8\7\r\2\2\u00a8\u00a9\7\34\2\2\u00a9\u00aa\7"+
+		"\16\2\2\u00aa\u00ab\7\34\2\2\u00ab#\3\2\2\2\u00ac\u00ad\7\31\2\2\u00ad"+
+		"\u00ae\7\17\2\2\u00ae\u00af\7\33\2\2\u00af\u00b0\7\20\2\2\u00b0\u00b1"+
+		"\7\33\2\2\u00b1%\3\2\2\2\13*,<CIOUX[";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
