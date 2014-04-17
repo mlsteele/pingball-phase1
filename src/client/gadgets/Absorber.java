@@ -83,7 +83,6 @@ public class Absorber implements Gadget {
                 //position for ball according to specs (bottom right corner)
                 Vect absorberBottom = new Vect(this.getPosition().x() + width - (1) -
                         0.25, this.getPosition().y() - height + .25);
-                System.out.println(absorberBottom);
                 //places ball in the right place and updates contained information
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
@@ -141,7 +140,8 @@ public class Absorber implements Gadget {
             newBall.setVelocity(Constants.SHOOT_VELOCITY);
             //TODO: add ball to Board
             newBall.setInPlay(true);
-            newBall.setPosition(newBall.getCircle().getCenter().plus(Constants.SHOOT_VELOCITY.times(Constants.TIMESTEP)));
+            Vect shootStart = new Vect(startingPoint.x() + .25, startingPoint.y() - .25); //arbitrary to give it room
+            newBall.setPosition(shootStart);
             checkRep();
         }
     }
