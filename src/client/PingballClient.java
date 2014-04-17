@@ -72,7 +72,8 @@ public class PingballClient {
                 // TODO process messages
             }
 
-            board.step();
+            String boardView = board.step();
+            System.out.println(boardView);
         }
     }
 

@@ -132,11 +132,12 @@ public class Board {
 
         //update every ball for gravity and their velocity
         for (Ball ball: balls){
-            if (ball.isInPlay() == true){
-                Vect gravityVelocity = new Vect(0, gravity*Constants.TIMESTEP);
-                Vect newVelocity = ball.getVelocity().times(Constants.TIMESTEP);
-                ball.setPosition(ball.getCircle().getCenter().plus(newVelocity.plus(gravityVelocity)));
-                ball.setVelocity(newVelocity.plus(gravityVelocity));
+            if (ball.isInPlay() == true) {
+                // vel += gravity * timestep
+                // pos += vel * timestep
+
+                ball.setVelocity(ball.getVelocity().plus(new Vect(0, gravity * Constants.TIMESTEP)));
+                ball.setPosition(ball.getPosition().plus(ball.getVelocity().times(Constants.TIMESTEP)));
             }
         }
 

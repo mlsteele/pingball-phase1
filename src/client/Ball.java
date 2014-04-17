@@ -1,7 +1,7 @@
 package client;
 
+import common.Constants;
 import common.RepInvariantException;
-
 import physics.Circle;
 import physics.Vect;
 
@@ -61,7 +61,10 @@ public class Ball {
      * TODO magic number 20
      */
     private void checkRep(){
-        if (!(getPosition().x() >= 0 && getPosition().x() <= 20 && getPosition().y() >= 0 && getPosition().y() <= 20)) {
+        if (!(getPosition().x() >= 0
+                && getPosition().x() <= Constants.BOARD_WIDTH
+                && getPosition().y() >= 0
+                && getPosition().y() <= Constants.BOARD_HEIGHT)) {
             throw new RepInvariantException("Rep invariant violated.");
         }
     }
