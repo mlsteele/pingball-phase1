@@ -10,7 +10,7 @@ public class BoardParseExample {
             "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3\n" +
             "# a comment followed by a few blank lines\n" +
             "\n\n\n" +
-            "squareBumper name=SquareH x=7 y=10\n" +
+            "squareBumper name=SquareA x=7 y=10\n" +
             "rightFlipper name=FlipR x=12 y=7 orientation=0\n" +
             "  leftFlipper name=FlipL x=10 y=7 orientation=90\n" +
             "circleBumper name=Circle x=4 y=3\n" +

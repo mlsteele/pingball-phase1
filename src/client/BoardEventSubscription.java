@@ -20,8 +20,8 @@ public class BoardEventSubscription {
      * @param triggerer the Gadget that will fire BoardEvents
      */
     public BoardEventSubscription(Gadget triggerer, Gadget subscriber) {
-        this.subscriber = subscriber;
         this.triggerer = triggerer;
+        this.subscriber = subscriber;
     }
 
     /**

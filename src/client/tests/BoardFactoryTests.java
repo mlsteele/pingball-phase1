@@ -25,6 +25,10 @@ public class BoardFactoryTests {
     public static void setUpBeforeClass() {
         lines.put("boardinfo1", "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0");
         lines.put("ball1", "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
+        lines.put("square1", "squareBumper name=SquareA x=7 y=10");
+        lines.put("square2", "squareBumper name=SquareB x=4 y=90");
+        lines.put("flipL1", "leftFlipper name=FlipL x=10 y=7 orientation=90");
+        lines.put("flipR1", "leftFlipper name=FlipR x=3 y=20 orientation=270");
         lines.put("fire1", "fire trigger=SquareA action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipR");
         lines.put("comment1", "# just a regular comment");
@@ -63,22 +67,22 @@ public class BoardFactoryTests {
     }
 
     @Test public void testBoardNoComments() {
-        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "fire1", "fire1")));
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flipL1", "fire1")));
     }
 
     @Test public void testBoardCommentsAtEnd() {
-        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "fire1", "fire1", "comment1", "comment2")));
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flilpL1", "fire1", "comment1", "comment2")));
     }
 
     @Test public void testBoardCommentsAfterBoardInfo() {
-        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "comment2", "ball1", "fire1", "fire1")));
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "comment2", "ball1", "square1", "flilpL1", "fire1")));
     }
 
     @Test public void testBoardCommentsAtStart() {
-        assertNotNull(BoardFactory.parse(buildBF("comment1", "comment2", "boardinfo1", "ball1", "fire1", "fire1")));
+        assertNotNull(BoardFactory.parse(buildBF("comment1", "comment2", "boardinfo1", "ball1", "square1", "flilpL1", "fire1")));
     }
 
     @Test public void testBoardCommentsWithEntries() {
-        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "ball1", "fire1", "comment2", "fire1")));
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "ball1", "square1", "fire1", "square2", "flipL1", "flipR1", "comment2", "fire2")));
     }
 }
