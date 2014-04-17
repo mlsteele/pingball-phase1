@@ -1,5 +1,7 @@
 package client.gadgets;
 import common.Constants;
+import common.RepInvariantException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,11 +140,10 @@ public class StaticBumper implements Gadget {
 
     /**
      * Rep invariant: bumper must have a position within the board's boundaries
-     * @return boolean indicating whether the Bumper adheres to the rep invariant
      */
-    public boolean checkRep(){
+    public void checkRep(){
         //TODO: implement checkRep
-        return true;
+        throw new RepInvariantException("Rep invariant violated.");
     }
 
 }

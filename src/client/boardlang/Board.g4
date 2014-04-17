@@ -55,14 +55,14 @@ START_LEFTFLIPPER    : 'leftFlipper' ;
 START_ABSORBER       : 'absorber' ;
 START_FIRE           : 'fire' ;
 
-NAME       : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
-ASSIGN     : '=' ;
-INTEGER    : ('0'..'9')+ ;
-FLOAT      : '-'? (FlOAT1 | FlOAT2 | FlOAT3) ;
-FlOAT1     : INTEGER ;
-FlOAT2     : INTEGER '.' INTEGER ;
-FlOAT3     : '.' INTEGER ;
+ASSIGN       : '=' ;
 ORIENTATION  : '0' | '90' | '180' | '270' ;
+NAME         : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+INTEGER      : ('0'..'9')+ ;
+FLOAT        : '-'? (FlOAT1 | FlOAT2 | FlOAT3) ;
+FlOAT1       : INTEGER ;
+FlOAT2       : INTEGER '.' INTEGER ;
+FlOAT3       : '.' INTEGER ;
 
 NEWLINE    : '\r'? '\n' ;
 WHITESPACE : [ \t]+ -> skip ;
@@ -77,7 +77,7 @@ boardinfo : entry_board NEWLINE ;
 entry     : (entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire) NEWLINE;
 entries   : entry* ;
 comments  : comment* ;
-comment   : COMMENT NEWLINE ;
+comment   : COMMENT NEWLINE | NEWLINE ;
 
 /* board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT */
 entry_board : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;

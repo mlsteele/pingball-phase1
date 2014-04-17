@@ -74,9 +74,10 @@ public interface Gadget {
     public void specialAction();
 
     /**
-     * @return boolean indicating whether the Gadget adheres to its class's rep invariant
+     * Check that the Gadget adheres to its class's rep invariant.
+     * @throws RepInvariantException indicating failure to adhere to the rep invariant
      */
-    public boolean checkRep();
+    public void checkRep();
 
 
 

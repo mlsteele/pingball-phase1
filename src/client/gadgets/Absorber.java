@@ -63,11 +63,7 @@ public class Absorber implements Gadget {
         balls = null;
         this.geometry = geometry;
 
-        if (!checkRep()){
-            System.out.println("Error: rep invariant broken");
-            System.exit(0);
-        }
-
+        checkRep();
     }
 
     @Override
@@ -91,10 +87,7 @@ public class Absorber implements Gadget {
                 ballContained = true;
                 balls.add(ball);
 
-                if (!checkRep()){
-                    System.out.println("Error: rep invariant broken");
-                    System.exit(0);
-                }
+                checkRep();
                 return new BoardEvent(this);
             }
         }
@@ -154,10 +147,7 @@ public class Absorber implements Gadget {
             Ball newBall = balls.get(0);
             newBall.setVelocity(Constants.SHOOT_VELOCITY);
             newBall.setPosition(newBall.getCircle().getCenter().plus(Constants.SHOOT_VELOCITY.times(Constants.TIMESTEP)));
-            if (!checkRep()){
-                System.out.println("Error: rep invariant broken");
-                System.exit(0);
-            }
+            checkRep();
         }
     }
 
@@ -180,11 +170,9 @@ public class Absorber implements Gadget {
      * Rep invariant: geometry (the list) must have four lines. The four
      * corners of the lineSegments must occur within the board (their x and y
      * coordinates are less than 20 and greater than 0)
-     *
-     * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
-    public boolean checkRep(){
+    public void checkRep(){
         //TODO: implement and change checkRep
-        return true;
+        // throw new RepInvariantException("Rep invariant violated.");
     }
 }
