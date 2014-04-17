@@ -12,19 +12,14 @@ public class Constants {
     public static final double ANGULAR_ROTATION = 18.849555922; //for flipper; radians/sec
     public static final double TIMESTEP = 1d/20d; //seconds
     public static final Vect SHOOT_VELOCITY = new Vect(Math.PI/2, 50d); //from absorber; L/s
-<<<<<<< HEAD
-    public static final double GRAVITY = 25; //L/s^2
     public static final double DEFAULT_FRICTION1 = 0.025; // per second
     public static final double DEFAULT_FRICTION2 = 0.025; // per L
     public static final double BALL_RADIUS = 0.5; // in L
-=======
-    public static final int GRAVITY = 25; //L/s^2
+    public static final double GRAVITY = 25; //L/s^2
     public static final int DEFAULT_PORT = 10987;
     public static final int MIN_PORT = 0;
     public static final int MAX_PORT = 65535;
     public static final double RANDOM_THRESHOLD = 1.0;
-
->>>>>>> Read BallWoes file and email for details
 
     public enum BoardSide {
         LEFT, RIGHT, TOP, BOTTOM;
