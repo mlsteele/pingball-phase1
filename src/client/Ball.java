@@ -61,11 +61,12 @@ public class Ball {
      * TODO magic number 20
      */
     private void checkRep(){
+
         if (!(getPosition().x() >= 0
                 && getPosition().x() <= Constants.BOARD_WIDTH
                 && getPosition().y() >= 0
                 && getPosition().y() <= Constants.BOARD_HEIGHT)) {
-            throw new RepInvariantException("Rep invariant violated.");
+            throw new RepInvariantException("Rep invariant violated. Ball position: " + getPosition());
         }
     }
 
