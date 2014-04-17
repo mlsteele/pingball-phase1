@@ -31,19 +31,19 @@ package client.boardlang;
  */
 COMMENT : '#' ~( '\r' | '\n' )* ;
 
-FIELD_NAME        : 'name' ASSIGN ;
-FIELD_GRAVITY     : 'gravity' ASSIGN ;
-FIELD_FRICTION1   : 'friction1' ASSIGN ;
-FIELD_FRICTION2   : 'friction2' ASSIGN ;
-FIELD_X           : 'x' ASSIGN ;
-FIELD_Y           : 'y' ASSIGN ;
-FIELD_XVELOCITY   : 'xVelocity' ASSIGN ;
-FIELD_YVELOCITY   : 'yVelocity' ASSIGN ;
-FIELD_ORIENTATION : 'orientation' ASSIGN ;
-FIELD_WIDTH       : 'width' ASSIGN ;
-FIELD_HEIGHT      : 'height' ASSIGN ;
-FIELD_TRIGGER     : 'trigger' ASSIGN ;
-FIELD_ACTION      : 'action' ASSIGN ;
+FIELD_NAME        : 'name' WHITESPACE? ASSIGN ;
+FIELD_GRAVITY     : 'gravity' WHITESPACE? ASSIGN ;
+FIELD_FRICTION1   : 'friction1' WHITESPACE? ASSIGN ;
+FIELD_FRICTION2   : 'friction2' WHITESPACE? ASSIGN ;
+FIELD_X           : 'x' WHITESPACE? ASSIGN ;
+FIELD_Y           : 'y' WHITESPACE? ASSIGN ;
+FIELD_XVELOCITY   : 'xVelocity' WHITESPACE? ASSIGN ;
+FIELD_YVELOCITY   : 'yVelocity' WHITESPACE? ASSIGN ;
+FIELD_ORIENTATION : 'orientation' WHITESPACE? ASSIGN ;
+FIELD_WIDTH       : 'width' WHITESPACE? ASSIGN ;
+FIELD_HEIGHT      : 'height' WHITESPACE? ASSIGN ;
+FIELD_TRIGGER     : 'trigger' WHITESPACE? ASSIGN ;
+FIELD_ACTION      : 'action' WHITESPACE? ASSIGN ;
 
 START_BOARD          : 'board' ;
 START_BALL           : 'ball' ;
@@ -56,7 +56,9 @@ START_ABSORBER       : 'absorber' ;
 START_FIRE           : 'fire' ;
 
 ASSIGN       : '=' ;
-ORIENTATION  : '0' | '90' | '180' | '270' ;
+/* Note: ORIENTATION is no longer present because it shadowed INTEGER. */
+/*       Instead, this checking is done in java later.                 */
+/* ORIENTATION  : '0' | '90' | '180' | '270' ; */
 NAME         : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 INTEGER      : ('0'..'9')+ ;
 FLOAT        : '-'? (FlOAT1 | FlOAT2 | FlOAT3) ;
@@ -80,7 +82,10 @@ comments  : comment* ;
 comment   : COMMENT NEWLINE | NEWLINE ;
 
 /* board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT */
-entry_board : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
+entry_board : START_BOARD FIELD_NAME NAME entry_board_gravity? entry_board_friction1? entry_board_friction2? ;
+entry_board_gravity   : FIELD_GRAVITY FLOAT ;
+entry_board_friction1 : FIELD_FRICTION1 FLOAT ;
+entry_board_friction2 : FIELD_FRICTION2 FLOAT ;
 
 /* ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT */
 entry_ball : START_BALL FIELD_NAME NAME FIELD_X FLOAT FIELD_Y FLOAT FIELD_XVELOCITY FLOAT FIELD_YVELOCITY FLOAT ;
@@ -92,13 +97,13 @@ entry_squarebumper : START_SQUAREBUMPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y 
 entry_circlebumper : START_CIRCLEBUMPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER ;
 
 /* triangleBumper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION */
-entry_trianglebumper : START_TRIANGLEBUMPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION ORIENTATION ;
+entry_trianglebumper : START_TRIANGLEBUMPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION INTEGER ;
 
 /* rightFlipper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION */
-entry_rightflipper : START_RIGHTFLIPPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION ORIENTATION ;
+entry_rightflipper : START_RIGHTFLIPPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION INTEGER ;
 
 /* leftFlipper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION */
-entry_leftflipper : START_LEFTFLIPPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION ORIENTATION ;
+entry_leftflipper : START_LEFTFLIPPER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_ORIENTATION INTEGER ;
 
 /* absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER */
 entry_absorber : START_ABSORBER FIELD_NAME NAME FIELD_X INTEGER FIELD_Y INTEGER FIELD_WIDTH INTEGER FIELD_HEIGHT INTEGER ;

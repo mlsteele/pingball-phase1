@@ -34,7 +34,7 @@ import client.gadgets.StaticBumper;
  * care of this detail so that the caller of parse
  * does not need to worry about the end of the string at all.
  *
- * TODO fix 90/180/270/0 INTEGER bug!
+ * TODO tell syntaxError to throw a more descriptive exception.
  */
 public class BoardFactory {
     /**
@@ -50,13 +50,13 @@ public class BoardFactory {
         CharStream stream = new ANTLRInputStream(input);
         BoardLexer lexer = new BoardLexer(stream);
         // TODO report as errors
-        // lexer.reportErrorsAsExceptions();
+        lexer.reportErrorsAsExceptions();
         TokenStream tokens = new CommonTokenStream(lexer);
 
         // Feed the tokens into the parser.
         BoardParser parser = new BoardParser(tokens);
         // TODO report as errors
-        // parser.reportErrorsAsExceptions();
+        parser.reportErrorsAsExceptions();
 
         // Generate the parse tree using the starter rule.
         ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
@@ -84,7 +84,8 @@ public class BoardFactory {
      * and assembles a Board.
      */
     private static class BoardBuilder extends BoardBaseListener {
-        private static final boolean DEBUG = true;
+        private static final boolean DEBUG = false;
+
         private final Map<String, String> subscriptions = new HashMap<String, String>();
         private final Map<String, Gadget> gadgets = new HashMap<String, Gadget>();
         private final List<Ball> balls = new ArrayList<Ball>();
@@ -96,11 +97,21 @@ public class BoardFactory {
         // board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
         @Override public void exitEntry_board(BoardParser.Entry_boardContext ctx) {
             boardName = ctx.NAME().getText();
-            gravity = Float.parseFloat(ctx.FLOAT(0).getText());
-            friction1 = Float.parseFloat(ctx.FLOAT(1).getText());
-            friction2 = Float.parseFloat(ctx.FLOAT(2).getText());
             if (DEBUG) System.out.println("boardinfo n=" + boardName + " g=" + gravity + " f1=" + friction1 + " f2=" + friction2);
         }
+
+        @Override public void exitEntry_board_gravity(BoardParser.Entry_board_gravityContext ctx) {
+            gravity = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
+        @Override public void exitEntry_board_friction1(BoardParser.Entry_board_friction1Context ctx) {
+            friction1 = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
+        @Override public void exitEntry_board_friction2(BoardParser.Entry_board_friction2Context ctx) {
+            friction2 = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
 
         // ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
         @Override public void exitEntry_ball(BoardParser.Entry_ballContext ctx) {
@@ -132,12 +143,12 @@ public class BoardFactory {
             gadgets.put(name, new StaticBumper(name, Constants.BumperType.CIRCLE, new Vect(x, y)));
         }
 
-        // triangleBumper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION
+        // triangleBumper name=NAME x=INTEGER y=INTEGER f=ORIENTATION
         @Override public void exitEntry_trianglebumper(BoardParser.Entry_trianglebumperContext ctx) {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("triangleBumper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             if (orientation == 0 || orientation == 180) {
                 gadgets.put(name, new StaticBumper(name, Constants.BumperType.TRIUP, new Vect(x, y)));
@@ -154,7 +165,7 @@ public class BoardFactory {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("rightFlipper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             gadgets.put(name, new Flipper(name, new Vect(x, y), orientation, Constants.FlipperType.RIGHT));
         }
@@ -164,7 +175,7 @@ public class BoardFactory {
             String name = ctx.NAME().getText();
             int x = Integer.parseInt(ctx.INTEGER(0).getText());
             int y = Integer.parseInt(ctx.INTEGER(1).getText());
-            int orientation = Integer.parseInt(ctx.ORIENTATION().getText());
+            int orientation = getAndCheckOrientation(ctx.INTEGER(2).getText());
             if (DEBUG) System.out.println("leftFlipper name=" + name + " x=" + x + " y=" + y + " or=" + orientation);
             gadgets.put(name, new Flipper(name, new Vect(x, y), orientation, Constants.FlipperType.LEFT));
         }
@@ -198,11 +209,13 @@ public class BoardFactory {
 
             // Add subscriptions.
             for (Map.Entry<String, String> entry : subscriptions.entrySet()) {
-                Gadget triggerer = gadgets.get(entry.getKey());
-                Gadget subscriber = gadgets.get(entry.getValue());
+                String triggererName = entry.getKey();
+                String subscriberName = entry.getValue();
+                Gadget triggerer = gadgets.get(triggererName);
+                Gadget subscriber = gadgets.get(subscriberName);
                 if (triggerer == null || subscriber == null) {
                     // TODO what kind of exception?
-                    throw new RuntimeException("Board mentions subscription without named gadet.");
+                    throw new RuntimeException("Board mentions subscription without named gadget: " + triggererName + " -> " + subscriberName);
                 } else {
                     board.addSubscription(new BoardEventSubscription(triggerer, subscriber));
                 }
@@ -214,6 +227,22 @@ public class BoardFactory {
             }
 
             return board;
+        }
+
+        /**
+         * Parse an orientation string and or throw an exception if the orientation is
+         * not one of '0' | '90' | '180' | '270'.s
+         * @param  orientation string of the orientation, must be a valid integer.s
+         * @return int of the orientation if it is valid.
+         */
+        private static int getAndCheckOrientation(String orientation) {
+            int v = Integer.parseInt(orientation);
+            if (v == 0 || v == 90 || v == 180 || v == 270) {
+                return v;
+            } else {
+                // TODO what exception?
+                throw new RuntimeException("Invalid orientation: " + orientation);
+            }
         }
     }
 }
