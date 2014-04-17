@@ -135,11 +135,10 @@ public class SideWall implements Gadget{
     /**
      * Rep Invariant: Length of line Segments must be equal to BOARD_WIDTH and BOARD_HEIGHT.
      * Walls cannot tilt at an angle.
-     * @return boolean indicating whether the SideWall adheres to the rep invariant
      */
-    public boolean checkRep(){
+    public void checkRep(){
         //TODO: implement checkRep
-        return true;
+        // throw new RepInvariantException("Rep invariant violated.");
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.Constants;
+import common.RepInvariantException;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
@@ -54,10 +55,7 @@ public class Flipper implements Gadget{
         List<LineSegment> geometry = new ArrayList<LineSegment>();
         geometry.add(setFlipperLine());
 
-        if (!checkRep()){
-            System.out.println("Error: rep invariant broken");
-            System.exit(0);
-        }
+        checkRep();
     }
 
     @Override
@@ -152,17 +150,17 @@ public class Flipper implements Gadget{
 
     /**
      * Rep invariant: starting position of Flipper must allow full rotation within board boundaries
-     * @return boolean indicating whether the Flipper adheres to the rep invariant
      */
-    public boolean checkRep() {
+    public void checkRep() {
         //flippers must be allowed to rotate 2 Ls below their rotation point
         if (startingPoint.y() <= 0 || startingPoint.y() >= 18){
-            return false;
+            // TODO magic number 18!
+            throw new RepInvariantException("Rep invariant violated.");
         }
         if (startingPoint.x() >= 18 || startingPoint.x() <= 0){
-            return false;
+            // TODO magic number 18!
+            throw new RepInvariantException("Rep invariant violated.");
         }
-        return true;
     }
 
     /**

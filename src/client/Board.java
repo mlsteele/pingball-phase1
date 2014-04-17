@@ -140,11 +140,10 @@ public class Board {
     /**
      * Rep Invariant: Gadgets are never added or removed from the list of Board gadgets.
      * No gadgets can overlap.
-     * @return boolean indicating whether the Gadget adheres to the rep invariant
      */
-    public boolean checkRep(){
+    public void checkRep(){
         //TODO: implement checkRep for Board
-        return true;
+        // throw new RepInvariantException("Rep invariant violated.");
     }
 
 

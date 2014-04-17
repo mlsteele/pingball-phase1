@@ -26,9 +26,9 @@ public class BoardFactoryTests {
         lines.put("boardinfo1", "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0");
         lines.put("ball1", "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
         lines.put("square1", "squareBumper name=SquareA x=7 y=10");
-        lines.put("square2", "squareBumper name=SquareB x=4 y=91");
+        lines.put("square2", "squareBumper name=SquareB x=4 y=7");
         lines.put("flipL1", "leftFlipper name=FlipL x=10 y=7 orientation=90");
-        lines.put("flipR1", "leftFlipper name=FlipR x=3 y=20 orientation=270");
+        lines.put("flipR1", "leftFlipper name=FlipR x=3 y=17 orientation=270");
         lines.put("fire1", "fire trigger=SquareA action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipR");
         lines.put("comment1", "# just a regular comment");
