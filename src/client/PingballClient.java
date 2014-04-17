@@ -1,24 +1,20 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import server.ClientHandler;
-import server.CommandLineInterface;
-import server.SocketAcceptor;
+
 import client.boardlang.BoardFactory;
 import common.Constants;
 import common.netprotocol.NetworkMessage;
+
 import java.io.File;
+import java.net.Socket;
 
 
 /**
@@ -32,12 +28,53 @@ import java.io.File;
  * Thread Safety Argument:
  * - board is confined to the main thread.
  * - incomingMessages is a threadsafe datatype.
+ * // TODO update specs in this class
  */
 public class PingballClient {
-    private BlockingQueue incomingMessages; //will be final when implemented
-    private int port;
-    private String host;
-    private static File file;
+    private final Board board;
+    private final Socket socket;
+    private final ServerHandler serverHandler;
+    private final BlockingQueue<NetworkMessage> incomingMessages;
+
+    /**
+     * Instantiate a PingballClient.
+     *
+     * @param socket socket to communicate with the server
+     *               socket can be null!
+     *               if socket is null, server communication is disabled.
+     * @throws IOException if the socket can not be created
+     */
+    public PingballClient(Board board, Socket socket) {
+        this.board = board;
+        this.socket = socket;
+        this.incomingMessages = new LinkedBlockingQueue<NetworkMessage>();
+        if (socket != null) {
+            this.serverHandler = new ServerHandler(socket, incomingMessages);
+        } else {
+            this.serverHandler = null;
+        }
+    }
+
+    public void startClient() throws IOException {
+        if (socket != null) {
+            serverHandler.run();
+        }
+
+        while(true){
+            try {
+                // Sleep to limit framerate.
+                Thread.sleep((int) (Constants.TIMESTEP * 1000));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            if (socket != null) {
+                // TODO process messages
+            }
+
+            board.step();
+        }
+    }
 
     /**
      * Start a PingballClient using the given arguments.
@@ -57,24 +94,12 @@ public class PingballClient {
      * @throws InterruptedException
      *
      */
-
-    /**
-     * Instantiate a PingballClient
-     * @param port the port on which to create the socket
-     * @throws IOException if the socket can not be created
-     */
-    public PingballClient(int port, String host, File file) throws IOException {
-        this.port = port;
-        this.incomingMessages = new LinkedBlockingQueue<String>();
-        this.file = file;
-    }
-
-
-    public static void main(String[] args) throws InterruptedException {
-        Board board;
-        Queue<String> arguments = new LinkedList<String>(Arrays.asList(args));
+    public static void main(String[] args) {
         int port = Constants.DEFAULT_PORT;
-        String host = null;
+        String hostname = null;
+        String boardFilePath = null;
+
+        Queue<String> arguments = new LinkedList<String>(Arrays.asList(args));
         try {
             while ( ! arguments.isEmpty()) {
                 String flag = arguments.remove();
@@ -84,56 +109,62 @@ public class PingballClient {
                         if (port < Constants.MIN_PORT || port > Constants.MAX_PORT) {
                             throw new IllegalArgumentException("port " + port + " out of range");
                         }
+                    } else if (flag.equals("--host")) {
+                        hostname = arguments.remove();
                     } else {
-                        throw new IllegalArgumentException("unknown option: \"" + flag + "\"");
+                        if (boardFilePath != null) {
+                            throw new IllegalArgumentException("Extra argument: " + flag);
+                        }
+                        boardFilePath = flag;
+                        // throw new IllegalArgumentException("unknown option: \"" + flag + "\"");
                     }
                 } catch (NoSuchElementException nsee) {
                     throw new IllegalArgumentException("missing argument for " + flag);
                 } catch (NumberFormatException nfe) {
                     throw new IllegalArgumentException("unable to parse number for " + flag);
                 }
-                if (flag.equals("--host")){
-                    host = arguments.remove();
-                }
+            }
+
+            if (boardFilePath == null) {
+                throw new IllegalArgumentException("Missing BOARD filepath");
             }
         } catch (IllegalArgumentException iae) {
             System.err.println(iae.getMessage());
-            System.err.println("usage: PingballServer [--port PORT]");
+            System.err.println("Usage: PingballClient [--host HOST] [--port PORT] FILE");
             return;
         }
 
-        String boardString = "";
-        BufferedReader reader = null;
+        // Create assets for the client and start it.
+
+        Board board;
         try {
-            reader = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                boardString = boardString.concat(line).concat("\n");
-            }
+            board = BoardFactory.parse(SimpleFileReader.readFile(new File(boardFilePath)));
+        } catch (FileNotFoundException e) {
+            System.err.println("Board file not found at " + boardFilePath);
+            return;
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println("Error while reading board file at " + boardFilePath);
+            return;
         }
-        board = BoardFactory.parse(boardString);
-        //PingballClient client = new PingballClient(port, host, file);
-        //client.startClient(board);
-    }
 
-    public void startClient(Board b) throws IOException {
-        while(true){
+        Socket socket = null;
+        if (hostname != null) {
             try {
-                Thread.sleep((int) (Constants.TIMESTEP * 1000));
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                socket = new Socket(hostname, port);
+            } catch (IOException e) {
+                System.err.println("Could not connect to server " + hostname + ":" + port);
+                return;
             }
-            b.step();
+        }
+
+        PingballClient client = new PingballClient(board, socket);
+
+        try {
+            client.startClient();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Terminated due to erorr while communicating with server.");
+            return;
         }
     }
-
 }
