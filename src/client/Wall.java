@@ -24,7 +24,7 @@ public class Wall {
             wall = new LineSegment(0, Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
         } else if (type == Constants.BoardSide.LEFT){
             wall = new LineSegment(0, 0, 0, Constants.BOARD_HEIGHT);
-        }else{
+        } else {
             wall = new LineSegment(Constants.BOARD_WIDTH, 0, Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
         }
     }
@@ -36,11 +36,9 @@ public class Wall {
      * @param Ball object from Board
      */
     public BoardEvent handleBall(Ball ball) {
-        double randomThreshold = 1.05; //should be Constants.TIMESTEP
-        Vect reboundVelocity;
-        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.RANDOM_THRESHOLD){
+        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP){
             if (visible){
-                reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
+                Vect reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
                 ball.setVelocity(reboundVelocity);
             } else if (!visible){
                 //TODO: create an event (a BoardEventforBoards)

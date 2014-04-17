@@ -56,7 +56,7 @@ public class Absorber implements Gadget {
         this.startingPoint = startingPoint;
         balls = new ArrayList<Ball>();
 
-        //create list of LineSegments to represent Absorber boundaries
+        // Create list of LineSegments to represent Absorber boundary rectangle.
         geometry = new ArrayList<LineSegment>();
         geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + width, startingPoint.y()));
         geometry.add(new LineSegment(startingPoint.x() + width, startingPoint.y(), startingPoint.x() + width, startingPoint.y() + height));
@@ -77,9 +77,10 @@ public class Absorber implements Gadget {
      * @param ball object from Board
      */
     public BoardEvent handleBall(Ball ball) {
-        //if the ball hits
-        for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.RANDOM_THRESHOLD) {
+        // Check for ball hit.
+        for (LineSegment line : geometry) {
+            double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
+            if (timeUntilCollision < Constants.TIMESTEP) {
                 //position for ball according to specs (bottom right corner)
                 Vect absorberBottom = new Vect(this.getPosition().x() + width - (1) -
                         0.25, this.getPosition().y() - height + .25);

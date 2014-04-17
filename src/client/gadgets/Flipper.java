@@ -70,7 +70,7 @@ public class Flipper implements Gadget{
      */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.RANDOM_THRESHOLD) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 double angularRotation = Constants.ANGULAR_ROTATION;
                 if ((type == Constants.FlipperType.LEFT && !rotated) || (type == Constants.FlipperType.RIGHT && rotated)){
                     angularRotation *= -1; //from specs; counter-clockwise rotation
