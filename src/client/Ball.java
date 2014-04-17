@@ -31,6 +31,7 @@ public class Ball {
     public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
         this.vel = vel;
+        this.position = pos;
         this.radius = radius;
         checkRep();
         inPlay = true;

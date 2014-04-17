@@ -71,7 +71,7 @@ public class BoardFactoryTests {
         lines.put("triangle1", "triangleBumper name=Tri1 x=8 y=9 orientation=270");
         lines.put("flipperL1", "leftFlipper name=FlipL x=10 y=7 orientation=90");
         lines.put("flipperR1", "leftFlipper name=FlipR x=3 y=14 orientation=270");
-        lines.put("absorber1", "absorber name=Abs x=1 y=19 width=20 height=1 ");
+        lines.put("absorber1", "absorber name=Abs x=1 y=4 width=5 height=1 ");
         lines.put("fire1", "fire trigger=SquareA action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipR");
         lines.put("comment1", "# just a regular comment");
