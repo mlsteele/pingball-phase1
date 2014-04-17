@@ -184,18 +184,7 @@ public class Absorber implements Gadget {
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
     public boolean checkRep(){
-        if (geometry.size() == 4){
-            return false;
-        }
-        //check status of all corners of line segments
-        for (int i = 0; i < geometry.size(); i++){
-            if (!((geometry.get(i).p1().x() >= 0 && geometry.get(i).p1().x() <= 20) &&
-                    (geometry.get(i).p1().y() >= 0 && geometry.get(i).p1().y() <= 20))){
-                return false;
-            }
-        }
-
-
+        //TODO: implement and change checkRep
         return true;
     }
 }

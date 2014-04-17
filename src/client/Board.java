@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import physics.Circle;
 import common.Constants;
-
 import client.gadgets.Gadget;
 
 /**
@@ -70,26 +70,29 @@ public class Board {
      */
     public void step() {
         //TODO: loop through all gadgets and call handleBall for all balls
-        //TODO: make board string for output with all gadgets and all balls
 
-        StringCanvas board = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ", name);
+        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
         for (Gadget gadget: gadgets){
             //add gadgets to board
-            if (gadget.getHeight() == 1 && gadget.getWidth() == 1){
-                board.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
-            }
-            //TODO: Make sure walls aren't included in this-StringCanvas already deals with them
-            else{
-                board.setChar((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
-            }
-        }
-        for (Ball ball: balls){
-          //add balls to board
-            board.setChar((int)ball.getCenter().x(), (int)ball.getCenter().x(), "*");
+            boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
         }
 
         //TODO: change all balls' gravity
-        String boardOutput = board.getString();
+        for (Ball ball: balls){
+            ball.setPosition();
+        }
+
+        //TODO: move balls along an appropriate amount according to their velocity
+        for (Ball ball: balls){
+            ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().times(Constants.TIMESTEP)));
+        }
+
+        for (Ball ball: balls){
+          //add balls to board
+            boardString.setRect((int)ball.getCenter().x(), (int)ball.getCenter().x(), "*");
+        }
+
+        String boardOutput = boardString.getString();
         System.out.println(boardOutput);
 
         // process events in queue (last part of step)

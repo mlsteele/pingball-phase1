@@ -38,7 +38,7 @@ public class Flipper implements Gadget{
     private boolean rotated;
 
     /**
-     * Flipper constructor that initializes a Flipper object according to its rotat.
+     * Flipper constructor that initializes a Flipper object according to its rotation.
      *
      * @param name unique String identifier for Flipper object
      * @param geometry list LineSegments (probably one) that describe and enclose the Flipper. The first LineSegment
@@ -75,9 +75,7 @@ public class Flipper implements Gadget{
                 Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), angularRotation, ball.getCircle(), ball.getVelocity(), 0.95);
                 ball.setVelocity(velocity);
                 ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
-                rotated = !rotated;
-                geometry.remove(0);
-                geometry.add(setFlipperLine());
+                specialAction();
                 return new BoardEvent(this);
             }
         }
@@ -129,7 +127,9 @@ public class Flipper implements Gadget{
 
     @Override
     public void specialAction() {
-        // already did flipper rotation in handleBall...
+        rotated = !rotated;
+        geometry.remove(0);
+        geometry.add(setFlipperLine());
     }
 
     @Override

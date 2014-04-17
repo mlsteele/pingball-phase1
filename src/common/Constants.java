@@ -13,6 +13,7 @@ public class Constants {
     public static final double ANGULAR_ROTATION = 18.849555922; //for flipper; radians/sec
     public static final double TIMESTEP = .05; //seconds
     public static final Vect SHOOT_VELOCITY = new Vect(Math.PI/2, 50d); //from absorber; L/s
+    public static final int GRAVITY = 25; //L/s^2
     /* TODO there will probably be more of these */
 
     public enum BoardSide {

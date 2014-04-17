@@ -11,7 +11,7 @@ import client.gadgets.Gadget;
 
 /**
  *
- * rep invariant: all strings in userBoard representation are either characters in the alphabet,
+ * rep invariant: all strings in userBoard representation are either characters in the alphabet, spaces,
  * an * to represent a ball, or contained within this Gadget-string set: {=, 0, #, /, \, |, -, .}
  * (this assumes that we only accept alphabet characters for Board names, which may not be true...)
  */
@@ -28,12 +28,9 @@ public class StringCanvas {
      * Create a new String Canvas
      * @param width board width
      * @param height board height
-     * @param name name of board
-     * @param filler String that goes between gadgets as a placeholder. Default is " "
-     * @param gadgets list of gadgets on the board.
-     *                caller must never modify this list.
+     * @param filler String that goes between gadgets as a placeholder. " " is recommended
      */
-    public StringCanvas(int width, int height, String filler, String name) {
+    public StringCanvas(int width, int height, String filler) {
         columns = width;
         rows = height;
         this.filler = filler;
@@ -46,7 +43,7 @@ public class StringCanvas {
         //Create walls
         for (int i = 0; i < rows + 2; i++){
             for (int j = 0; j < columns + 2; j++){
-                if (i != 0 && i != rows - 1 && j != 0 && j != columns - 1){
+                if (i != 0 && i != rows + 1 && j != 0 && j != columns + 1){
                     userBoard[i][j] = filler;
                 } else{
                     userBoard[i][j] = ".";
@@ -71,19 +68,6 @@ public class StringCanvas {
             }
         }
     }
-
-    /**
-     * Takes the representation of single-character gadgets (bumpers)
-     * or a ball (*) and incorporates them into the board representation
-     *
-     * @param x must be >= 0 and <= columns
-     * @param y must be >= 0 and <= rows
-     * @param rep stringRepresentation of gadget object
-     */
-    public void setChar(int x, int y, String rep){
-        userBoard[y+wallBorderSize][x+wallBorderSize] = rep;
-    }
-
 
     /**
      * @return String representation of Board
