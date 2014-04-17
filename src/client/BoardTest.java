@@ -1,7 +1,6 @@
 package client;
 
 import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +68,7 @@ public class BoardTest {
      * Testing recievesBall for Absorber
      */
 
+    @Test
     public void absorberRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
         int numIterations = 12; //times to activate board.step()
@@ -92,11 +92,11 @@ public class BoardTest {
             System.out.println(out);
         }
 
-        assertEquals(absorber.toString(), "Absorber with 2 ball(s)");
+        assertEquals(absorber.ballsContained(), 2);
         absorber.specialAction();
-        assertEquals(absorber.toString(), "Absorber with 1 ball(s)");
+        assertEquals(absorber.ballsContained(), 1);
         absorber.specialAction();
-        assertEquals(absorber.toString(), "Absorber with 0 ball(s)");
+        assertEquals(absorber.ballsContained(), 0);
     }
 
     /**
@@ -125,8 +125,8 @@ public class BoardTest {
             String out = testBoardA.step();
             System.out.println(out);
         }
-        System.out.println(square.toString());
-        //assertEquals(square.toString(), "Bumper SQUARE handled ball 1 time(s)");
+
+        assertTrue(square.getHits() >= 1);
     }
 
     /**
@@ -152,7 +152,7 @@ public class BoardTest {
             System.out.println(out);
         }
 
-        assertEquals(flipper.toString(), "Flipper is rotated");
+        assertTrue(flipper.isRotated());
     }
 
     /**

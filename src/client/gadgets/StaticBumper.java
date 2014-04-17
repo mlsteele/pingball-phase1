@@ -147,13 +147,17 @@ public class StaticBumper implements Gadget {
      * Rep invariant: bumper must have a position within the board's boundaries
      */
     public void checkRep(){
-        //TODO: implement checkRep
+        if(startingPoint.x() + 1 >= Constants.BOARD_WIDTH ||
+                startingPoint.y() + 1 >= Constants.BOARD_HEIGHT ||
+                startingPoint.x() < 0 ||
+                startingPoint.y() < 0){
+                throw new RepInvariantException("Rep invariant violated.");
+            }
         throw new RepInvariantException("Rep invariant violated.");
     }
 
-    @Override
-    public String toString(){
-        return "Bumper " + type + " handled ball " + hits + " time(s)";
+    public int getHits(){
+        return hits;
     }
 
 

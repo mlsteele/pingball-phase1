@@ -164,8 +164,8 @@ public class Flipper implements Gadget{
      */
     public void checkRep() {
         //flippers must be allowed to rotate 2 Ls below their rotation point
-        if(startingPoint.x() + 2 > Constants.BOARD_WIDTH ||
-            startingPoint.y() + 2 > Constants.BOARD_HEIGHT ||
+        if(startingPoint.x() + 2 >= Constants.BOARD_WIDTH ||
+            startingPoint.y() + 2 >= Constants.BOARD_HEIGHT ||
             startingPoint.x() < 0 ||
             startingPoint.y() < 0){
             throw new RepInvariantException("Rep invariant violated.");
@@ -207,13 +207,8 @@ public class Flipper implements Gadget{
 
     }
 
-    @Override
-    public String toString(){
-        if (rotated){
-            return "Flipper is rotated";
-        } else{
-            return "Flipper is not rotated";
-        }
+    public boolean isRotated(){
+        return rotated;
 
     }
 
