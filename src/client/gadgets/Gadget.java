@@ -36,16 +36,6 @@ public interface Gadget {
     public BoardEvent handleBall(Ball ball);
 
     /**
-     * @return height of Gadget in L unit lengths for rendering purposes
-     */
-    public int getHeight();
-
-    /**
-     * @return width of Gadget in L unit lengths for rendering purposes
-     */
-    public int getWidth();
-
-    /**
      * @return unique String representation of Gadget
      */
     public String getName();
@@ -55,6 +45,16 @@ public interface Gadget {
      * the upper left corner of their object's location.
      */
     public Vect getPosition();
+
+    /**
+     * @return height of gadget in L
+     */
+    public double getHeight();
+
+    /**
+     * @return width of gadget in L
+     */
+    public double getWidth();
 
     /**
      * @return string representing gadget for rendering purposes for all gadgets

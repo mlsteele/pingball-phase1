@@ -32,4 +32,12 @@ public class BoardEventSubscription {
         return triggerer;
     }
 
+    /**
+     * get the subscriber
+     * @return the subscriber, i.e. the Gadget who was listening for the triggerer's BoardEvents.
+     */
+    public Gadget getSubscriber() {
+        return subscriber;
+    }
+
 }

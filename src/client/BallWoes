@@ -1,0 +1,58 @@
+A Better Title Would Be GeometryWoes, Really
+============================================
+
+The ball disappears from the board and doesn't reflect off of gadgets for reasons I cannot yet ascertain.
+It may be a very simply explanation but I haven't seen it, so I am offering it to the Kenney-Steele household.
+
+What's supposed to happen:
+	In each time step:
+		-Board figures out where the Ball is supposed to be, based on its latest velocity and location
+		-All Gadgets and Walls have handleBall(Ball b) called. handleBall reflects ball and gives it
+		a new velocity if Geometry.timeUntilCollision() returns 
+		-Repeat
+		
+Places to look to fix bug:
+	-Wall/Gadget handleBall() method
+	-Board loop that begins with comment //update every ball for gravity and their velocity
+	-Ball class
+	-Probably elsewhere
+	
+	Other: negative y-Velocity goes upward, b/c of the 0 - BOARD_HEIGHT indexing
+
+Here are attempts that didn't work: 
+	- updating more frequently (100 times a second)
+	- making the radius of the ball bigger
+	- multiplying the threshold of timeUntilCollision a modest amount
+	- accounting for the next step's gravity acceleration in the ball.getVelocity() calculation
+	- speeding things up (aka not printing as much), just in case the program took too long.
+	- Implementing a method like this for Board to add balls to its String rep:
+	- Multiplying the magnitude of the reflection velocity (so increasing coefficient of reflection)
+	(mostly because of stack overflow. But it was a bad way to do it to begin with)
+	/*    public void addBalltoGrid(StringCanvas boardString, Ball b){
+        String e = boardString.setRect((int) Math.round(b.getCircle().getCenter().x()), (int) Math.round(b.getCircle().getCenter().y()), "*");
+        if (e == null){
+            return;
+        } else{
+            Wall reflector = getClosestWall(b);
+            Vect velocity = Geometry.reflectWall(reflector.getWall(), b.getVelocity());
+            b.setVelocity(velocity);
+            b.setPosition(b.getCircle().getCenter().plus(b.getVelocity()));
+            addBalltoGrid(boardString, b);
+        }
+    }
+    
+    //in Board:
+    public Wall getClosestWall(Ball b){
+        List<Double> wallTimes = new ArrayList<Double>();
+        for (Wall wall: walls){
+            wallTimes.add(Geometry.timeUntilWallCollision(wall.getWall(), b.getCircle(), b.getVelocity()));
+        }
+        int minIndex = wallTimes.indexOf(Collections.min(wallTimes));
+        return walls.get(minIndex);
+    }
+    */
+	
+What works for slightly more time than the rest:
+	-ridiculously increasing the threshold of timeUntilCollision to ~1.0 second
+	-it is now stored as RANDOM_THRESHOLD in constants. I figure once we delete it, it will be easy to track down
+	the places we used it and change RANDOM_THRESHOLD to TIMESTEP. 

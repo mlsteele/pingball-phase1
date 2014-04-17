@@ -20,6 +20,7 @@ public class Ball {
     private Vect vel; // velocity
     private Vect position;
     private double radius;
+    private boolean inPlay;
 
     /**
      * Ball Constructor
@@ -30,9 +31,9 @@ public class Ball {
     public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
         this.vel = vel;
-        position = pos;
         this.radius = radius;
         checkRep();
+        inPlay = true;
     }
 
     public void setVelocity(Vect vel) {
@@ -52,10 +53,6 @@ public class Ball {
         return this.vel;
     }
 
-    public Vect getCenter(){
-        return this.position;
-    }
-
     /**
      * Rep invariant: Ball position.x and Ball position.y must be between 0 and 20
      * TODO magic number 20
@@ -64,5 +61,13 @@ public class Ball {
         if (!(position.x() >= 0 && position.x() <= 20 && position.y() >= 0 && position.y() <= 20)) {
             throw new RepInvariantException("Rep invariant violated.");
         }
+    }
+
+    public boolean isInPlay() {
+        return inPlay;
+    }
+
+    public void setInPlay(boolean inPlay) {
+        this.inPlay = inPlay;
     }
 }

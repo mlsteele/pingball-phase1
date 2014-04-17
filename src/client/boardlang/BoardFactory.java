@@ -243,6 +243,6 @@ public class BoardFactory {
                 // TODO what exception?
                 throw new RuntimeException("Invalid orientation: " + orientation);
             }
-        }
+            }
     }
 }
