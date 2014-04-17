@@ -50,6 +50,10 @@ public class Ball {
         return this.vel;
     }
 
+    public Vect getCenter(){
+        return this.position;
+    }
+
     /**
      * Rep invariant: Ball position.x and Ball position.y must be between 0 and 20
      * @return boolean indicating whether the ball adheres to the rep invariant

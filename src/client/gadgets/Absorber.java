@@ -1,5 +1,7 @@
 package client.gadgets;
 import common.Constants;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import physics.Geometry;
@@ -47,11 +49,16 @@ public class Absorber implements Gadget {
      * than the height of the board.
      *
      */
-    public Absorber(String name, List<LineSegment> geometry){
+    public Absorber(String name, Vect startingPoint, int width, int height){
         this.name = name;
-        this.width = (int) geometry.get(0).length();
-        this.height = (int) geometry.get(1).length();
-        startingPoint = geometry.get(0).p1();
+        this.width = width;
+        this.height = height;
+        this.startingPoint = startingPoint;
+        List<LineSegment> geometry = new ArrayList<LineSegment>();
+        geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + width, startingPoint.y()));
+        geometry.add(new LineSegment(startingPoint.x() + width, startingPoint.y(), startingPoint.x() + width, startingPoint.y() + height));
+        geometry.add(new LineSegment(startingPoint.x() + width, startingPoint.y() + height, startingPoint.x(), startingPoint.y() + height));
+        geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + height, startingPoint.x(), startingPoint.y()));
         ballContained = false;
         balls = null;
         this.geometry = geometry;
@@ -126,13 +133,13 @@ public class Absorber implements Gadget {
                 }
                 else{
                     if (j == 0 || j == width-1){
-                        absorber += "=";
+                        absorber += "|";
                     } else{
                         absorber += " ";
                     }
                 }
             }
-            absorber += "/n";
+            absorber += "\n";
         }
 
         return absorber;
@@ -177,18 +184,7 @@ public class Absorber implements Gadget {
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
     public boolean checkRep(){
-        if (geometry.size() == 4){
-            return false;
-        }
-        //check status of all corners of line segments
-        for (int i = 0; i < geometry.size(); i++){
-            if (!((geometry.get(i).p1().x() >= 0 && geometry.get(i).p1().x() <= 20) &&
-                    (geometry.get(i).p1().y() >= 0 && geometry.get(i).p1().y() <= 20))){
-                return false;
-            }
-        }
-
-
+        //TODO: implement and change checkRep
         return true;
     }
 }

@@ -1,6 +1,8 @@
 package client.gadgets;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import common.Constants;
 import physics.Geometry;
 import physics.LineSegment;
@@ -31,22 +33,24 @@ import client.BoardEvent;
 public class Flipper implements Gadget{
     private final Vect startingPoint;
     private final String name;
-    private final String type;
-    private final List<LineSegment> geometry;
+    private final Constants.flipperType type;
+    private List<LineSegment> geometry;
     private boolean rotated;
 
     /**
-     * Constructor that dictates the position of the flipper.
+     * Flipper constructor that initializes a Flipper object according to its rotation.
+     *
      * @param name unique String identifier for Flipper object
      * @param geometry list LineSegments (probably one) that describe and enclose the Flipper. The first LineSegment
      * listed in geometry must begin at the origin point (around which the Flipper rotates).
      */
-    public Flipper(String name, String type, List<LineSegment> geometry, boolean rotated) {
+    public Flipper(String name, Constants.flipperType type, Vect startingPoint, boolean rotated) {
         this.name = name;
-        this.type = type; //left or right; I'll make this an enum soon
-        startingPoint = geometry.get(0).p1();
-        this.geometry = geometry;
+        this.type = type;
+        this.startingPoint = startingPoint;
         this.rotated = rotated; //rotated indicates that the flipper is horizontal
+        List<LineSegment> geometry = new ArrayList<LineSegment>();
+        geometry.add(setFlipperLine());
 
         if (!checkRep()){
             System.out.println("Error: rep invariant broken");
@@ -65,13 +69,13 @@ public class Flipper implements Gadget{
         for (LineSegment line : geometry){
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 double angularRotation = Constants.ANGULAR_ROTATION;
-                if (type == "left" && !rotated || type == "right" && rotated){
+                if ((type == Constants.flipperType.LEFT && !rotated) || (type == Constants.flipperType.RIGHT && rotated)){
                     angularRotation *= -1; //from specs; counter-clockwise rotation
                 }
-                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), Constants.ANGULAR_ROTATION, ball.getCircle(), ball.getVelocity(), 0.95);
+                Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), angularRotation, ball.getCircle(), ball.getVelocity(), 0.95);
                 ball.setVelocity(velocity);
                 ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
-                rotated = !rotated;
+                specialAction();
                 return new BoardEvent(this);
             }
         }
@@ -115,20 +119,22 @@ public class Flipper implements Gadget{
      */
     public String stringRepresentation() {
         if (rotated){
-            return "|" + "\n" + "|";
+            return " " + "|" + "\n" + " " + "|";
         }else{
-            return "--";
+            return "  " + "\n" + "--";
         }
     }
 
     @Override
     public void specialAction() {
-        // already did flipper rotation in handleBall...
+        rotated = !rotated;
+        geometry.remove(0);
+        geometry.add(setFlipperLine());
     }
 
     @Override
     /**
-     * @return startingPoint Vector representation of point at the top left corner of the absorber
+     * @return startingPoint Vector representation of point at the top left corner of the flipper
      */
     public Vect getPosition() {
         return startingPoint;
@@ -147,19 +153,33 @@ public class Flipper implements Gadget{
      * @return boolean indicating whether the Flipper adheres to the rep invariant
      */
     public boolean checkRep() {
-        //flippers must be allowed to rotate 2 below their rotation point
+        //flippers must be allowed to rotate 2 Ls below their rotation point
         if (startingPoint.y() <= 0 || startingPoint.y() >= 18){
             return false;
         }
-        //check safety of left flipper
-        if (type == "left" && (startingPoint.x() >= 18 || startingPoint.x() <= 0)){
-            return false;
-        }
-        //check safety of right flipper
-        if (type == "right" && (startingPoint.x() >= 20 || startingPoint.x() <= 2)){
+        if (startingPoint.x() >= 18 || startingPoint.x() <= 0){
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return LineSegment appropriate to the flipper's orientation and type.
+     */
+    public LineSegment setFlipperLine(){
+        LineSegment flipperNew;
+
+        if (!rotated && type == Constants.flipperType.LEFT){
+            flipperNew = new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x(), startingPoint.y() + 2);
+        } else if (!rotated && type == Constants.flipperType.RIGHT){
+            flipperNew = new LineSegment(startingPoint.x() + 2, startingPoint.y(), startingPoint.x() + 2, startingPoint.y() + 2);
+        } else {
+            //Line Segment is the same for both types of rotated flippers
+            flipperNew = new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 2, startingPoint.y());
+        }
+
+        return flipperNew;
+
     }
 
 }

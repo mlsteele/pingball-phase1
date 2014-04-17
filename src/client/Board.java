@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import physics.Circle;
+import common.Constants;
 import client.gadgets.Gadget;
 
 /**
@@ -31,8 +33,6 @@ import client.gadgets.Gadget;
 public class Board {
 
     private final String name;
-    private final int width;
-    private final int height;
     private final List<Gadget> gadgets;
     private List<Ball> balls;
     private Queue<BoardEvent> eventQueue;
@@ -46,10 +46,8 @@ public class Board {
      * @param gadgets list of gadgets on the board.
      *                caller must never modify this list.
      */
-    public Board(String name, int width, int height, List<Gadget> gadgets) {
+    public Board(String name, List<Gadget> gadgets) {
         this.name = name;
-        this.width = width;
-        this.height = height;
         this.gadgets = Collections.unmodifiableList(gadgets);
         this.balls = new ArrayList<Ball>();
         this.eventQueue = new LinkedList<BoardEvent>();
@@ -71,6 +69,32 @@ public class Board {
      * are only produced in one method (handleBall) by each gadget.
      */
     public void step() {
+        //TODO: loop through all gadgets and call handleBall for all balls
+
+        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
+        for (Gadget gadget: gadgets){
+            //add gadgets to board
+            boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
+        }
+
+        //TODO: change all balls' gravity
+        for (Ball ball: balls){
+            ball.setPosition();
+        }
+
+        //TODO: move balls along an appropriate amount according to their velocity
+        for (Ball ball: balls){
+            ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().times(Constants.TIMESTEP)));
+        }
+
+        for (Ball ball: balls){
+          //add balls to board
+            boardString.setRect((int)ball.getCenter().x(), (int)ball.getCenter().x(), "*");
+        }
+
+        String boardOutput = boardString.getString();
+        System.out.println(boardOutput);
+
         // process events in queue (last part of step)
         while (!eventQueue.isEmpty()) {
             /* beware of infinite looping here. Maybe we need an invariant saying that
@@ -94,4 +118,6 @@ public class Board {
         //TODO: implement checkRep for Board
         return true;
     }
+
+
 }

@@ -21,8 +21,8 @@ import client.BoardEvent;
 public class StaticBumper implements Gadget {
     private final Vect startingPoint;
     private final String name;
-    private final bumperType type;
-    private final List<LineSegment> geometry;
+    private final Constants.bumperType type;
+    private List<LineSegment> geometry;
 
     /**
      * Constructor that indicates the shape and starting point of the bumper.
@@ -32,72 +32,26 @@ public class StaticBumper implements Gadget {
      * @param geometry List of line segments that ball can reflect off of. The first LineSegment listed in geometry
      * must begin at the origin point (position.x(), position.y()) of the bumper
      */
-    public StaticBumper(String name, bumperType type, List<LineSegment> geometry) {
+    public StaticBumper(String name, Constants.bumperType type, Vect startingPoint) {
         this.name = name;
         this.type = type;
-        startingPoint = geometry.get(0).p1();
-        this.geometry = geometry;
-    }
+        this.startingPoint = startingPoint;
+        List<LineSegment>geometry = new ArrayList<LineSegment>();
 
-    /**
-     * Factory method for creating SquareBumpers
-     * @param name unique String identifier for this bumper
-     * @param position starting point (upper left corner) of bumper
-     */
-    public static StaticBumper createSquareBumper(String name, Vect position) {
-        LineSegment top = new LineSegment(position.x(), position.y(), position.x() + 1, position.y());
-        LineSegment bottom = new LineSegment(position.x(), position.y() + 1, position.x() + 1, position.y() + 1);
-        LineSegment left = new LineSegment(position.x(), position.y(), position.x(), position.y() - 1);
-        LineSegment right = new LineSegment(position.x() + 1, position.y(), position.x() + 1, position.y() - 1);
-
-        List<LineSegment> squareBumper = new ArrayList<LineSegment>();
-        squareBumper.add(top);
-        squareBumper.add(bottom);
-        squareBumper.add(left);
-        squareBumper.add(right);
-
-        return new StaticBumper(name, bumperType.SQUARE, squareBumper);
-    }
-
-    /**
-     * Factory method for creating TriangularBumpers
-     * @param name unique String identifier for this bumper
-     * @param position starting point (upper left corner) of bumper
-     */
-    public static StaticBumper createTriangularBumper(String name, Vect position, int orientation) {
-        //TriUp v. TriDown distinguishes between / and \ respectively
-        if (orientation == 0 || orientation == 180){
-            LineSegment Triangle = new LineSegment(position.x(), position.y(), position.x() + 1, position.y() + 1);
-            List<LineSegment> triBumper = new ArrayList<LineSegment>();
-            triBumper.add(Triangle);
-            return new StaticBumper(name, bumperType.TRIUP, triBumper);
-        } else{
-            LineSegment Triangle = new LineSegment(position.x(), position.y(), position.x() + 1, position.y() - 1);
-            List<LineSegment> triBumper = new ArrayList<LineSegment>();
-            triBumper.add(Triangle);
-            return new StaticBumper(name, bumperType.TRIDOWN, triBumper);
+        if (type == Constants.bumperType.TRIDOWN){
+            //orientation == 90 | 270
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() - 1));
+        } else if (type == Constants.bumperType.TRIUP){
+            //orientation == 0 | 180
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
+        }else{
+            //circle or square bumper
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y()));
+            geometry.add(new LineSegment(startingPoint.x() + 1, startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
+            geometry.add(new LineSegment(startingPoint.x() + 1, startingPoint.y() + 1, startingPoint.x(), startingPoint.y() + 1));
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x(), startingPoint.y()));
         }
 
-    }
-
-    /**
-     * Factory method for creating CircularBumpers
-     * @param name unique String identifier for this bumper
-     * @param position starting point (upper left corner) of bumper
-     */
-    public static StaticBumper createCircularBumper(String name, Vect position) {
-        LineSegment top = new LineSegment(position.x(), position.y(), position.x() + 1, position.y());
-        LineSegment bottom = new LineSegment(position.x(), position.y() + 1, position.x() + 1, position.y() + 1);
-        LineSegment left = new LineSegment(position.x(), position.y(), position.x(), position.y() - 1);
-        LineSegment right = new LineSegment(position.x() + 1, position.y(), position.x() + 1, position.y() - 1);
-
-        List<LineSegment> circleBumper = new ArrayList<LineSegment>();
-        circleBumper.add(top);
-        circleBumper.add(bottom);
-        circleBumper.add(left);
-        circleBumper.add(right);
-
-        return new StaticBumper(name, bumperType.CIRCLE, circleBumper);
     }
 
     @Override
@@ -153,13 +107,13 @@ public class StaticBumper implements Gadget {
      */
     public String stringRepresentation() {
         String repString = "";
-        if (type == bumperType.SQUARE){
+        if (type == Constants.bumperType.SQUARE){
             repString = "#";
-        } else if (type == bumperType.TRIUP){
+        } else if (type == Constants.bumperType.TRIUP){
             repString = "/";
-        } else if (type == bumperType.TRIDOWN){
+        } else if (type == Constants.bumperType.TRIDOWN){
             repString = "\\";
-        } else if (type == bumperType.CIRCLE){
+        } else if (type == Constants.bumperType.CIRCLE){
             repString = "0";
         }
         return repString;
@@ -181,9 +135,6 @@ public class StaticBumper implements Gadget {
         return name;
     }
 
-    public enum bumperType{
-        SQUARE, TRIDOWN, TRIUP, CIRCLE
-    }
 
     /**
      * Rep invariant: bumper must have a position within the board's boundaries
