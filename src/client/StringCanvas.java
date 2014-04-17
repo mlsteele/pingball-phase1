@@ -39,7 +39,7 @@ public class StringCanvas {
         wallBorderSize = 1;
         userBoard = new String[rows + 2*wallBorderSize][columns + 2*wallBorderSize];
 
-        //create skeleton
+        //create skeleton with walls
         for (int i = 0; i < rows + 2; i++){
             for (int j = 0; j < columns + 2; j++){
                 if (isOnBoundary(j,i)){
@@ -110,8 +110,8 @@ public class StringCanvas {
      */
     public String getString(){
         String board = "";
-        for(int j = 0; j < this.rows; j++){
-            for(int i = 0; i < this.columns; i++){
+        for(int j = 0; j < this.rows + 2; j++){
+            for(int i = 0; i < this.columns + 2; i++){
                 board += userBoard[j][i];
             }
             board += "\n";
@@ -127,9 +127,9 @@ public class StringCanvas {
      */
     private boolean isOnBoundary(int x, int y) {
         return x == 0
-            || x == Constants.BOARD_WIDTH -1
+            || x == Constants.BOARD_WIDTH + 1
             || y == 0
-            || y == Constants.BOARD_HEIGHT -1;
+            || y == Constants.BOARD_HEIGHT + 1;
     }
 
 

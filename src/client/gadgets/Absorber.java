@@ -54,6 +54,7 @@ public class Absorber implements Gadget {
         this.width = width;
         this.height = height;
         this.startingPoint = startingPoint;
+        balls = new ArrayList<Ball>();
 
         //create list of LineSegments to represent Absorber boundaries
         geometry = new ArrayList<LineSegment>();
@@ -63,7 +64,6 @@ public class Absorber implements Gadget {
         geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + height, startingPoint.x(), startingPoint.y()));
 
         ballContained = false;
-        balls = null;
 
         checkRep();
     }
@@ -80,9 +80,10 @@ public class Absorber implements Gadget {
         //if the ball hits
         for (LineSegment line : geometry){
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.RANDOM_THRESHOLD) {
-                //position for ball according to specs;
-                Vect absorberBottom = new Vect(this.getPosition().x() + width - (balls.size()) -
+                //position for ball according to specs (bottom right corner)
+                Vect absorberBottom = new Vect(this.getPosition().x() + width - (1) -
                         0.25, this.getPosition().y() - height + .25);
+                System.out.println(absorberBottom);
                 //places ball in the right place and updates contained information
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
@@ -106,8 +107,16 @@ public class Absorber implements Gadget {
         String absorber = "";
         for (int i = 0; i < height; i++){
             for (int j = 0; j < width; j++){
-                if (i == 0 || i == height-1){ //top and bottom rows of absorber
+                if (i == 0){ //top and bottom rows of absorber
                     absorber += "=";
+                } else if(i == height-2){
+                    if (j == 0 || j == width-1){
+                        absorber += "|";
+                    } else if (j > width-2-balls.size()){
+                        absorber += "*";
+                    } else{
+                        absorber += " ";
+                    }
                 }
                 else{
                     if (j == 0 || j == width-1){
@@ -127,8 +136,8 @@ public class Absorber implements Gadget {
      * Shoots out ball if a ball is contained. Triggered only by Board.
      */
     public void specialAction() {
-        if (ballContained){
-            Ball newBall = balls.get(0);
+        if (balls.size() > 0){
+            Ball newBall = balls.remove(0);
             newBall.setVelocity(Constants.SHOOT_VELOCITY);
             //TODO: add ball to Board
             newBall.setInPlay(true);

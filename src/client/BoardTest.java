@@ -63,33 +63,34 @@ public class BoardTest {
     /**
      * Testing recievesBall for Absorber
      */
-
+    @Test
     public void absorberRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
-        int numIterations = 60; //times to activate board.step()
+        int numIterations = 12; //times to activate board.step()
         Vect ballStart = new Vect(9,0);
+        Vect ballStart2 = new Vect(11,0);
         Vect absorberStart = new Vect(0,15);
         double velocityMagnitude = 0; //L/s
-        Vect initialBallVelocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
+        Vect ball1Velocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
+        Vect ball2Velocity = new Vect(1, 5);
         Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
-        Ball ball = new Ball(0.25, ballStart, initialBallVelocity);
+        Ball ball = new Ball(0.25, ballStart, ball1Velocity);
+        Ball ball2 = new Ball(0.25, ballStart2, ball2Velocity);
         boardGadgets.add(absorber);
 
         Board testBoardA = new Board("testBoardA", boardGadgets, 25, 0, 0);
         testBoardA.addBall(ball);
+        testBoardA.addBall(ball2);
 
         for(int i = 0; i < numIterations; i++){
-            try {
-                Thread.sleep((int) (Constants.TIMESTEP * 1000));
-                String out = testBoardA.step();
-                System.out.println(out);
-            } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
+            String out = testBoardA.step();
+            System.out.println(out);
         }
-        assertEquals(absorber.toString(), "Absorber with 1 ball(s)");
+
+        assertEquals(absorber.toString(), "Absorber with 2 ball(s)");
         absorber.specialAction();
-        assertEquals(absorber.toString(), "Absorber with 0 ball(s)");
+        System.out.println(absorber.toString());
+        assertEquals(absorber.toString(), "Absorber with 1 ball(s)");
     }
 
     /**
@@ -158,7 +159,7 @@ public class BoardTest {
      * Visual test to see if a simple Board can maintain play
      * Note: this is the board that makes you realize how sad walls are
      */
-    @Test
+
     public void BallLeavesBoard() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
         Vect ballStart = new Vect(1,1);
