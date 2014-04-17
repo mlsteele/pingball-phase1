@@ -62,7 +62,7 @@ public class SideWall implements Gadget{
      */
     @Override
     public BoardEvent handleBall(Ball ball) {
-        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+        if (!invisible && Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
             Vect velocity = Geometry.reflectWall(wall, ball.getVelocity());
             ball.setVelocity(velocity);
             ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));

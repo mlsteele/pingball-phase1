@@ -21,7 +21,7 @@ import client.BoardEvent;
 public class StaticBumper implements Gadget {
     private final Vect startingPoint;
     private final String name;
-    private final Constants.bumperType type;
+    private final Constants.BumperType type;
     private List<LineSegment> geometry;
 
     /**
@@ -32,16 +32,16 @@ public class StaticBumper implements Gadget {
      * @param geometry List of line segments that ball can reflect off of. The first LineSegment listed in geometry
      * must begin at the origin point (position.x(), position.y()) of the bumper
      */
-    public StaticBumper(String name, Constants.bumperType type, Vect startingPoint) {
+    public StaticBumper(String name, Constants.BumperType type, Vect startingPoint) {
         this.name = name;
         this.type = type;
         this.startingPoint = startingPoint;
         List<LineSegment>geometry = new ArrayList<LineSegment>();
 
-        if (type == Constants.bumperType.TRIDOWN){
+        if (type == Constants.BumperType.TRIDOWN){
             //orientation == 90 | 270
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() - 1));
-        } else if (type == Constants.bumperType.TRIUP){
+        } else if (type == Constants.BumperType.TRIUP){
             //orientation == 0 | 180
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
         }else{
@@ -107,13 +107,13 @@ public class StaticBumper implements Gadget {
      */
     public String stringRepresentation() {
         String repString = "";
-        if (type == Constants.bumperType.SQUARE){
+        if (type == Constants.BumperType.SQUARE){
             repString = "#";
-        } else if (type == Constants.bumperType.TRIUP){
+        } else if (type == Constants.BumperType.TRIUP){
             repString = "/";
-        } else if (type == Constants.bumperType.TRIDOWN){
+        } else if (type == Constants.BumperType.TRIDOWN){
             repString = "\\";
-        } else if (type == Constants.bumperType.CIRCLE){
+        } else if (type == Constants.BumperType.CIRCLE){
             repString = "0";
         }
         return repString;
