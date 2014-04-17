@@ -33,7 +33,7 @@ import client.BoardEvent;
 public class Flipper implements Gadget{
     private final Vect startingPoint;
     private final String name;
-    private final Constants.flipperType type;
+    private final Constants.FlipperType type;
     private List<LineSegment> geometry;
     private boolean rotated;
 
@@ -41,14 +41,16 @@ public class Flipper implements Gadget{
      * Flipper constructor that initializes a Flipper object according to its rotation.
      *
      * @param name unique String identifier for Flipper object
-     * @param geometry list LineSegments (probably one) that describe and enclose the Flipper. The first LineSegment
-     * listed in geometry must begin at the origin point (around which the Flipper rotates).
+     * @param startingPoint
+     * @param orientation either 0, 90, 180, or 270
+     * @param type RIGHT (clockwise rotation) or LEFT (counter-clockwise rotation)
      */
-    public Flipper(String name, Constants.flipperType type, Vect startingPoint, boolean rotated) {
+    public Flipper(String name, Vect startingPoint, int orientation, Constants.FlipperType type) {
+        //TODO: FIX FLIPPERS because they're sad now
         this.name = name;
         this.type = type;
         this.startingPoint = startingPoint;
-        this.rotated = rotated; //rotated indicates that the flipper is horizontal
+        this.rotated = false;
         List<LineSegment> geometry = new ArrayList<LineSegment>();
         geometry.add(setFlipperLine());
 
@@ -69,7 +71,7 @@ public class Flipper implements Gadget{
         for (LineSegment line : geometry){
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 double angularRotation = Constants.ANGULAR_ROTATION;
-                if ((type == Constants.flipperType.LEFT && !rotated) || (type == Constants.flipperType.RIGHT && rotated)){
+                if ((type == Constants.FlipperType.LEFT && !rotated) || (type == Constants.FlipperType.RIGHT && rotated)){
                     angularRotation *= -1; //from specs; counter-clockwise rotation
                 }
                 Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), angularRotation, ball.getCircle(), ball.getVelocity(), 0.95);
@@ -169,9 +171,9 @@ public class Flipper implements Gadget{
     public LineSegment setFlipperLine(){
         LineSegment flipperNew;
 
-        if (!rotated && type == Constants.flipperType.LEFT){
+        if (!rotated && type == Constants.FlipperType.LEFT){
             flipperNew = new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x(), startingPoint.y() + 2);
-        } else if (!rotated && type == Constants.flipperType.RIGHT){
+        } else if (!rotated && type == Constants.FlipperType.RIGHT){
             flipperNew = new LineSegment(startingPoint.x() + 2, startingPoint.y(), startingPoint.x() + 2, startingPoint.y() + 2);
         } else {
             //Line Segment is the same for both types of rotated flippers

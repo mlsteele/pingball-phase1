@@ -19,6 +19,12 @@ public class Ball {
     private Vect position;
     private double radius;
 
+    /**
+     * Ball Constructor
+     * @param radius
+     * @param pos
+     * @param vel
+     */
     public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
         this.vel = vel;

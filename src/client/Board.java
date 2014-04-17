@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 
 import physics.Circle;
+import physics.Vect;
 import common.Constants;
 import client.gadgets.Gadget;
 
@@ -37,6 +38,9 @@ public class Board {
     private List<Ball> balls;
     private Queue<BoardEvent> eventQueue;
     private List<BoardEventSubscription> subscriptions;
+    private final double gravity;
+    private final double frictionOne;
+    private final double frictionTwo;
 
     /**
      * Create a new board.
@@ -46,12 +50,16 @@ public class Board {
      * @param gadgets list of gadgets on the board.
      *                caller must never modify this list.
      */
-    public Board(String name, List<Gadget> gadgets) {
+    public Board(String name, List<Gadget> gadgets, double gravity, double f1, double f2) {
         this.name = name;
         this.gadgets = Collections.unmodifiableList(gadgets);
         this.balls = new ArrayList<Ball>();
         this.eventQueue = new LinkedList<BoardEvent>();
         this.subscriptions = new ArrayList<BoardEventSubscription>();
+        this.gravity = gravity;
+        this.frictionOne = f1;
+        this.frictionTwo = f2;
+        //TODO: make Walls instead of SideWalls
     }
 
     /**
@@ -59,7 +67,15 @@ public class Board {
      * @param ball Any legal ball can be handled
      */
     public void addBall(Ball ball) {
+        balls.add(ball);
+    }
 
+    /**
+     * Called by the server when a new subscription is created
+     * @param s Any legal subscription can be handled
+     */
+    public void addSubscription(BoardEventSubscription s){
+        subscriptions.add(s);
     }
 
     /**
@@ -69,26 +85,38 @@ public class Board {
      * are only produced in one method (handleBall) by each gadget.
      */
     public void step() {
-        //TODO: loop through all gadgets and call handleBall for all balls
 
         StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
+
+        //loop through all gadgets and call handleBall for all balls
         for (Gadget gadget: gadgets){
-            //add gadgets to board
+            for (Ball ball: balls){
+                BoardEvent e = gadget.handleBall(ball);
+                if (e != null){
+                    eventQueue.add(e);
+                }
+            }
+        }
+
+        //add gadgets to boardString
+        for (Gadget gadget: gadgets){
             boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
         }
 
-        //TODO: change all balls' gravity
+        //update every ball for gravity
         for (Ball ball: balls){
-            ball.setPosition();
+            Vect gravity = new Vect(ball.getVelocity().angle(), Constants.GRAVITY*Constants.TIMESTEP);
+            ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().minus(gravity)));
+            //ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
         }
 
-        //TODO: move balls along an appropriate amount according to their velocity
+        //move balls along an appropriate amount according to their velocity
         for (Ball ball: balls){
             ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().times(Constants.TIMESTEP)));
         }
 
+        //add balls to boardString to complete it
         for (Ball ball: balls){
-          //add balls to board
             boardString.setRect((int)ball.getCenter().x(), (int)ball.getCenter().x(), "*");
         }
 
