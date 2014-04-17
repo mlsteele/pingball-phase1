@@ -5,6 +5,10 @@ package common.netprotocol;
  * Message sent to notify a client that the server refused its connection.
  * This is an immutable class.
  *
+ * ADT:
+ * * ConnectionRefusedMessage contains the following data:
+ * * * reason: the reason the server refused
+ *
  * Thread Safety Argument:
  * - all data is immutable.
  */

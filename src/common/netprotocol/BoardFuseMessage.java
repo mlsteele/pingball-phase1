@@ -7,6 +7,11 @@ import common.Constants.BoardSide;
  * Message sent to notify a client of a board fuse.
  * This is an immutable class.
  *
+ * ADT:
+ * * BoardFuseMessage contains the following data:
+ * * * boardName: the name of the board that will fuse to the client board
+ * * * side: which side the new board will fuse to on the client
+ *
  * Thread Safety Argument:
  * - all data is immutable.
  */
