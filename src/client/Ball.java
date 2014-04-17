@@ -18,7 +18,6 @@ import physics.Vect;
 public class Ball {
     private Circle c;
     private Vect vel; // velocity
-    private Vect position;
     private double radius;
     private boolean inPlay;
 
@@ -31,7 +30,6 @@ public class Ball {
     public Ball(double radius, Vect pos, Vect vel) {
         this.c = new Circle(pos, radius);
         this.vel = vel;
-        this.position = pos;
         this.radius = radius;
         checkRep();
         inPlay = true;
@@ -44,6 +42,10 @@ public class Ball {
     public void setPosition(Vect pos) {
         this.c = new Circle(pos, radius);
         checkRep();
+    }
+
+    public Vect getPosition() {
+        return c.getCenter();
     }
 
     public Circle getCircle() {
@@ -59,7 +61,7 @@ public class Ball {
      * TODO magic number 20
      */
     private void checkRep(){
-        if (!(position.x() >= 0 && position.x() <= 20 && position.y() >= 0 && position.y() <= 20)) {
+        if (!(getPosition().x() >= 0 && getPosition().x() <= 20 && getPosition().y() >= 0 && getPosition().y() <= 20)) {
             throw new RepInvariantException("Rep invariant violated.");
         }
     }

@@ -26,7 +26,7 @@ import common.Constants;
  * bottom of the absorber and .25L from the right side of the absorber.
  *
  * Rep invariant: geometry (the list) must have four lines. The four corners of the lineSegments
- * must occur within the board (their x and y coordinates are less than 20 and greater than 0)
+ * must occur within the board (their x and y coordinates are less than or equal to 20 and greater than or equal to 0)
  *
  * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
  */
@@ -176,18 +176,20 @@ public class Absorber implements Gadget {
     }
 
     /**
-     * Rep invariant: The four corners of the AssRobber must occur within
-     * the board (their x and y coordinates are less than BOARD_HEIGHT/WIDTH
-     * and greater than 0)
+     * Rep invariant: The four corners of the Absorber must occur within
+     * the board (their x and y coordinates are less than or equal to BOARD_HEIGHT/WIDTH
+     * and greater than or equal to 0)
      *
      * @return boolean indicating whether the Absorber adheres to the rep invariant
      */
     public void checkRep(){
-        if (startingPoint.x() + width >= Constants.BOARD_WIDTH ||
-                startingPoint.y() + height >= Constants.BOARD_HEIGHT ||
+        if (startingPoint.x() + width > Constants.BOARD_WIDTH ||
+                startingPoint.y() + height > Constants.BOARD_HEIGHT ||
                 startingPoint.x() < 0 ||
                 startingPoint.y() < 0) {
-            throw new RepInvariantException("Rep invariant violated.");
+            throw new RepInvariantException("Rep invariant violated. "
+                + startingPoint.x() + " + " + width + " >=" + Constants.BOARD_WIDTH + " or "
+                + startingPoint.y() + " + " + height + " >=" + Constants.BOARD_HEIGHT);
         }
     }
 
