@@ -12,11 +12,11 @@ public class BoardBaseListener implements BoardListener {
 	@Override public void enterEntry_ball(BoardParser.Entry_ballContext ctx) { }
 	@Override public void exitEntry_ball(BoardParser.Entry_ballContext ctx) { }
 
-	@Override public void enterEntry_board(BoardParser.Entry_boardContext ctx) { }
-	@Override public void exitEntry_board(BoardParser.Entry_boardContext ctx) { }
-
 	@Override public void enterEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx) { }
 	@Override public void exitEntry_circlebumper(BoardParser.Entry_circlebumperContext ctx) { }
+
+	@Override public void enterEntry_board(BoardParser.Entry_boardContext ctx) { }
+	@Override public void exitEntry_board(BoardParser.Entry_boardContext ctx) { }
 
 	@Override public void enterEntry_absorber(BoardParser.Entry_absorberContext ctx) { }
 	@Override public void exitEntry_absorber(BoardParser.Entry_absorberContext ctx) { }
@@ -27,17 +27,20 @@ public class BoardBaseListener implements BoardListener {
 	@Override public void enterEntry_leftflipper(BoardParser.Entry_leftflipperContext ctx) { }
 	@Override public void exitEntry_leftflipper(BoardParser.Entry_leftflipperContext ctx) { }
 
-	@Override public void enterEntry_squarebumper(BoardParser.Entry_squarebumperContext ctx) { }
-	@Override public void exitEntry_squarebumper(BoardParser.Entry_squarebumperContext ctx) { }
-
 	@Override public void enterEntry_trianglebumper(BoardParser.Entry_trianglebumperContext ctx) { }
 	@Override public void exitEntry_trianglebumper(BoardParser.Entry_trianglebumperContext ctx) { }
+
+	@Override public void enterEntry_squarebumper(BoardParser.Entry_squarebumperContext ctx) { }
+	@Override public void exitEntry_squarebumper(BoardParser.Entry_squarebumperContext ctx) { }
 
 	@Override public void enterEntry_fire(BoardParser.Entry_fireContext ctx) { }
 	@Override public void exitEntry_fire(BoardParser.Entry_fireContext ctx) { }
 
 	@Override public void enterBoardinfo(BoardParser.BoardinfoContext ctx) { }
 	@Override public void exitBoardinfo(BoardParser.BoardinfoContext ctx) { }
+
+	@Override public void enterEntry_board_gravity(BoardParser.Entry_board_gravityContext ctx) { }
+	@Override public void exitEntry_board_gravity(BoardParser.Entry_board_gravityContext ctx) { }
 
 	@Override public void enterBoardfile(BoardParser.BoardfileContext ctx) { }
 	@Override public void exitBoardfile(BoardParser.BoardfileContext ctx) { }
@@ -47,6 +50,12 @@ public class BoardBaseListener implements BoardListener {
 
 	@Override public void enterEntries(BoardParser.EntriesContext ctx) { }
 	@Override public void exitEntries(BoardParser.EntriesContext ctx) { }
+
+	@Override public void enterEntry_board_friction1(BoardParser.Entry_board_friction1Context ctx) { }
+	@Override public void exitEntry_board_friction1(BoardParser.Entry_board_friction1Context ctx) { }
+
+	@Override public void enterEntry_board_friction2(BoardParser.Entry_board_friction2Context ctx) { }
+	@Override public void exitEntry_board_friction2(BoardParser.Entry_board_friction2Context ctx) { }
 
 	@Override public void enterComment(BoardParser.CommentContext ctx) { }
 	@Override public void exitComment(BoardParser.CommentContext ctx) { }

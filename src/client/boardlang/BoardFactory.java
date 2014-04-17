@@ -85,7 +85,8 @@ public class BoardFactory {
      * and assembles a Board.
      */
     private static class BoardBuilder extends BoardBaseListener {
-        private static final boolean DEBUG = true;
+        private static final boolean DEBUG = false;
+
         private final Map<String, String> subscriptions = new HashMap<String, String>();
         private final Map<String, Gadget> gadgets = new HashMap<String, Gadget>();
         private final List<Ball> balls = new ArrayList<Ball>();
@@ -97,11 +98,21 @@ public class BoardFactory {
         // board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
         @Override public void exitEntry_board(BoardParser.Entry_boardContext ctx) {
             boardName = ctx.NAME().getText();
-            gravity = Float.parseFloat(ctx.FLOAT(0).getText());
-            friction1 = Float.parseFloat(ctx.FLOAT(1).getText());
-            friction2 = Float.parseFloat(ctx.FLOAT(2).getText());
             if (DEBUG) System.out.println("boardinfo n=" + boardName + " g=" + gravity + " f1=" + friction1 + " f2=" + friction2);
         }
+
+        @Override public void exitEntry_board_gravity(BoardParser.Entry_board_gravityContext ctx) {
+            gravity = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
+        @Override public void exitEntry_board_friction1(BoardParser.Entry_board_friction1Context ctx) {
+            friction1 = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
+        @Override public void exitEntry_board_friction2(BoardParser.Entry_board_friction2Context ctx) {
+            friction2 = Float.parseFloat(ctx.FLOAT().getText());
+        }
+
 
         // ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
         @Override public void exitEntry_ball(BoardParser.Entry_ballContext ctx) {

@@ -80,7 +80,10 @@ comments  : comment* ;
 comment   : COMMENT NEWLINE | NEWLINE ;
 
 /* board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT */
-entry_board : START_BOARD FIELD_NAME NAME FIELD_GRAVITY FLOAT FIELD_FRICTION1 FLOAT FIELD_FRICTION2 FLOAT ;
+entry_board : START_BOARD FIELD_NAME NAME entry_board_gravity? entry_board_friction1? entry_board_friction2? ;
+entry_board_gravity   : FIELD_GRAVITY FLOAT ;
+entry_board_friction1 : FIELD_FRICTION1 FLOAT ;
+entry_board_friction2 : FIELD_FRICTION2 FLOAT ;
 
 /* ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT */
 entry_ball : START_BALL FIELD_NAME NAME FIELD_X FLOAT FIELD_Y FLOAT FIELD_XVELOCITY FLOAT FIELD_YVELOCITY FLOAT ;
