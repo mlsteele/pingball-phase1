@@ -35,6 +35,7 @@ import client.gadgets.StaticBumper;
  * does not need to worry about the end of the string at all.
  *
  * TODO fix 90/180/270/0 INTEGER bug!
+ * TODO tell syntaxError to throw a more descriptive exception.
  */
 public class BoardFactory {
     /**
@@ -50,13 +51,13 @@ public class BoardFactory {
         CharStream stream = new ANTLRInputStream(input);
         BoardLexer lexer = new BoardLexer(stream);
         // TODO report as errors
-        // lexer.reportErrorsAsExceptions();
+        lexer.reportErrorsAsExceptions();
         TokenStream tokens = new CommonTokenStream(lexer);
 
         // Feed the tokens into the parser.
         BoardParser parser = new BoardParser(tokens);
         // TODO report as errors
-        // parser.reportErrorsAsExceptions();
+        parser.reportErrorsAsExceptions();
 
         // Generate the parse tree using the starter rule.
         ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
@@ -198,11 +199,13 @@ public class BoardFactory {
 
             // Add subscriptions.
             for (Map.Entry<String, String> entry : subscriptions.entrySet()) {
-                Gadget triggerer = gadgets.get(entry.getKey());
-                Gadget subscriber = gadgets.get(entry.getValue());
+                String triggererName = entry.getKey();
+                String subscriberName = entry.getValue();
+                Gadget triggerer = gadgets.get(triggererName);
+                Gadget subscriber = gadgets.get(subscriberName);
                 if (triggerer == null || subscriber == null) {
                     // TODO what kind of exception?
-                    throw new RuntimeException("Board mentions subscription without named gadet.");
+                    throw new RuntimeException("Board mentions subscription without named gadget: " + triggererName + " -> " + subscriberName);
                 } else {
                     board.addSubscription(new BoardEventSubscription(triggerer, subscriber));
                 }

@@ -37,6 +37,11 @@ import client.boardlang.BoardFactory;
  * - parse a absorber entry
  * - parse a fire entry
  *
+ * Partitions regarding field values:
+ * - parse NAME with a numeric in it like zer0
+ * - parse NAME with an underscore
+ * - parse negative float
+ *
  * Partitions regarding header:
  * - header includes no parameters but name
  * - header includes gravity
@@ -55,15 +60,18 @@ public class BoardFactoryTests {
     public static void setUpBeforeClass() {
         lines.put("boardinfo1", "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0");
         lines.put("boardinfo2", "board name=ExampleB");
-        lines.put("boardinfo3", "board name=ExampleB gravity=10.0 friction2=3.4");
-        lines.put("ball1", "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
+        lines.put("boardinfo3", "board name=ExampleB gravity=-4.3 friction2=3.4");
+        lines.put("ball1", "ball name=B_ll2A x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3");
+        lines.put("ball2", "ball name= B_ll2B x= 1.8 y = 4.5 xVelocity= 10.4 yVelocity=10.3");
         lines.put("square1", "squareBumper name=SquareA x=7 y=10");
         lines.put("square2", "squareBumper name=SquareB x=2 y=5");
+        lines.put("square3", "     squareBumper name=SquareB x=2 y=5");
+        lines.put("square4", "squareBumper name=SquareB x=2 y=5     ");
         lines.put("circle1", "circleBumper name=Circle4 x=4 y=3");
         lines.put("triangle1", "triangleBumper name=Tri1 x=8 y=9 orientation=270");
         lines.put("flipperL1", "leftFlipper name=FlipL x=10 y=7 orientation=90");
         lines.put("flipperR1", "leftFlipper name=FlipR x=3 y=17 orientation=270");
-        lines.put("absorber1", "absorber name=Abs x=0 y=19 width=20 height=1 ");
+        lines.put("absorber1", "absorber name=Abs x=1 y=19 width=20 height=1 ");
         lines.put("fire1", "fire trigger=SquareA action=FlipL");
         lines.put("fire2", "fire trigger=SquareB action=FlipR");
         lines.put("comment1", "# just a regular comment");
@@ -96,29 +104,81 @@ public class BoardFactoryTests {
     @Test public void testBuildBF() {
         String expected =
             "board name=ExampleB gravity=10.0 friction1=1.0 friction2=3.0\n" +
-            "ball name=BallA x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3\n" +
+            "ball name=B_ll2A x=1.8 y=4.5 xVelocity=10.4 yVelocity=10.3\n" +
             "fire trigger=SquareA action=FlipL\n" +
             "fire trigger=SquareB action=FlipR\n";
         assertEquals(expected, buildBF("boardinfo1", "ball1", "fire1", "fire2"));
     }
 
-    @Test public void testBoardNoComments() {
+    @Test public void testParseBoardNoComments() {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testBoardCommentsAtEnd() {
+    @Test public void testParseBoardCommentsAtEnd() {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flipperL1", "fire1", "comment1", "comment2")));
     }
 
-    @Test public void testBoardCommentsAfterBoardInfo() {
+    @Test public void testParseBoardCommentsAfterBoardInfo() {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "comment2", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testBoardCommentsAtStart() {
+    @Test public void testParseBoardCommentsAtStart() {
         assertNotNull(BoardFactory.parse(buildBF("comment1", "comment2", "boardinfo1", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testBoardCommentsWithEntries() {
+    @Test public void testParseBoardCommentsWithEntries() {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "ball1", "square1", "fire1", "square2", "flipperL1", "flipperR1", "comment2", "fire2")));
+    }
+
+    @Test public void testParseBoardCommentsWithBlankLines() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "blankline", "ball1", "square1", "fire1", "square2", "flipperL1", "flipperR1", "blankline", "blankline", "fire2")));
+    }
+
+    @Test public void testParseBallEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1")));
+    }
+
+    @Test public void testParseSquareBumperEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "square2")));
+    }
+
+    @Test public void testParseCircleBumperEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "circle1")));
+    }
+
+    @Test public void testParseTriangleBumperEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "triangle1")));
+    }
+
+    @Test public void testParseRightFlipperLeftEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperR1")));
+    }
+
+    @Test public void testParseLeftFlipperRightEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperL1")));
+    }
+
+    @Test public void testParseAbsorberEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "absorber1")));
+    }
+
+    @Test public void testParseFireEntry() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperR1", "square2", "fire2")));
+    }
+
+    @Test public void testParseNoOptionalParams() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo2")));
+    }
+
+    @Test public void testParseNoFriction1() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo3")));
+    }
+
+    @Test public void testParseSpacesInFieldAssignment() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball2")));
+    }
+
+    @Test public void testParseExtraSpaces() {
+        assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "square3", "square4")));
     }
 }
