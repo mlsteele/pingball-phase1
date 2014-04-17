@@ -7,7 +7,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
-import common.netprotocol.NetworkMessage;
+import common.netprotocol.*;
+import common.*;
+import common.netprotocol.NetworkMessage.DecodeException;
 
 /**
  * Creates thread to handle client's requests. These include ball out messages
@@ -20,6 +22,9 @@ import common.netprotocol.NetworkMessage;
  * * and only the server thread will write to the output stream
  * * (though both will do so through this class).
  * * Sockets are thread-safe for concurrent input and output.
+ *
+ * Rep invariant:
+ * * TODO ??
  */
 
 public class ClientHandler implements Runnable{
@@ -27,7 +32,10 @@ public class ClientHandler implements Runnable{
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private final BlockingQueue<NetworkMessage> messageQueue;
+    private final BlockingQueue<AuthoredMessage> messageQueue;
+    private final BlockingQueue<ClientHandler> deadClientsQueue;
+    /* TODO maybe this should be volatile: */
+    private String name;
 
 
     /**
@@ -36,27 +44,42 @@ public class ClientHandler implements Runnable{
      * @param queue the Server's queue of messages, on which to put incoming messages
      * @throws IOException if we are unable to open the input or output stream with the client
      */
-    public ClientHandler(Socket socket, BlockingQueue<NetworkMessage> queue) throws IOException {
+    public ClientHandler(Socket socket,
+            BlockingQueue<AuthoredMessage> queue,
+            BlockingQueue<ClientHandler> deadClientsQueue) throws IOException {
         this.socket = socket;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
         this.messageQueue = queue;
-
+        this.deadClientsQueue = deadClientsQueue;
     }
 
     /**
-     * Handles the incoming client messages
+     * Handles the incoming client messages.
+     * Listens for input from the client, and sends it to the server.
+     * Ignores bad input messages, but prints an error to System.err if there is an IOException
      */
     @Override
     public void run() {
         // handle the client
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
-                // TODO deserialize line
+                NetworkMessage message = NetworkMessage.deserialize(line);
+                if (message instanceof ClientConnectMessage) {
+                    this.name = ((ClientConnectMessage) message).getBoardName();
+                }
+                messageQueue.add(new AuthoredMessage(message, this));
 
-                // add to queue
             }
         } catch (IOException e) {
+            if (Constants.DEBUG) {
+                System.err.println(e.getMessage());
+            }
+        } catch (DecodeException e) {
+            // ignore bad input
+            if (Constants.DEBUG) {
+                System.err.println(e.getMessage());
+            }
         } finally {
             this.kill();
         }
@@ -73,17 +96,26 @@ public class ClientHandler implements Runnable{
 
     /**
      * Terminates the connection to the client.
-     * This also causes the run() method to finish.
+     * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     public void kill() {
-        try {
-            out.close();
-            in.close();
-            socket.close();
-        } catch (IOException e) {}
-
+        deadClientsQueue.add(this);
+        if (!socket.isClosed()) {
+            try {
+                out.close();
+                in.close();
+                socket.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 
-
-
+    /**
+     * getter for board name
+     * @return the name of the client board
+     */
+    public String getName() {
+        return this.name;
+    }
 }

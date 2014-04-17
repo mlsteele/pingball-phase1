@@ -29,4 +29,6 @@ public class Constants {
     public enum FlipperType{
         LEFT, RIGHT
     }
+    /* TODO set this to false in the final version! */
+    public static final boolean DEBUG = true;
 }

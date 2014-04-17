@@ -8,6 +8,12 @@ import common.Constants.BoardSide;
  * Message sent when a ball should enter a board.
  * This is an immutable class.
  *
+ * ADT:
+ * * BallInMessage contains the following data:
+ * * * ballPos: the position of the ball
+ * * * ballVel: the velocity of the ball
+ * * * fromSide: the side of the board that the ball will enter through
+ *
  * Thread Safety Argument:
  * - all data is immutable.
  */

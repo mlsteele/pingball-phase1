@@ -9,6 +9,12 @@ import common.Constants.BoardSide;
  * This is an immutable class.
  * The position and velocity of the ball are cached when the message is constructed.
  *
+ * ADT:
+ * * BallOutMessage contains the following data:
+ * * * ballPos: the position of the ball
+ * * * ballVel: the velocity of the ball
+ * * * fromSide: the side of the board that the ball went out
+ *
  * Thread Safety Argument:
  * - all data is immutable.
  */

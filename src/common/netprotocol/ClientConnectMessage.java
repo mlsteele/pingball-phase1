@@ -5,6 +5,10 @@ package common.netprotocol;
  * Message sent when a client wants to connect to a server.
  * This is an immutable class.
  *
+ * ADT:
+ * * ClientConnectMessage contains the following data:
+ * * * boardName: the name of the board connecting
+ *
  * Thread Safety Argument:
  * - all data is immutable.
  */
