@@ -66,13 +66,17 @@ public class StaticBumper implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(),
-                    ball.getVelocity().plus(new Vect(0, Constants.GRAVITY*Constants.TIMESTEP))) < Constants.RANDOM_THRESHOLD) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 hits ++;
+                System.out.println("LINE: " + line);
+                System.out.println("Velocity1: " + ball.getVelocity());
+                System.out.println("XCoord: " + ball.getCircle().getCenter().x());
+                System.out.println("YCoord: " + ball.getCircle().getCenter().y());
                 //options to make more sensitive: increase radius of ball, increase timestep multiplication,
                 //go based on center instead of Geometry, accelerate by gravity
                 Vect velocity = Geometry.reflectWall(line, ball.getVelocity());
                 ball.setVelocity(velocity);
+                System.out.println("Velocity2: " + ball.getVelocity());
                 return new BoardEvent(this);
             }
         }

@@ -17,7 +17,7 @@ import client.gadgets.Gadget;
  * an * to represent a ball, or contained within this Gadget-string set: {=, 0, #, /, \, |, -, .}
  * (this assumes that we only accept alphabet characters for Board names, which may not be true...)
  *
- * Thread Safety: confined to one thread; only one instance per Board
+ * Thread Safety: not threadsafe
  */
 
 public class StringCanvas {

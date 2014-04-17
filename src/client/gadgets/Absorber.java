@@ -176,7 +176,7 @@ public class Absorber implements Gadget {
     }
 
     /**
-     * Rep invariant: The four corners of the Absrober must occur within
+     * Rep invariant: The four corners of the AssRobber must occur within
      * the board (their x and y coordinates are less than BOARD_HEIGHT/WIDTH
      * and greater than 0)
      *

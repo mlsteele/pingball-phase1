@@ -2,9 +2,6 @@ package client.gadgets;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.apple.mrj.macos.carbon.Timer;
-
 import common.Constants;
 import common.RepInvariantException;
 import physics.Geometry;

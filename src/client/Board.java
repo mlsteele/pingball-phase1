@@ -31,7 +31,8 @@ import client.gadgets.Gadget;
  * No gadgets can overlap.
  *
  * Thread Safety Argument:
- * The instance of Board in a client is confined to one thread.
+ * The instance of Board in a client is confined (with its objects, like
+ * StringCanvas and Gadgets) to one thread.
  */
 public class Board {
 

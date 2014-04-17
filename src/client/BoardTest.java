@@ -31,7 +31,7 @@ public class BoardTest {
      * Testing strategy for Board construction
      * -initialized with overlapping Gadgets
      * -initialized with Gadgets that extend outside the Board
-     * -initialized with
+     * -initialized with a regular set of Gadgets
      *
      * Testing strategy for Gadgets and Walls:
      * -each Gadget/Wall will underGo a receivesBall Test to make sure it can respond to
@@ -57,13 +57,18 @@ public class BoardTest {
      * More examples of edge cases we should add:
      * -null initializations
      *
+     *Diagnostic printing (not to submit in final):
+     *System.out.println("LINE: " + line);
+                System.out.println("Velocity1: " + ball.getVelocity());
+                System.out.println("XCoord: " + ball.getCircle().getCenter().x());
+                System.out.println("YCoord: " + ball.getCircle().getCenter().y());
      */
 
 
     /**
      * Testing recievesBall for Absorber
      */
-    @Test
+
     public void absorberRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
         int numIterations = 12; //times to activate board.step()
@@ -89,39 +94,39 @@ public class BoardTest {
 
         assertEquals(absorber.toString(), "Absorber with 2 ball(s)");
         absorber.specialAction();
-        System.out.println(absorber.toString());
         assertEquals(absorber.toString(), "Absorber with 1 ball(s)");
+        absorber.specialAction();
+        assertEquals(absorber.toString(), "Absorber with 0 ball(s)");
     }
 
     /**
      * Testing recievesBall for Bumper
      */
 
+    @Test
     public void bumperRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
-        int numIterations = 60; //times to activate board.step()
-        Vect ballStart = new Vect(9,7);
-        Vect squareStart = new Vect(9,5);
-        double velocityMagnitude = 5; //L/s
+        int numIterations = 20; //times to activate board.step()
+        Vect ballStart = new Vect(9,4);
+        Vect squareStart = new Vect(9,7);
+        Vect absorberStart = new Vect(0,16);
+        double velocityMagnitude = 3; //L/s
         Vect initialBallVelocity = new Vect(1, velocityMagnitude); //falls downward when y-velocity is positive
         StaticBumper square = new StaticBumper("SquareB", Constants.BumperType.SQUARE, squareStart);
+        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
         Ball ball = new Ball(0.25, ballStart, initialBallVelocity);
         boardGadgets.add(square);
+        boardGadgets.add(absorber);
 
         Board testBoardA = new Board("testBoardA", boardGadgets, 25, 0, 0);
         testBoardA.addBall(ball);
 
         for(int i = 0; i < numIterations; i++){
-            try {
-                Thread.sleep((int) (Constants.TIMESTEP * 1000));
-                String out = testBoardA.step();
-                System.out.println(out);
-            } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
+            String out = testBoardA.step();
+            System.out.println(out);
         }
-        assertTrue(ball.getVelocity().x() != 0); //not sure of good test here
-        assertEquals(square.toString(), "Bumper SQUARE handled ball 1 time(s)");
+        System.out.println(square.toString());
+        //assertEquals(square.toString(), "Bumper SQUARE handled ball 1 time(s)");
     }
 
     /**
@@ -143,13 +148,8 @@ public class BoardTest {
         flipBoardA.addBall(ball);
 
         for(int i = 0; i < numIterations; i++){
-            try {
-                Thread.sleep((int) (Constants.TIMESTEP * 1000));
-                String out = flipBoardA.step();
-                System.out.println(out);
-            } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
+            String out = flipBoardA.step();
+            System.out.println(out);
         }
 
         assertEquals(flipper.toString(), "Flipper is rotated");
