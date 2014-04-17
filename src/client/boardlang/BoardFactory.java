@@ -188,6 +188,11 @@ public class BoardFactory {
             subscriptions.put(firer, subscriber);
         }
 
+        /**
+         * Assemble a board from the information collected while walking the tree.
+         * This method may be called ONLY ONCE for each instance of BoardBuilder.
+         * @return a Board assembled from the tree
+         */
         public Board getBoard() {
             Board board = new Board(boardName, new ArrayList<Gadget>(gadgets.values()), gravity, friction1, friction2);
 
