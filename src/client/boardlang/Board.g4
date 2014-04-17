@@ -31,19 +31,19 @@ package client.boardlang;
  */
 COMMENT : '#' ~( '\r' | '\n' )* ;
 
-FIELD_NAME        : 'name' ASSIGN ;
-FIELD_GRAVITY     : 'gravity' ASSIGN ;
-FIELD_FRICTION1   : 'friction1' ASSIGN ;
-FIELD_FRICTION2   : 'friction2' ASSIGN ;
-FIELD_X           : 'x' ASSIGN ;
-FIELD_Y           : 'y' ASSIGN ;
-FIELD_XVELOCITY   : 'xVelocity' ASSIGN ;
-FIELD_YVELOCITY   : 'yVelocity' ASSIGN ;
-FIELD_ORIENTATION : 'orientation' ASSIGN ;
-FIELD_WIDTH       : 'width' ASSIGN ;
-FIELD_HEIGHT      : 'height' ASSIGN ;
-FIELD_TRIGGER     : 'trigger' ASSIGN ;
-FIELD_ACTION      : 'action' ASSIGN ;
+FIELD_NAME        : 'name' WHITESPACE? ASSIGN ;
+FIELD_GRAVITY     : 'gravity' WHITESPACE? ASSIGN ;
+FIELD_FRICTION1   : 'friction1' WHITESPACE? ASSIGN ;
+FIELD_FRICTION2   : 'friction2' WHITESPACE? ASSIGN ;
+FIELD_X           : 'x' WHITESPACE? ASSIGN ;
+FIELD_Y           : 'y' WHITESPACE? ASSIGN ;
+FIELD_XVELOCITY   : 'xVelocity' WHITESPACE? ASSIGN ;
+FIELD_YVELOCITY   : 'yVelocity' WHITESPACE? ASSIGN ;
+FIELD_ORIENTATION : 'orientation' WHITESPACE? ASSIGN ;
+FIELD_WIDTH       : 'width' WHITESPACE? ASSIGN ;
+FIELD_HEIGHT      : 'height' WHITESPACE? ASSIGN ;
+FIELD_TRIGGER     : 'trigger' WHITESPACE? ASSIGN ;
+FIELD_ACTION      : 'action' WHITESPACE? ASSIGN ;
 
 START_BOARD          : 'board' ;
 START_BALL           : 'ball' ;
