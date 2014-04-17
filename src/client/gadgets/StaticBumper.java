@@ -1,7 +1,6 @@
 package client.gadgets;
 import common.Constants;
 import common.RepInvariantException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,27 +24,30 @@ public class StaticBumper implements Gadget {
     private final String name;
     private final Constants.BumperType type;
     private List<LineSegment> geometry;
+    private int hits;
 
     /**
      * Constructor that indicates the shape and starting point of the bumper.
      *
      * @param name unique String identifier for this bumper
-     * @param type bumperType representing what kind of bumper this is. Used for getting stringRepresentation later
-     * @param geometry List of line segments that ball can reflect off of. The first LineSegment listed in geometry
-     * must begin at the origin point (position.x(), position.y()) of the bumper
+     * @param type BumperType representing what kind of bumper this is. Used for getting stringRepresentation later
+     *        TRIDOWN = triangle bumper with initial orientation 90 || 270
+     *        TRIUP   = triangle bumper with initial orientation  0 || 180
+     * @param startingPoint upper left-hand corner coordinates for the bumper
      */
     public StaticBumper(String name, Constants.BumperType type, Vect startingPoint) {
         this.name = name;
         this.type = type;
         this.startingPoint = startingPoint;
-        List<LineSegment>geometry = new ArrayList<LineSegment>();
+        this.hits = 0; //number of times Ball has hit it
+        geometry = new ArrayList<LineSegment>();
 
         if (type == Constants.BumperType.TRIDOWN){
             //orientation == 90 | 270
-            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() - 1));
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
         } else if (type == Constants.BumperType.TRIUP){
             //orientation == 0 | 180
-            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x() + 1, startingPoint.y() + 1));
         }else{
             //circle or square bumper
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y()));
@@ -53,7 +55,6 @@ public class StaticBumper implements Gadget {
             geometry.add(new LineSegment(startingPoint.x() + 1, startingPoint.y() + 1, startingPoint.x(), startingPoint.y() + 1));
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x(), startingPoint.y()));
         }
-
     }
 
     @Override
@@ -65,31 +66,17 @@ public class StaticBumper implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
-            if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+            if (Geometry.timeUntilWallCollision(line, ball.getCircle(),
+                    ball.getVelocity().plus(new Vect(0, Constants.GRAVITY*Constants.TIMESTEP))) < Constants.RANDOM_THRESHOLD) {
+                hits ++;
+                //options to make more sensitive: increase radius of ball, increase timestep multiplication,
+                //go based on center instead of Geometry, accelerate by gravity
                 Vect velocity = Geometry.reflectWall(line, ball.getVelocity());
                 ball.setVelocity(velocity);
-                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
                 return new BoardEvent(this);
             }
         }
-
-        return null; //type + " Bumper " + name + " handled ball.";
-    }
-
-    @Override
-    /**
-     * @return 1; all bumpers take up only one square on a board
-     */
-    public int getWidth() {
-        return 1;
-    }
-
-    @Override
-    /**
-     * @return 1; all bumpers take up only one square on a board
-     */
-    public int getHeight() {
-        return 1;
+        return null;
     }
 
     @Override
@@ -129,6 +116,20 @@ public class StaticBumper implements Gadget {
 
     }
 
+    /**
+     * @return 1 height of bumper is always 1
+     */
+    public double getHeight(){
+        return 1;
+    }
+
+    /**
+     * @return 1 width of bumper is always 1
+     */
+    public double getWidth(){
+        return 1;
+    }
+
     @Override
     /**
      * @return unique String representation of bumper
@@ -145,5 +146,11 @@ public class StaticBumper implements Gadget {
         //TODO: implement checkRep
         throw new RepInvariantException("Rep invariant violated.");
     }
+
+    @Override
+    public String toString(){
+        return "Bumper " + type + " handled ball " + hits + " time(s)";
+    }
+
 
 }

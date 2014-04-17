@@ -32,6 +32,9 @@ public class ServerHandler implements Runnable {
         this.incomingMessages = incomingMessages;
     }
 
+    //wait and send inputs to serverhandler queue
+    //
+
     /**
      * Start listening for messages from the server.
      */

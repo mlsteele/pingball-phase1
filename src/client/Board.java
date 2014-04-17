@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Queue;
 
 import physics.Circle;
+import physics.Geometry;
 import physics.Vect;
 import common.Constants;
+import common.RepInvariantException;
 import client.gadgets.Gadget;
 
 /**
@@ -36,6 +38,7 @@ public class Board {
     private final String name;
     private final List<Gadget> gadgets;
     private List<Ball> balls;
+    private List<Wall> walls;
     private Queue<BoardEvent> eventQueue;
     private List<BoardEventSubscription> subscriptions;
     private final double gravity;
@@ -45,21 +48,31 @@ public class Board {
     /**
      * Create a new board.
      * @param name board name
-     * @param width board width
-     * @param height board height
      * @param gadgets list of gadgets on the board.
      *                caller must never modify this list.
+     * @param gravity force of gravity on ball in L/s^2
+     * @param f1 force of friction on ball in L/s^2
+     * @param f2 force of friction on ball in L/s^2
      */
     public Board(String name, List<Gadget> gadgets, double gravity, double f1, double f2) {
         this.name = name;
         this.gadgets = Collections.unmodifiableList(gadgets);
         this.balls = new ArrayList<Ball>();
+        this.walls = new ArrayList<Wall>();
         this.eventQueue = new LinkedList<BoardEvent>();
         this.subscriptions = new ArrayList<BoardEventSubscription>();
         this.gravity = gravity;
         this.frictionOne = f1;
         this.frictionTwo = f2;
-        //TODO: make Walls instead of SideWalls
+
+        Wall top = new Wall(true, Constants.BoardSide.TOP);
+        Wall bottom = new Wall(true, Constants.BoardSide.BOTTOM);
+        Wall left = new Wall(true, Constants.BoardSide.LEFT);
+        Wall right = new Wall(true, Constants.BoardSide.RIGHT);
+        walls.add(top);
+        walls.add(bottom);
+        walls.add(left);
+        walls.add(right);
     }
 
     /**
@@ -84,11 +97,18 @@ public class Board {
      * that some BoardEvents generate. eventQueue will always empty because BoardEvents
      * are only produced in one method (handleBall) by each gadget.
      */
-    public void step() {
-
+    public String step() {
         StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
 
-        //loop through all gadgets and call handleBall for all balls
+        //make sure the ball isn't going to crash into any walls
+        for (Wall wall: walls){
+            for (Ball ball: balls){
+                wall.handleBall(ball);
+            }
+        }
+
+        //loop through all gadgets and call handleBall for all balls; add relevant events to boardQueue
+        //  then add gadgets to boardString
         for (Gadget gadget: gadgets){
             for (Ball ball: balls){
                 BoardEvent e = gadget.handleBall(ball);
@@ -96,45 +116,36 @@ public class Board {
                     eventQueue.add(e);
                 }
             }
-        }
-
-        //add gadgets to boardString
-        for (Gadget gadget: gadgets){
             boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
         }
 
-        //update every ball for gravity
-        for (Ball ball: balls){
-            Vect gravity = new Vect(ball.getVelocity().angle(), Constants.GRAVITY*Constants.TIMESTEP);
-            ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().minus(gravity)));
-            //ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
+        // process events in queue
+        while (!eventQueue.isEmpty()) {
+            BoardEvent e = eventQueue.remove();
+            for (BoardEventSubscription s : subscriptions) {
+                if (s.getTriggerer() == e.getTriggerer()) {
+                    s.getSubscriber().specialAction();
+                }
+            }
         }
 
-        //move balls along an appropriate amount according to their velocity
+        //update every ball for gravity and their velocity
         for (Ball ball: balls){
-            ball.setPosition(ball.getCircle().getCenter().plus(ball.getVelocity().times(Constants.TIMESTEP)));
+            if (ball.isInPlay() == true){
+                Vect gravityVelocity = new Vect(0, gravity*Constants.TIMESTEP);
+                Vect newVelocity = ball.getVelocity().times(Constants.TIMESTEP);
+                ball.setPosition(ball.getCircle().getCenter().plus(newVelocity.plus(gravityVelocity)));
+                ball.setVelocity(newVelocity.plus(gravityVelocity));
+            }
         }
 
         //add balls to boardString to complete it
         for (Ball ball: balls){
-            boardString.setRect((int)ball.getCenter().x(), (int)ball.getCenter().x(), "*");
-        }
-
-        String boardOutput = boardString.getString();
-        System.out.println(boardOutput);
-
-        // process events in queue (last part of step)
-        while (!eventQueue.isEmpty()) {
-            /* beware of infinite looping here. Maybe we need an invariant saying that
-             * no event-based action can add an event to the queue.
-             */
-            BoardEvent e = eventQueue.remove();
-            for (BoardEventSubscription s : subscriptions) {
-                if (s.getTriggerer() == e.getTriggerer()) {
-                    // process the event with the subscriber
-                }
+            if (ball.isInPlay() == true){
+                boardString.setRect((int) Math.round(ball.getCircle().getCenter().x()), (int) Math.round(ball.getCircle().getCenter().y()), "*");
             }
         }
+        return boardString.getString();
     }
 
     /**
@@ -142,9 +153,17 @@ public class Board {
      * No gadgets can overlap.
      */
     public void checkRep(){
-        //TODO: implement checkRep for Board
-        // throw new RepInvariantException("Rep invariant violated.");
+        for (Gadget gadget: gadgets){
+            for (Gadget gadget2: gadgets){
+                if (gadget != gadget2){
+                    if ((gadget.getPosition().x() <= gadget2.getPosition().x() &&
+                        gadget.getPosition().x() + gadget.getWidth() > gadget2.getPosition().x()) ||
+                                (gadget.getPosition().y() <= gadget2.getPosition().x() &&
+                                gadget.getPosition().y() + gadget.getHeight() >= gadget2.getPosition().y())){
+                        throw new RepInvariantException("Rep invariant violated.");
+                    }
+                }
+            }
+        }
     }
-
-
 }

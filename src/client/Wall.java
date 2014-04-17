@@ -1,28 +1,23 @@
 package client;
 
+import common.Constants;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
-import common.Constants;
 
 public class Wall {
-    private final String name;
     private final Constants.BoardSide type;
-    private boolean invisible;
+    private boolean visible;
     private final LineSegment wall;
 
     /**
-     * Constructor that takes the shape of the wall.
-     *
-     * @param name unique String identifier for SideWall object
-     * @param invisible Indicates whether wall is visible (false) or invisible (true)
-     * @param wallType BoardSide enum indicating if the wall is top, bottom, left, or right
-     * (BoardSide enum contained in common.Constants class)
+     * Ball Constructor
+     * @param visible
+     * @param wallType
      */
-    public Wall(String name, boolean invisible, Constants.BoardSide wallType) {
-        this.name = name;
-        this.invisible = invisible;
-        type = wallType;
+    public Wall(boolean visible, Constants.BoardSide wallType) {
+        this.type = wallType;
+        this.visible = visible;
         if (type == Constants.BoardSide.TOP){
             wall = new LineSegment(0, 0, Constants.BOARD_WIDTH, 0);
         } else if (type == Constants.BoardSide.BOTTOM){
@@ -34,13 +29,56 @@ public class Wall {
         }
     }
 
+    /**
+     * When physics' timeUntilWallCollision method detects that a ball from Board will hit a SideWall,
+     * the wall will reflect the ball with the appropriate physics methods
+     *
+     * @param Ball object from Board
+     */
     public BoardEvent handleBall(Ball ball) {
-        if (!invisible && Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
-            Vect velocity = Geometry.reflectWall(wall, ball.getVelocity());
-            ball.setVelocity(velocity);
-            ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
-            return new BoardEvent(this);
+        double randomThreshold = 1.05; //should be Constants.TIMESTEP
+        Vect reboundVelocity;
+        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.RANDOM_THRESHOLD){
+            if (visible){
+                reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
+                ball.setVelocity(reboundVelocity);
+            } else if (!visible){
+                //TODO: create an event (a BoardEventforBoards)
+                //  for when the ball is going to pass through a shared wall
+            }
         }
         return null;
+    }
+
+    /**
+     * Called during Board's step function. Each L unit of a sideWall is represented
+     * by "*"
+     *
+     * @return string representation of sideWall for print out
+     */
+    public String stringRepresentation() {
+        String stringRep = "";
+        if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM){
+            for (int i = 0; i < Constants.BOARD_WIDTH; i++){
+                stringRep += ".";
+            }
+            stringRep += "\n";
+        } else if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT){
+            for (int i = 0; i < Constants.BOARD_HEIGHT; i++){
+                stringRep += "." + "\n";
+            }
+        }
+        return stringRep;
+    }
+
+    /**
+     * @return startingPoint Vector representation of point at the top left corner of the absorber
+     */
+    public Vect getPosition() {
+        return wall.p1();
+    }
+
+    public Constants.BoardSide getType() {
+        return type;
     }
 }
