@@ -72,7 +72,9 @@ public class ClientHandler implements Runnable{
 
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            if (Constants.DEBUG) {
+                System.err.println(e.getMessage());
+            }
         } catch (DecodeException e) {
             // ignore bad input
             if (Constants.DEBUG) {
@@ -94,7 +96,7 @@ public class ClientHandler implements Runnable{
 
     /**
      * Terminates the connection to the client.
-     * This also causes the run() method to finish.
+     * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     public void kill() {
         deadClientsQueue.add(this);

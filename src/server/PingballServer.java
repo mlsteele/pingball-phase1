@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import physics.Vect;
 
 import common.Constants;
+import common.RepInvariantException;
 
 import common.netprotocol.*;
 import common.netprotocol.NetworkMessage.DecodeException;
@@ -39,6 +40,10 @@ import common.netprotocol.NetworkMessage.DecodeException;
  *      * The ClientHandler threads, which send AuthoredMessages to the main thread via a queue
  *  * PingballServer calls ClientHandler.send(), but it is the only thread that does so (ClientHandler does not call its own send method)
  *  * PingballServer calls ClientHandler.getName(), but it is the only thread that does so
+ *  * The following fields are confined:
+ *      * clients
+ *      * horizontalBoardJoins
+ *      * verticalBoardJoins
  *
  *  Rep Invariants:
  *  * MIN_PORT <= port <= MAX_PORT
@@ -58,6 +63,7 @@ public class PingballServer {
     private final int port;
     private final BlockingQueue<String> cliQueue;
     private final BlockingQueue<AuthoredMessage> messageQueue;
+    /* deadClientsQueue is for ClientHandlers who have been killed and need to be removed from the Server's knowledge. */
     private final BlockingQueue<ClientHandler> deadClientsQueue;
     private final Map<String, ClientHandler> clients;
     private final List<List<String>> horizontalBoardJoins; // pairs of boards joined as left, right
@@ -243,7 +249,7 @@ public class PingballServer {
             b1Pos = Constants.BoardSide.TOP;
             b2Pos = Constants.BoardSide.BOTTOM;
         }
-        boolean overwrote = false;
+        boolean overwrote = false; // is true if we find an existing board connection and we overwrite it with this new one
         for (List<String> pair : boardJoins) {
             String p1 = pair.get(0);
             String p2 = pair.get(1);
