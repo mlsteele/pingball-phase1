@@ -75,7 +75,6 @@ public class Absorber implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         // Check for ball hit.
-        System.out.println("Velocity1: " + ball.getVelocity());
         for (LineSegment line : geometry) {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision <= Constants.TIMESTEP) {

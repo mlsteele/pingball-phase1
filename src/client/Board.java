@@ -121,7 +121,9 @@ public class Board {
      * are only produced in one method (handleBall) by each gadget.
      */
     public String step() {
-        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " ");
+        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " "); //String representation of Board
+                                                                                                                    //adds room for walls on all sides, so must increment
+                                                                                                                    //height and weight by 2
         boardString.setRect(0,0,".");
         boardString.setRect(0,21,".");
         boardString.setRect(21,0,".");
