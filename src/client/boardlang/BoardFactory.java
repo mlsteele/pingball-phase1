@@ -90,7 +90,7 @@ public class BoardFactory {
         private final Map<String, Gadget> gadgets = new HashMap<String, Gadget>();
         private final List<Ball> balls = new ArrayList<Ball>();
         private String boardName;
-        private double gravity = Constants.GRAVITY;
+        private double gravity = Constants.DEFAULT_GRAVITY;
         private double friction1 = Constants.DEFAULT_FRICTION1;
         private double friction2 = Constants.DEFAULT_FRICTION2;
 
@@ -188,7 +188,7 @@ public class BoardFactory {
             int width = Integer.parseInt(ctx.INTEGER(2).getText());
             int height = Integer.parseInt(ctx.INTEGER(3).getText());
             if (DEBUG) System.out.println("absorber name=" + name + " x=" + x + " y=" + y + " w=" + width + " h=" + height);
-            gadgets.put(name, new Absorber(name, new Vect(x, y), width, height));
+            gadgets.put(name, new Absorber(name, new Vect(x, y), width, height, gravity));
         }
 
         // fire trigger=NAME action=NAME
