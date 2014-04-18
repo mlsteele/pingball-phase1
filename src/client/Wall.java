@@ -36,7 +36,7 @@ public class Wall {
      * @param Ball object from Board
      */
     public BoardEvent handleBall(Ball ball) {
-        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP){
+        if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP){
             if (visible){
                 Vect reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
                 ball.setVelocity(reboundVelocity);

@@ -2,9 +2,11 @@ package client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import physics.Circle;
 import physics.Geometry;
@@ -101,17 +103,8 @@ public class Board {
     public String step() {
         StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
 
-        // Keep track of whether the ball has collided this frame.
-        boolean ballHasCollided = false;
-
-        //make sure the ball isn't going to crash into any walls
-        for (Ball ball: balls){
-            for (Wall wall: walls){
-                if (wall.handleBall(ball) != null) {
-                    ballHasCollided = true;
-                }
-            }
-        }
+        // Keep track of which balls have collided this frame.
+        Set<Ball> ballsThatHaveCollided = new HashSet<Ball>();
 
         //loop through all gadgets and call handleBall for all balls; add relevant events to boardQueue
         //  then add gadgets to boardString
@@ -120,10 +113,19 @@ public class Board {
                 BoardEvent e = gadget.handleBall(ball);
                 if (e != null){
                     eventQueue.add(e);
-                    ballHasCollided = true;
+                    ballsThatHaveCollided.add(ball);
                 }
             }
             boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
+        }
+
+        //make sure the ball isn't going to crash into any walls
+        for (Ball ball: balls){
+            for (Wall wall: walls){
+                if (wall.handleBall(ball) != null) {
+                    ballsThatHaveCollided.add(ball);
+                }
+            }
         }
 
         // process events in queue
@@ -139,11 +141,33 @@ public class Board {
         // update every ball for gravity and their velocity
         for (Ball ball: balls){
             if (ball.isInPlay() == true) {
+                // Update algorithm (not used anymore):
                 // vel += gravity * timestep
                 // pos += vel * timestep
 
-                ball.setVelocity(ball.getVelocity().plus(new Vect(0, gravity * Constants.TIMESTEP)));
-                ball.setPosition(ball.getPosition().plus(ball.getVelocity().times(Constants.TIMESTEP)));
+                // Update algorithm (simultaneously):
+                // vel += gravity * timestep
+                // pos += vel * timestep + (1/2 * gravity * timestep^2)
+
+                Vect oldPos = ball.getPosition();
+                Vect oldVel = ball.getVelocity();
+
+                Vect term1 = oldVel.times(Constants.TIMESTEP);
+                Vect term2 = new Vect(0, 0.5 * Constants.GRAVITY * Constants.TIMESTEP * Constants.TIMESTEP);
+
+                Vect newPos = oldPos.plus(term1).plus(term2);
+                Vect newVel = oldVel.plus(new Vect(0, Constants.GRAVITY * Constants.TIMESTEP));
+
+                ball.setPosition(newPos);
+                ball.setVelocity(newVel);
+
+                System.out.println(" p: " + newPos);
+                System.out.println(" v: " + newVel);
+
+                double kinetic = 0.5 * ball.getVelocity().y()*ball.getVelocity().y();
+                double potential = (25) * (Constants.BOARD_HEIGHT - ball.getPosition().y());
+                System.out.println(" E: " + (kinetic + potential));
+
             }
         }
 

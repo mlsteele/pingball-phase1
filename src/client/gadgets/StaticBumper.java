@@ -76,7 +76,7 @@ public class StaticBumper implements Gadget {
     public BoardEvent handleBall(Ball ball) {
         if (isCircle) {
             Circle bumperCircle = new Circle(startingPoint, Constants.DEFAULT_CIRCLE_BUMPER_RADIUS);
-            if (Geometry.timeUntilCircleCollision(bumperCircle, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+            if (Geometry.timeUntilCircleCollision(bumperCircle, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP) {
                 hits ++;
                 Vect velocity = Geometry.reflectCircle(bumperCircle.getCenter(), ball.getCircle().getCenter(), ball.getVelocity());
                 ball.setVelocity(velocity);
@@ -84,7 +84,7 @@ public class StaticBumper implements Gadget {
             }
         } else {
             for (LineSegment line : geometry){
-                if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
+                if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP) {
                     hits ++;
                     // TODO what does this mean (below)?
                     //options to make more sensitive: increase radius of ball, increase timestep multiplication,
