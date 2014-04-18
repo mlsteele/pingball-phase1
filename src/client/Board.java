@@ -70,10 +70,10 @@ public class Board {
         this.frictionOne = f1;
         this.frictionTwo = f2;
 
-        Wall top = new Wall(true, Constants.BoardSide.TOP, this);
-        Wall bottom = new Wall(true, Constants.BoardSide.BOTTOM, this);
-        Wall left = new Wall(true, Constants.BoardSide.LEFT, this);
-        Wall right = new Wall(true, Constants.BoardSide.RIGHT, this);
+        Wall top = new Wall(Constants.BoardSide.TOP, this);
+        Wall bottom = new Wall(Constants.BoardSide.BOTTOM, this);
+        Wall left = new Wall(Constants.BoardSide.LEFT, this);
+        Wall right = new Wall(Constants.BoardSide.RIGHT, this);
         walls.add(top);
         walls.add(bottom);
         walls.add(left);
@@ -150,15 +150,18 @@ public class Board {
      * are only produced in one method (handleBall) by each gadget.
      */
     public String step() {
-        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " "); //String representation of Board
-                                                                                                                    //adds room for walls on all sides, so must increment
-                                                                                                                    //height and weight by 2
+        //String representation of Board
+        //adds room for walls on all sides, so must increment
+        //height and weight by 2
+        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " ");
+
+        // Draw the four corners
         boardString.setRect(0,0,".");
         boardString.setRect(0,21,".");
         boardString.setRect(21,0,".");
         boardString.setRect(21,21,".");
 
-        // balls which were taken by absorbers or invisible walls
+        // Balls which were taken by fused walls.
         Set<Ball> ballsToRemove = new HashSet<Ball>();
 
         //loop through all gadgets and call handleBall for all balls; add relevant events to boardQueue
@@ -173,26 +176,31 @@ public class Board {
             boardString.setRect((int)gadget.getPosition().x() + 1, (int)gadget.getPosition().y() + 1, gadget.stringRepresentation());
         }
 
-        //make sure the ball isn't going to crash into any walls
-        //and add it to board
+        // Handle Wall collisions
         for (Ball ball: balls){
             for (Wall wall: walls){
-                if (wall.getType() == Constants.BoardSide.TOP){
-                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y(), wall.stringRepresentation());
-                } else if (wall.getType() == Constants.BoardSide.LEFT){
-                    boardString.setRect((int)wall.getPosition().x(), (int)wall.getPosition().y()+1, wall.stringRepresentation());
-                } else if (wall.getType() == Constants.BoardSide.BOTTOM){
-                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
-                } else{ //RIGHT
-                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
-                }
-
+                // Handle collisions
                 if (wall.handleBall(ball) != null) { // the wall took the ball
                     ballsToRemove.add(ball);
                 }
             }
         }
 
+        // Draw Walls
+        for (Wall wall: walls){
+            // Draw the Wall
+            if (wall.getType() == Constants.BoardSide.TOP){
+                boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y(), wall.stringRepresentation());
+            } else if (wall.getType() == Constants.BoardSide.LEFT){
+                boardString.setRect((int)wall.getPosition().x(), (int)wall.getPosition().y()+1, wall.stringRepresentation());
+            } else if (wall.getType() == Constants.BoardSide.BOTTOM){
+                boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
+            } else{ //RIGHT
+                boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
+            }
+        }
+
+        // Remove balls from Board.
         for (Ball ball: ballsToRemove) {
             balls.remove(ball);
         }

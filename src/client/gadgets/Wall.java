@@ -14,12 +14,13 @@ import physics.Vect;
 /**
  * TODO
  *
+ * connectedBoardName is null iff the Wall is not connected to any other Board.
+ *
  * Rep Invariant:
- * * if connectedBoardName == null iff visible == false
+ * - TODO (none?)
  */
 public class Wall implements Gadget {
     private final Constants.BoardSide type;
-    private boolean visible;
     private final LineSegment wall;
     private String connectedBoardName;
     private ServerHandler serverHandler;
@@ -27,13 +28,13 @@ public class Wall implements Gadget {
 
     /**
      * Ball Constructor
-     * @param visible
-     * @param wallType
+     * @param wallType what kind of Wall this is.
+     * @param board Board that this Wall resides on
      */
-    public Wall(boolean visible, Constants.BoardSide wallType, Board board) {
+    public Wall(Constants.BoardSide wallType, Board board) {
         this.type = wallType;
-        this.visible = visible;
         this.board = board;
+        this.connectedBoardName = null;
         if (type == Constants.BoardSide.TOP){
             wall = new LineSegment(0, 0, Constants.BOARD_WIDTH, 0);
         } else if (type == Constants.BoardSide.BOTTOM){
@@ -50,32 +51,26 @@ public class Wall implements Gadget {
      * the wall will reflect the ball with the appropriate physics methods
      *
      * @param Ball object from Board
-     * @return a BoardEvent if the wall is taking the ball. else returns null
+     * @return a BoardEvent if the wall is taking the ball, otherwise null
      */
     public BoardEvent handleBall(Ball ball) {
         if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP){
-            if (visible){
+            if (connectedBoardName == null){
                 Vect reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
                 ball.setVelocity(reboundVelocity);
-            } else if (!visible){
-                //TODO: create an event (a BoardEventforBoards?)
-                //  for when the ball is going to pass through a shared wall
-                //  or maybe we should just have a board method takeBall() or something
-
-                // ball position will be set to be relative to the other board
+            } else {
+                // Transofrm ball position so that it shows up in the correct place on the fused board.
                 Vect newBallPosition = ball.getPosition().plus(ball.getVelocity().times(Constants.TIMESTEP));
                 if (type == Constants.BoardSide.TOP)    newBallPosition = new Vect(newBallPosition.x(), 20d);
                 if (type == Constants.BoardSide.BOTTOM) newBallPosition = new Vect(newBallPosition.x(), 0d);
                 if (type == Constants.BoardSide.LEFT)   newBallPosition = new Vect(20d, newBallPosition.y());
                 if (type == Constants.BoardSide.RIGHT)  newBallPosition = new Vect(0d, newBallPosition.y());
-
                 ball.setPosition(newBallPosition);
 
-                // send the ball to the server
-                // TODO do we need to send type?
+                // Send the ball to the server
                 serverHandler.send(new BallOutMessage(ball.getPosition(), ball.getVelocity(), type));
 
-                // tell the board we took the ball.
+                // Emit an event, notifying the Board that we took the ball out of play.
                 return new BoardEvent(this);
             }
         }
@@ -91,19 +86,19 @@ public class Wall implements Gadget {
     public String stringRepresentation() {
         // TODO lots of copypaste here
         String stringRep = "";
-        if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM){
-            for (int i = 0; i < Constants.BOARD_WIDTH; i++){
-                if (connectedBoardName != null && i-1 > 0 && i-1 < connectedBoardName.length()) {
-                    stringRep += connectedBoardName.substring(i-1, i);
+        if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM) {
+            for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
+                if (connectedBoardName != null && i < connectedBoardName.length()) {
+                    stringRep += connectedBoardName.charAt(i);
                 } else {
                     stringRep += ".";
                 }
             }
             stringRep += "\n";
-        } else if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT){
-            for (int i = 0; i < Constants.BOARD_HEIGHT; i++){
-                if (connectedBoardName != null && i-1 > 0 && i-1 < connectedBoardName.length()) {
-                    stringRep += connectedBoardName.substring(i-1, i);
+        } else if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT) {
+            for (int i = 0; i < Constants.BOARD_HEIGHT; i++) {
+                if (connectedBoardName != null && i < connectedBoardName.length()) {
+                    stringRep += connectedBoardName.charAt(i) + "\n";
                 } else {
                     stringRep += "." + "\n";
                 }
@@ -133,7 +128,6 @@ public class Wall implements Gadget {
      * @param name the name of the other board
      */
     public void connectToServer(String name) {
-        visible = true;
         connectedBoardName = name;
     }
 
@@ -141,7 +135,6 @@ public class Wall implements Gadget {
      * Disconnects this wall from a board over the network
      */
     public void disconnectFromServer() {
-        visible = false;
         connectedBoardName = null;
     }
 
@@ -150,19 +143,13 @@ public class Wall implements Gadget {
     }
 
     /**
-     * Rep Invariant:
-     * * if connectedBoardName == null iff visible == false
+     * Return the name of the Wall.
+     * Walls do not have names.
+     * @return null name
      */
     @Override
-    public void checkRep() {
-        if (visible && connectedBoardName != null || !visible && connectedBoardName == null) {
-            throw new RepInvariantException("visible: " + visible + "; board name: " + connectedBoardName);
-        }
-    }
-
-    @Override
     public String getName() {
-        return null; //TODO
+        return null;
     }
 
     @Override
@@ -183,4 +170,11 @@ public class Wall implements Gadget {
     public void specialAction() {
         // do nothing
     }
+
+    /**
+     * Verify the rep invariant of the class.
+     * The rep invariant is fully enforced by the java type system.
+     */
+    @Override
+    public void checkRep() { }
 }

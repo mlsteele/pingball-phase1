@@ -52,8 +52,11 @@ public class PingballClient {
         this.incomingMessages = new LinkedBlockingQueue<NetworkMessage>();
         if (socket != null) {
             serverHandler = new ServerHandler(socket, incomingMessages);
+            System.out.println("Sending initial message.");
             serverHandler.send(new ClientConnectMessage(board.getName()));
+            System.out.println("Sent initial message.");
             board.setServerHandler(serverHandler);
+            System.out.println("Already set serverHandler.");
         } else {
             this.serverHandler = null;
         }
@@ -61,9 +64,11 @@ public class PingballClient {
 
     public void startClient() throws IOException {
         if (socket != null) {
-            serverHandler.run();
+            Thread serverHandlerThread = new Thread(serverHandler);
+            serverHandlerThread.start();
         }
 
+        System.out.println("Reached main loop.");
         while(true){
             try {
                 // Sleep to limit framerate.
@@ -84,7 +89,7 @@ public class PingballClient {
                     String name = ((BoardFuseMessage) message).getBoardName();
                     board.connectWallToServer(side, name);
                 } else if (message instanceof BoardUnfuseMessage) {
-                    Constants.BoardSide side = ((BoardFuseMessage) message).getSide();
+                    Constants.BoardSide side = ((BoardUnfuseMessage) message).getSide();
                     board.disconnectWallFromServer(side);
                 } else if (message instanceof ConnectionRefusedMessage) {
                     // when the serverHandler receives a ConnectionRefusedMessage it

@@ -90,6 +90,7 @@ public class ServerHandler implements Runnable {
      * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     private void kill() {
+        // TODO if the server dies, we should probably disconnect all local walls?
         if (!socket.isClosed()) {
             try {
                 out.close();
