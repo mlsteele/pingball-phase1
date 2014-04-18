@@ -21,6 +21,9 @@ import common.Constants.BoardSide;
  * than the alternative of using fragile language introspection
  * to find implementations.
  *
+ * Thread Safety Argument:
+ * * NetworkMessages are always immutable.
+ *
  */
 public abstract class NetworkMessage {
     // Standard separator for message units.
@@ -114,6 +117,7 @@ public abstract class NetworkMessage {
 
     /**
      * Exception thrown when a NetworkMessage message cannot be decoded.
+     * This is a checked exception.
      */
     public static class DecodeException extends Exception {
         private static final long serialVersionUID = 1L;
@@ -166,7 +170,7 @@ public abstract class NetworkMessage {
      * Serialize a Vect.
      * Helper method for message serialization.
      *
-     * Converts a Vect into the form:
+     * Converts a Vect with x=1.0 and y=2.0 into the form:
      * "1.0 2.0"
      *
      * @param v Vect to serialize
@@ -183,7 +187,7 @@ public abstract class NetworkMessage {
      * Converts a Vect serialized using serializeVect
      * back into the original Vect.
      *
-     * @param v string representation of Vect
+     * @param v string representation of Vect, must be of the form "double double"
      * @return deserialized Vect
      */
     protected static Vect deserializeVect(String v) throws DecodeException {
