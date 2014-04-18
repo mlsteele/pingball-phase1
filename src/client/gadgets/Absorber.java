@@ -136,7 +136,10 @@ public class Absorber implements Gadget {
     public void specialAction() {
         if (balls.size() > 0){
             Ball newBall = balls.remove(0);
-            newBall.setVelocity(Constants.SHOOT_VELOCITY);
+            //change velocity for time ball spends in absorber
+            double velocityAfterAbsorberMag = -1.0*Math.sqrt((Constants.SHOOT_VELOCITY*Constants.SHOOT_VELOCITY + (2*Constants.GRAVITY*height)));
+            Vect velocityAfterAbsorber = new Vect(0, velocityAfterAbsorberMag);
+            newBall.setVelocity(velocityAfterAbsorber);
             //TODO: add ball to Board
             newBall.setInPlay(true);
             Vect shootStart = new Vect(startingPoint.x() + width, startingPoint.y()); //arbitrary to give it room
