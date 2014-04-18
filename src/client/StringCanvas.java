@@ -29,9 +29,9 @@ public class StringCanvas {
         userBoard = new String[rows][columns];
 
         //create skeleton
-        for (int i = 0; i < rows + 2; i++){
-            for (int j = 0; j < columns + 2; j++){
-                    userBoard[i][j] = filler;
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++){
+                userBoard[i][j] = filler;
             }
         }
     }
