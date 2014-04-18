@@ -233,7 +233,9 @@ public class Board {
                 Vect term2 = new Vect(0, 0.5 * gravity * Constants.TIMESTEP * Constants.TIMESTEP);
 
                 Vect newPos = oldPos.plus(term1).plus(term2);
-                Vect newVel = oldVel.plus(new Vect(0, gravity * Constants.TIMESTEP));
+                double frictionScalar = 1-(frictionOne)*(Constants.TIMESTEP) - frictionTwo*oldVel.length()*Constants.TIMESTEP;
+                Vect frictionVel = oldVel.times(frictionScalar);
+                Vect newVel = frictionVel.plus(new Vect(0, gravity * Constants.TIMESTEP));
 
                 ball.setPosition(newPos);
                 ball.setVelocity(newVel);
