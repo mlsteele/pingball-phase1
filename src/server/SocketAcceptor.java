@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
-import common.netprotocol.NetworkMessage;
+import common.Constants;
 
 /**
  * Runnable that accepts socket connections and starts ClientHandler threads
@@ -31,6 +31,8 @@ public class SocketAcceptor implements Runnable {
         this.serverSocket = new ServerSocket(port);
         this.messageQueue = queue;
         this.deadClientsQueue = deadClientsQueue;
+
+        checkRep();
     }
 
     /**
@@ -43,8 +45,18 @@ public class SocketAcceptor implements Runnable {
                 Socket socket = serverSocket.accept();
                 Thread thread = new Thread(new ClientHandler(socket, messageQueue, deadClientsQueue));
                 thread.start();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                if (Constants.DEBUG) System.err.println(e.getMessage());
+            }
         }
     }
 
+    /**
+     * Rep invariant: none
+     *
+     * this is a do-nothing method
+     */
+    private void checkRep() {
+        return;
+    }
 }

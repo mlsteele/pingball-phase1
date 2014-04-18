@@ -55,7 +55,7 @@ public class ClientHandler implements Runnable{
         this.messageQueue = queue;
         this.deadClientsQueue = deadClientsQueue;
 
-        if (Constants.DEBUG) { checkRep(); }
+        checkRep();
     }
 
     /**
@@ -115,7 +115,7 @@ public class ClientHandler implements Runnable{
         }
         deadClientsQueue.add(this);
 
-        if (Constants.DEBUG) { checkRep(); }
+        checkRep();
 
     }
 

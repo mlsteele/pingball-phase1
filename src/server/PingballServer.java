@@ -3,7 +3,6 @@ package server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,7 +22,6 @@ import common.Constants;
 import common.RepInvariantException;
 
 import common.netprotocol.*;
-import common.netprotocol.NetworkMessage.DecodeException;
 
 /**
  * Makes a PingballServer that:
@@ -81,6 +79,8 @@ public class PingballServer {
         this.clients = new HashMap<String, ClientHandler>();
         this.horizontalBoardJoins = new ArrayList<List<String>>();
         this.verticalBoardJoins = new ArrayList<List<String>>();
+
+        checkRep();
     }
 
     /**
@@ -115,6 +115,8 @@ public class PingballServer {
                 if (Constants.DEBUG) System.out.println("Received message: " + receivedMessage.getClientHandler().getName() + receivedMessage.getMessage().serialize());
                 handleMessage(receivedMessage);
             }
+
+            checkRep();
         }
     }
 
@@ -155,6 +157,8 @@ public class PingballServer {
         }
         // remove from clients
         clients.remove(ch.getName());
+
+        checkRep();
     }
 
     /**
@@ -351,8 +355,7 @@ public class PingballServer {
         }
     }
     /**
-     * Asserts the rep invariants.
-     * @throws RepInvariantException if the rep invariant is violated
+     * Asserts the rep invariants by throwing a runtime exception if they fail
      *
      * Rep Invariants:
      *  * MIN_PORT <= port <= MAX_PORT
@@ -363,7 +366,7 @@ public class PingballServer {
      *      (e.g. "board1" cannot be the left side of a horizontal join to two different boards)
      *
      */
-    private void checkRep() throws RepInvariantException {
+    private void checkRep() {
         if (port < MIN_PORT || port > MAX_PORT) {
             throw new RepInvariantException("Port out of range");
         }

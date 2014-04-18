@@ -31,6 +31,8 @@ public class AuthoredMessage {
     public AuthoredMessage(NetworkMessage message, ClientHandler ch) {
         this.message = message;
         this.ch = ch;
+
+        checkRep();
     }
 
     /**

@@ -1,6 +1,5 @@
 package common.netprotocol;
 
-import common.Constants;
 import common.Constants.BoardSide;
 
 /**
@@ -54,7 +53,7 @@ public class BoardFuseMessage extends NetworkMessage {
         this.boardName = boardName;
         this.side = side;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**

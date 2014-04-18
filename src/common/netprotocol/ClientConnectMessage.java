@@ -1,6 +1,5 @@
 package common.netprotocol;
 
-import common.Constants;
 
 /**
  * Client -> Server
@@ -49,7 +48,7 @@ public class ClientConnectMessage extends NetworkMessage {
     public ClientConnectMessage(String boardName) {
         this.boardName = boardName;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**
