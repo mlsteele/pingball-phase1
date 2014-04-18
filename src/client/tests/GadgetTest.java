@@ -78,7 +78,7 @@ import client.gadgets.StaticBumper;
  * +Bumper:   Nothing happens
  */
 public class GadgetTest {
-    private static final Absorber regAbsorber = new Absorber("absorber", new Vect(0,17), 20, 3, 25);
+    private static final Absorber regAbsorber = new Absorber("absorber", new Vect(0,17), 20, 3);
     private static final Flipper regLeftFlipper = new Flipper("left", new Vect(8,2), 0, Constants.FlipperType.LEFT);
     private static final Flipper regRightFlipper = new Flipper("right", new Vect(11,2), 0, Constants.FlipperType.RIGHT);
     private static final StaticBumper squareBumper = new StaticBumper("square", Constants.BumperType.SQUARE, new Vect(0,0));
@@ -130,7 +130,7 @@ public class GadgetTest {
      */
     @Test(expected=RepInvariantException.class)
     public void badAbsorber() throws RepInvariantException{
-        Absorber badAbsorber = new Absorber("absorber", new Vect(0,17), 23, 3, 25);
+        Absorber badAbsorber = new Absorber("absorber", new Vect(0,17), 23, 3);
     }
 
     /**
