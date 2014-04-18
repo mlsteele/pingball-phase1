@@ -33,7 +33,6 @@ import common.Constants;
 
 public class Absorber implements Gadget {
     private final List<Ball> balls;
-    private boolean ballContained;
     private final int width;  //L
     private final int height; //L
     private final Vect startingPoint;
@@ -63,8 +62,6 @@ public class Absorber implements Gadget {
         geometry.add(new LineSegment(startingPoint.x() + width, startingPoint.y() + height, startingPoint.x(), startingPoint.y() + height));
         geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + height, startingPoint.x(), startingPoint.y()));
 
-        ballContained = false;
-
         checkRep();
     }
 
@@ -78,6 +75,7 @@ public class Absorber implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         // Check for ball hit.
+        System.out.println("Velocity1: " + ball.getVelocity());
         for (LineSegment line : geometry) {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision <= Constants.TIMESTEP) {
@@ -88,7 +86,6 @@ public class Absorber implements Gadget {
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
                 ball.setInPlay(false);
-                ballContained = true;
                 balls.add(ball);
                 checkRep();
                 return new BoardEvent(this);
