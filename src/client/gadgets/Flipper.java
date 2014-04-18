@@ -108,14 +108,14 @@ public class Flipper implements Gadget{
         rightPivot.add("\\" + " " + "\n" + " " + "\\");
          */
 
-        if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  90 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  90 && rotated))))){
+        if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))))){
             return "|" + " " + "\n" + "|" + " ";
-        }else if (((type == Constants.FlipperType.LEFT) && ((orientation ==  90 && !rotated) || (orientation ==  180 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  270 && !rotated) || (orientation ==  180 && rotated))))){
+        }else if (((type == Constants.FlipperType.LEFT) && ((orientation ==  270 && !rotated) || (orientation ==  180 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  90 && !rotated) || (orientation ==  180 && rotated))))){
             return "  " + "\n" + "--";
-        } else if(((type == Constants.FlipperType.LEFT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))))){
+        } else if(((type == Constants.FlipperType.LEFT) && ((orientation ==  180 && !rotated) || (orientation ==  90 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  0 && !rotated) || (orientation ==  90 && rotated))))){
             return " " + "|" + "\n" + " " + "|";
         } else{
             return "--" + "\n" + "  ";
@@ -180,14 +180,14 @@ public class Flipper implements Gadget{
         int flipLength = 2;
         LineSegment flipperNew;
 
-        if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  90 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  90 && rotated))))){
+        if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))))){
             flipperNew = new LineSegment(startingPoint.x() + flipLength, startingPoint.y(), startingPoint.x() + flipLength, startingPoint.y() + flipLength);
-        }else if (((type == Constants.FlipperType.LEFT) && ((orientation ==  90 && !rotated) || (orientation ==  180 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  270 && !rotated) || (orientation ==  180 && rotated))))){
+        }else if (((type == Constants.FlipperType.LEFT) && ((orientation ==  270 && !rotated) || (orientation ==  180 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  90 && !rotated) || (orientation ==  180 && rotated))))){
             flipperNew = new LineSegment(startingPoint.x(), startingPoint.y() + flipLength, startingPoint.x() + flipLength, startingPoint.y() + flipLength);
-        } else if(((type == Constants.FlipperType.LEFT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))) ||
-                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))))){
+        } else if(((type == Constants.FlipperType.LEFT) && ((orientation ==  180 && !rotated) || (orientation ==  90 && rotated))) ||
+                (((type == Constants.FlipperType.RIGHT) && ((orientation ==  0 && !rotated) || (orientation ==  90 && rotated))))){
             flipperNew = new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x(), startingPoint.y() + flipLength);
         } else{
             flipperNew = new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + flipLength, startingPoint.y() + 2);
