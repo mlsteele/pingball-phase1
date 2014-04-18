@@ -86,7 +86,7 @@ public class BoardTest {
         double velocityMagnitude = 0; //L/s
         Vect ball1Velocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
         Vect ball2Velocity = new Vect(1, 5);
-        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4, 25);
+        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
         Ball ball = new Ball(0.25, ballStart, ball1Velocity);
         Ball ball2 = new Ball(0.25, ballStart2, ball2Velocity);
         boardGadgets.add(absorber);
@@ -120,7 +120,7 @@ public class BoardTest {
         double velocityMagnitude = 0; //L/s
         Vect ball1Velocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
         Vect ball2Velocity = new Vect(1, 5);
-        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4, 25);
+        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
         Ball ball = new Ball(0.25, ballStart, ball1Velocity);
         Ball ball2 = new Ball(0.25, ballStart2, ball2Velocity);
         boardGadgets.add(absorber);
@@ -154,7 +154,7 @@ public class BoardTest {
         double velocityMagnitude = 3; //L/s
         Vect initialBallVelocity = new Vect(1, velocityMagnitude); //falls downward when y-velocity is positive
         StaticBumper square = new StaticBumper("SquareB", Constants.BumperType.SQUARE, squareStart);
-        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4, 25);
+        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
         Ball ball = new Ball(0.25, ballStart, initialBallVelocity);
         boardGadgets.add(square);
         boardGadgets.add(absorber);

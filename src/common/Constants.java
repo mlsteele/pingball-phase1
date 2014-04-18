@@ -11,7 +11,7 @@ public class Constants {
     public static final int BOARD_HEIGHT = 20; // in L
     public static final double ANGULAR_ROTATION = 18.849555922; //for flipper; radians/sec
     public static final double TIMESTEP = 1d/20d; //seconds
-    public static final double SHOOT_VELOCITY = -50d; //from absorber straight into air; L/s
+    public static final double SHOOT_VELOCITY = 50d; //from absorber straight into air; L/s
     public static final double DEFAULT_FRICTION1 = 0.025; // per second
     public static final double DEFAULT_FRICTION2 = 0.025; // per L
     public static final double BALL_RADIUS = 0.5; // in L
