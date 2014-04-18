@@ -190,10 +190,10 @@ public class Board {
                 Vect oldVel = ball.getVelocity();
 
                 Vect term1 = oldVel.times(Constants.TIMESTEP);
-                Vect term2 = new Vect(0, 0.5 * Constants.GRAVITY * Constants.TIMESTEP * Constants.TIMESTEP);
+                Vect term2 = new Vect(0, 0.5 * gravity * Constants.TIMESTEP * Constants.TIMESTEP);
 
                 Vect newPos = oldPos.plus(term1).plus(term2);
-                Vect newVel = oldVel.plus(new Vect(0, Constants.GRAVITY * Constants.TIMESTEP));
+                Vect newVel = oldVel.plus(new Vect(0, gravity * Constants.TIMESTEP));
 
                 ball.setPosition(newPos);
                 ball.setVelocity(newVel);
