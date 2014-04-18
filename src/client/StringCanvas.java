@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 
 import common.Constants;
+import common.RepInvariantException;
 import client.gadgets.Gadget;
 
 /**
@@ -130,6 +131,14 @@ public class StringCanvas {
             || x == Constants.BOARD_WIDTH + 1
             || y == 0
             || y == Constants.BOARD_HEIGHT + 1;
+    }
+
+    /**
+     * Rep invariant: boundaries should be
+     */
+    public void checkRep() {
+        //flippers must be allowed to rotate 2 Ls below their rotation point
+
     }
 
 
