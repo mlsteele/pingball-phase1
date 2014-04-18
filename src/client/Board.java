@@ -121,7 +121,13 @@ public class Board {
      * are only produced in one method (handleBall) by each gadget.
      */
     public String step() {
-        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
+        StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " "); //String representation of Board
+                                                                                                                    //adds room for walls on all sides, so must increment
+                                                                                                                    //height and weight by 2
+        boardString.setRect(0,0,".");
+        boardString.setRect(0,21,".");
+        boardString.setRect(21,0,".");
+        boardString.setRect(21,21,".");
 
         // Keep track of which balls have collided this frame.
         Set<Ball> ballsThatHaveCollided = new HashSet<Ball>();
@@ -136,12 +142,23 @@ public class Board {
                     ballsThatHaveCollided.add(ball);
                 }
             }
-            boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
+            boardString.setRect((int)gadget.getPosition().x() + 1, (int)gadget.getPosition().y() + 1, gadget.stringRepresentation());
         }
 
         //make sure the ball isn't going to crash into any walls
+        //and add it to board
         for (Ball ball: balls){
             for (Wall wall: walls){
+                if (wall.getType() == Constants.BoardSide.TOP){
+                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y(), wall.stringRepresentation());
+                } else if (wall.getType() == Constants.BoardSide.LEFT){
+                    boardString.setRect((int)wall.getPosition().x(), (int)wall.getPosition().y()+1, wall.stringRepresentation());
+                } else if (wall.getType() == Constants.BoardSide.BOTTOM){
+                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
+                } else{ //RIGHT
+                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
+                }
+
                 if (wall.handleBall(ball) != null) {
                     ballsThatHaveCollided.add(ball);
                 }
@@ -186,7 +203,7 @@ public class Board {
         //add balls to boardString to complete it
         for (Ball ball: balls){
             if (ball.isInPlay() == true){
-                boardString.setRect((int) Math.round(ball.getCircle().getCenter().x()), (int) Math.round(ball.getCircle().getCenter().y()), "*");
+                boardString.setRect((int)(ball.getCircle().getCenter().x() + 1), (int)(ball.getCircle().getCenter().y() + 1), "*");
             }
         }
         return boardString.getString();

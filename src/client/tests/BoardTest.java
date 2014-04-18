@@ -1,6 +1,10 @@
-package client;
+package client.tests;
 
 import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,11 @@ import common.Constants;
 import physics.Angle;
 import physics.LineSegment;
 import physics.Vect;
+import client.Ball;
+import client.Board;
+import client.BoardEventSubscription;
+import client.SimpleFileReader;
+import client.boardlang.BoardFactory;
 import client.gadgets.Absorber;
 import client.gadgets.Flipper;
 import client.gadgets.Gadget;
@@ -67,11 +76,10 @@ public class BoardTest {
     /**
      * Testing recievesBall for Absorber
      */
-
     @Test
     public void absorberRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
-        int numIterations = 12; //times to activate board.step()
+        int numIterations = 40; //times to activate board.step()
         Vect ballStart = new Vect(9,0);
         Vect ballStart2 = new Vect(11,0);
         Vect absorberStart = new Vect(0,15);
@@ -100,10 +108,43 @@ public class BoardTest {
     }
 
     /**
+     * Testing recievesBall for Absorber that triggers itself
+     */
+    @Test
+    public void refAbsorberRecievesBall() {
+        List<Gadget> boardGadgets = new ArrayList<Gadget>();
+        int numIterations = 400; //times to activate board.step()
+        Vect ballStart = new Vect(9,0);
+        Vect ballStart2 = new Vect(11,0);
+        Vect absorberStart = new Vect(0,15);
+        double velocityMagnitude = 0; //L/s
+        Vect ball1Velocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
+        Vect ball2Velocity = new Vect(1, 5);
+        Absorber absorber = new Absorber("Absorber", absorberStart, 20, 4);
+        Ball ball = new Ball(0.25, ballStart, ball1Velocity);
+        Ball ball2 = new Ball(0.25, ballStart2, ball2Velocity);
+        boardGadgets.add(absorber);
+
+        BoardEventSubscription absorbed = new BoardEventSubscription(absorber, absorber);
+        Board testBoardA = new Board("testBoardA", boardGadgets, 25, 0, 0);
+        testBoardA.addSubscription(absorbed);
+        testBoardA.addBall(ball);
+        testBoardA.addBall(ball2);
+
+        for(int i = 0; i < numIterations; i++){
+            String out = testBoardA.step();
+            System.out.println(out);
+        }
+
+        /*how do I make this an test?*/
+    }
+
+
+    /**
      * Testing recievesBall for Bumper
      */
 
-    @Test
+
     public void bumperRecievesBall() {
         List<Gadget> boardGadgets = new ArrayList<Gadget>();
         int numIterations = 20; //times to activate board.step()
@@ -196,6 +237,22 @@ public class BoardTest {
                 Thread.currentThread().interrupt();
             }
         }
+
+    }
+
+    /**
+     * sampleBoard1
+     */
+    public void sampleBoard1(){
+        try {
+            Board board = BoardFactory.parse(SimpleFileReader.readFile(new File("boards/sampleBoard1.pb")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
     }
 
