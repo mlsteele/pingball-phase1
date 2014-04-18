@@ -188,7 +188,7 @@ public class BoardFactory {
             int width = Integer.parseInt(ctx.INTEGER(2).getText());
             int height = Integer.parseInt(ctx.INTEGER(3).getText());
             if (DEBUG) System.out.println("absorber name=" + name + " x=" + x + " y=" + y + " w=" + width + " h=" + height);
-            gadgets.put(name, new Absorber(name, new Vect(x, y), width, height, gravity));
+            gadgets.put(name, new Absorber(name, new Vect(x, y), width, height));
         }
 
         // fire trigger=NAME action=NAME

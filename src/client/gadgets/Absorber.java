@@ -36,7 +36,6 @@ public class Absorber implements Gadget {
     private final int width;  //L
     private final int height; //L
     private final Vect startingPoint;
-    private final double gravity;
     private final String name;
     private final List<LineSegment> geometry;
 
@@ -48,14 +47,12 @@ public class Absorber implements Gadget {
      * @param startingPoint upper left-hand corner coordinates for the Absorber
      * @param width width of Absorber, must be less than BOARD_WIDTH
      * @param height height of Absorber, must less than BOARD_HEIGHT
-     * @param gravity magnitude of gravity of the board the Absorber is on.
      */
-    public Absorber(String name, Vect startingPoint, int width, int height, double gravity){
+    public Absorber(String name, Vect startingPoint, int width, int height){
         this.name = name;
         this.width = width;
         this.height = height;
         this.startingPoint = startingPoint;
-        this.gravity = gravity;
         balls = new ArrayList<Ball>();
 
         // Create list of LineSegments to represent Absorber boundary rectangle.
@@ -137,11 +134,8 @@ public class Absorber implements Gadget {
     public void specialAction() {
         if (balls.size() > 0){
             Ball newBall = balls.remove(0);
-            //change velocity for time ball spends in absorber
-            double velocityAfterAbsorberMag = -1.0*Math.sqrt((Constants.SHOOT_VELOCITY*Constants.SHOOT_VELOCITY + (2*gravity*height)));
-            Vect velocityAfterAbsorber = new Vect(0, velocityAfterAbsorberMag);
+            Vect velocityAfterAbsorber = new Vect(0, Constants.SHOOT_VELOCITY);
             newBall.setVelocity(velocityAfterAbsorber);
-            //TODO: add ball to Board
             newBall.setInPlay(true);
             Vect shootStart = new Vect(startingPoint.x() + width - 0.25, startingPoint.y() - 0.25);
             newBall.setPosition(shootStart);
