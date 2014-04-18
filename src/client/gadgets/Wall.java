@@ -1,5 +1,9 @@
-package client;
+package client.gadgets;
 
+import client.Ball;
+import client.Board;
+import client.BoardEvent;
+import client.ServerHandler;
 import common.Constants;
 import common.RepInvariantException;
 import common.netprotocol.BallOutMessage;
@@ -8,12 +12,12 @@ import physics.LineSegment;
 import physics.Vect;
 
 /**
- *
+ * TODO
  *
  * Rep Invariant:
  * * if connectedBoardName == null iff visible == false
  */
-public class Wall {
+public class Wall implements Gadget {
     private final Constants.BoardSide type;
     private boolean visible;
     private final LineSegment wall;
@@ -46,10 +50,9 @@ public class Wall {
      * the wall will reflect the ball with the appropriate physics methods
      *
      * @param Ball object from Board
-     * @return true if the wall is taking the ball
-     * TODO this is janky
+     * @return a BoardEvent if the wall is taking the ball. else returns null
      */
-    public boolean handleBall(Ball ball) {
+    public BoardEvent handleBall(Ball ball) {
         if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP){
             if (visible){
                 Vect reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
@@ -60,39 +63,23 @@ public class Wall {
                 //  or maybe we should just have a board method takeBall() or something
 
                 // ball position will be set to be relative to the other board
-                Vect deltaVelFromBoardCross;
-                switch (type) {
-                    case TOP:
-                        deltaVelFromBoardCross = new Vect(0d, -20d);
-                        break;
-                    case BOTTOM:
-                        deltaVelFromBoardCross = new Vect(0d, 20d);
-                        break;
-                    case LEFT:
-                        deltaVelFromBoardCross = new Vect(20d, 0d);
-                        break;
-                    default: //case RIGHT:
-                        deltaVelFromBoardCross = new Vect(-20d, 0d);
-                        break;
-                }
+                Vect newBallPosition = ball.getPosition().plus(ball.getVelocity().times(Constants.TIMESTEP));
+                if (type == Constants.BoardSide.TOP)    newBallPosition = new Vect(newBallPosition.x(), 20d);
+                if (type == Constants.BoardSide.BOTTOM) newBallPosition = new Vect(newBallPosition.x(), 0d);
+                if (type == Constants.BoardSide.LEFT)   newBallPosition = new Vect(20d, newBallPosition.y());
+                if (type == Constants.BoardSide.RIGHT)  newBallPosition = new Vect(0d, newBallPosition.y());
 
-                // move ball to collide with or pass through wall, and delta it to be relative to new board
-                // this must be in 1 step because doing 1 then the other would cause ball to have an invalid state & checkRep would fail
-                ball.setPosition(
-                        ball.getPosition()
-                            .plus(ball.getVelocity().times(Constants.TIMESTEP))
-                            .plus(deltaVelFromBoardCross)
-                );
+                ball.setPosition(newBallPosition);
 
                 // send the ball to the server
                 // TODO do we need to send type?
                 serverHandler.send(new BallOutMessage(ball.getPosition(), ball.getVelocity(), type));
 
                 // tell the board we took the ball.
-                return true;
+                return new BoardEvent(this);
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -128,10 +115,15 @@ public class Wall {
     /**
      * @return startingPoint Vector representation of point at the top left corner of the wall
      */
+    @Override
     public Vect getPosition() {
         return wall.p1();
     }
 
+    /**
+     * Which type of wall is this? what side is it?
+     * @return the BoardSide which this wall is
+     */
     public Constants.BoardSide getType() {
         return type;
     }
@@ -161,9 +153,34 @@ public class Wall {
      * Rep Invariant:
      * * if connectedBoardName == null iff visible == false
      */
-    private void checkRep() {
+    @Override
+    public void checkRep() {
         if (visible && connectedBoardName != null || !visible && connectedBoardName == null) {
             throw new RepInvariantException("visible: " + visible + "; board name: " + connectedBoardName);
         }
+    }
+
+    @Override
+    public String getName() {
+        return null; //TODO
+    }
+
+    @Override
+    public double getHeight() {
+        if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT)
+            return 20d;
+        return 0d;
+    }
+
+    @Override
+    public double getWidth() {
+        if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM)
+            return 20d;
+        return 0d;
+    }
+
+    @Override
+    public void specialAction() {
+        // do nothing
     }
 }

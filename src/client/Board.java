@@ -15,6 +15,7 @@ import physics.Vect;
 import common.Constants;
 import common.RepInvariantException;
 import client.gadgets.Gadget;
+import client.gadgets.Wall;
 
 /**
  * Board class to contain and run physics and interaction in a pingball board.
@@ -109,9 +110,7 @@ public class Board {
      * @param name the name of the connected
      */
     public void connectWallToServer(Constants.BoardSide side, String name) {
-        List<Constants.BoardSide> sides = Arrays.asList(Constants.BoardSide.TOP, Constants.BoardSide.BOTTOM, Constants.BoardSide.LEFT, Constants.BoardSide.RIGHT);
-        int wallSideIndex = sides.indexOf(side);
-        walls.get(wallSideIndex).connectToServer(name);
+        getWall(side).connectToServer(name);
     }
 
     /**
@@ -119,15 +118,29 @@ public class Board {
      * @param side the side to disconnect
      */
     public void disconnectWallFromServer(Constants.BoardSide side) {
-        List<Constants.BoardSide> sides = Arrays.asList(Constants.BoardSide.TOP, Constants.BoardSide.BOTTOM, Constants.BoardSide.LEFT, Constants.BoardSide.RIGHT);
-        int wallSideIndex = sides.indexOf(side);
-        walls.get(wallSideIndex).disconnectFromServer();
+        getWall(side).disconnectFromServer();
     }
 
+    /**
+     * sets the server handler so that the walls can connect to the server
+     * @param sh the server handler
+     */
     public void setServerHandler(ServerHandler sh) {
         for (Wall wall: walls) {
             wall.setServerHandler(sh);
         }
+    }
+
+    /**
+     * get the wall on the given side
+     * @param side the side
+     * @return the wall with type of that side
+     */
+    public Wall getWall(Constants.BoardSide side) {
+        for (Wall wall: walls) {
+            if (wall.getType() == side) return wall;
+        }
+        throw new RuntimeException("Unexpected state: no wall of type " + side);
     }
 
     /**
@@ -174,7 +187,7 @@ public class Board {
                     boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
                 }
 
-                if (wall.handleBall(ball)) { // the wall took the ball
+                if (wall.handleBall(ball) != null) { // the wall took the ball
                     ballsToRemove.add(ball);
                 }
             }

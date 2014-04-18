@@ -30,10 +30,10 @@ public interface Gadget {
      *
      * @param ball Any legal ball can be handled
      * @return BoardEvent to be queued and handled by the Board class
-     *         returned iff there is a collision with the gadget
+     *         returned iff the gadget fires an event. (Usually a ball collision
+     *         will trigger an event, but walls for example will return an event
+     *         if they take the ball)
      */
-    //returns a BoardEvent that will be queued and handled by Board class
-    //  after the gadget is hit by a ball
     public BoardEvent handleBall(Ball ball);
 
     /**
@@ -63,8 +63,9 @@ public interface Gadget {
      */
     public String stringRepresentation();
 
-    //debugging String that includes information about the Gadget object
-    //  like size, position, and type
+    /** debugging String that includes information about the Gadget object
+     *  like size, position, and type
+     */
     public String toString();
 
     /**
