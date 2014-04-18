@@ -1,5 +1,6 @@
 package common.netprotocol;
 
+import common.Constants;
 import common.Constants.BoardSide;
 
 /**
@@ -9,24 +10,26 @@ import common.Constants.BoardSide;
  *
  * ADT:
  * * BoardUnfuseMessage contains the following data:
- * * * side: which side the unfusing board was connected to
+ *      * side: which side the unfusing board was connected to
  *
  * Thread Safety Argument:
- * - all data is immutable.
+ * * all data is immutable.
+ *
+ * Rep Invariant:
+ * * all data is immutable (enforced by type system)
+ *
  */
 public class BoardUnfuseMessage extends NetworkMessage {
-    /**
-     * Rep invariant:
-     * - all data is immutable (enforced by type system)
-     */
+
     private final BoardSide side; // which side to unfuse
 
     /**
      * Deserialize the message.
      * See NetworkMessage.deserialize for specification.
      * See this NetworkMessage's serialize for specific serialization specification.
-     * @return decoded NetworkMessage
+     *
      * @param body body of the message
+     * @return decoded NetworkMessage
      */
     public static NetworkMessage deserialize(String body) throws DecodeException {
         String units[] = body.split(STD_SEP);
@@ -43,6 +46,8 @@ public class BoardUnfuseMessage extends NetworkMessage {
      */
     public BoardUnfuseMessage(BoardSide side) {
         this.side = side;
+
+        if (Constants.DEBUG) checkRep();
     }
 
     /**
@@ -56,9 +61,19 @@ public class BoardUnfuseMessage extends NetworkMessage {
     }
 
     /**
-     * @return return side
+     * @return side
      */
     public BoardSide getSide() {
         return side;
+    }
+
+
+    /**
+     * Our rep invariant is enforced by Java type-checking.
+     *
+     * This is a do-nothing method.
+     */
+    private void checkRep() {
+        return;
     }
 }
