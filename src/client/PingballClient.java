@@ -53,6 +53,7 @@ public class PingballClient {
         if (socket != null) {
             serverHandler = new ServerHandler(socket, incomingMessages);
             serverHandler.send(new ClientConnectMessage(board.getName()));
+            board.setServerHandler(serverHandler);
         } else {
             this.serverHandler = null;
         }
@@ -82,7 +83,15 @@ public class PingballClient {
                     Constants.BoardSide side = ((BoardFuseMessage) message).getSide();
                     String name = ((BoardFuseMessage) message).getBoardName();
                     board.connectWallToServer(side, name);
-                } // TODO the rest of the messages
+                } else if (message instanceof BoardUnfuseMessage) {
+                    Constants.BoardSide side = ((BoardFuseMessage) message).getSide();
+                    board.disconnectWallFromServer(side);
+                } else if (message instanceof ConnectionRefusedMessage) {
+                    // the serverHandler has already killed itself
+                    if (Constants.DEBUG) {
+                        System.err.println("Connection refused by server. Reason: " + ((ConnectionRefusedMessage) message).getReason());
+                    }
+                }
             }
 
             String boardView = board.step();
