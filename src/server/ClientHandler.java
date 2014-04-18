@@ -114,10 +114,7 @@ public class ClientHandler implements Runnable{
         }
         deadClientsQueue.add(this);
 
-        if (Constants.DEBUG) {
-            try { checkRep(); }
-            catch (RepInvariantException e) { System.err.println(e.getMessage()); }
-        }
+        if (Constants.DEBUG) { checkRep(); }
 
     }
 
