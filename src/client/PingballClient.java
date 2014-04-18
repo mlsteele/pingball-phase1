@@ -51,7 +51,7 @@ public class PingballClient {
         this.socket = socket;
         this.incomingMessages = new LinkedBlockingQueue<NetworkMessage>();
         if (socket != null) {
-            serverHandler = new ServerHandler(socket, incomingMessages, board.getName());
+            serverHandler = new ServerHandler(socket, incomingMessages);
             serverHandler.send(new ClientConnectMessage(board.getName()));
         } else {
             this.serverHandler = null;
@@ -171,14 +171,21 @@ public class PingballClient {
             }
         }
 
-
+        PingballClient client = null;
         try {
-            PingballClient client = new PingballClient(board, socket);
-            client.startClient();
+            client = new PingballClient(board, socket);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Terminated due to erorr while communicating with server.");
-            return;
+            System.err.println("Error while connecting to server");
+        }
+
+        if (client != null) {
+            try {
+                client.startClient();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Terminated due to erorr while communicating with server.");
+                return;
+            }
         }
     }
 }
