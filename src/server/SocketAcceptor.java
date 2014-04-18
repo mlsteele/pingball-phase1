@@ -11,9 +11,12 @@ import common.Constants;
  * Runnable that accepts socket connections and starts ClientHandler threads
  *
  * Thread Safety Argument:
- * * This is the only thread that will use the serverSocket.
- * * There will only ever be one SocketAcceptor.
- * * Sockets given to ClientHandlers are no longer touched by this thread.
+ * * serverSocket is confined to the SocketAcceptor thread.
+ * * There will only ever be one SocketAcceptor thread.
+ * * Sockets given to ClientHandlers are no longer touched by the SocketAcceptor thread.
+ *
+ * Rep Invariant:
+ * * none.
  *
  */
 public class SocketAcceptor implements Runnable {
@@ -24,7 +27,10 @@ public class SocketAcceptor implements Runnable {
 
     /**
      * Create a new SocketAcceptor on the specified port
+     *
      * @param port the port on which to start a server socket. requires 0 <= port <= 65535
+     * @param queue the queue that clients should pass AuthoredMessages to
+     * @param deadClientsQueue the queue where clients should go when they die
      * @throws IOException if the ServerSocket instantiation fails
      */
     public SocketAcceptor(int port, BlockingQueue<AuthoredMessage> queue, BlockingQueue<ClientHandler> deadClientsQueue) throws IOException {
