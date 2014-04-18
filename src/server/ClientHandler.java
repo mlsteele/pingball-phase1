@@ -12,19 +12,22 @@ import common.*;
 import common.netprotocol.NetworkMessage.DecodeException;
 
 /**
- * Creates thread to handle client's requests. These include ball out messages
- * and client connect/disconnect. The Server also calls ClientHandler methods
- * (from the Server thread), but only to send messages to the client.
+ * Runnable which handles client's incoming requests. These include ball out messages
+ * and client connect/disconnect.
  *
  * Thread safety argument:
  * * The many ClientHandler threads will all add NetworkMessages to the Server's BlockingQueue (thread safe datatype)
- * * Only client thread will read from the input stream,
- * * and only the server thread will write to the output stream
- * * (though both will do so through this class).
- * * Sockets are thread-safe for concurrent input and output.
+ * * Only client thread will read from the input stream (in run() method)
+ * * Only the server thread will write to the output stream (use send() method)
+ * * Sockets are safe for concurrent input and output.
+ * * kill() can be called by the server thread or the client thread. It is synchronized to prevent both calling kill()
+ *   on the same client at once.
+ * * name is volatile because multiple threads may be reading and writing its value
  *
  * Rep invariant:
- * * TODO ??
+ * * in and out are bound to socket
+ * * if this is in deadClientsQueue, socket is closed
+ *
  */
 
 public class ClientHandler implements Runnable{
@@ -34,8 +37,7 @@ public class ClientHandler implements Runnable{
     private final PrintWriter out;
     private final BlockingQueue<AuthoredMessage> messageQueue;
     private final BlockingQueue<ClientHandler> deadClientsQueue;
-    /* TODO maybe this should be volatile: */
-    private String name;
+    private volatile String name;
 
 
     /**
@@ -52,6 +54,8 @@ public class ClientHandler implements Runnable{
         this.out = new PrintWriter(socket.getOutputStream(), true);
         this.messageQueue = queue;
         this.deadClientsQueue = deadClientsQueue;
+
+        if (Constants.DEBUG) { checkRep(); }
     }
 
     /**
@@ -99,8 +103,7 @@ public class ClientHandler implements Runnable{
      * Terminates the connection to the client.
      * This also causes the run() method to finish, because in.close() will make run() fail.
      */
-    public void kill() {
-        deadClientsQueue.add(this);
+    public synchronized void kill() {
         if (!socket.isClosed()) {
             try {
                 out.close();
@@ -110,13 +113,33 @@ public class ClientHandler implements Runnable{
                 System.err.println(e.getMessage());
             }
         }
+        deadClientsQueue.add(this);
+
+        if (Constants.DEBUG) { checkRep(); }
+
     }
 
     /**
      * getter for board name
      * @return the name of the client board
+     *
+     * If we have not received a ClientConnectMessage yet, then name is null.
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * asserts the Rep Invariant
+     *
+     * Rep invariant:
+     * * in and out are bound to socket (there is no way to check this)
+     * * if this is in deadClientsQueue, socket is closed
+     *
+     */
+    private void checkRep() {
+        if (deadClientsQueue.contains(this) && !socket.isClosed()) {
+            throw new RepInvariantException("this is in deadClientsQueue but socket is open");
+        }
     }
 }
