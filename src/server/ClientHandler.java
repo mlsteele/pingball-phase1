@@ -26,7 +26,8 @@ import common.netprotocol.NetworkMessage.DecodeException;
  *
  * Rep invariant:
  * * in and out are bound to socket
- * * TODO
+ * * if this is in deadClientsQueue, socket is closed
+ *
  */
 
 public class ClientHandler implements Runnable{
@@ -53,6 +54,11 @@ public class ClientHandler implements Runnable{
         this.out = new PrintWriter(socket.getOutputStream(), true);
         this.messageQueue = queue;
         this.deadClientsQueue = deadClientsQueue;
+
+        if (Constants.DEBUG) {
+            try { checkRep(); }
+            catch (RepInvariantException e) { System.err.println(e.getMessage()); }
+        }
     }
 
     /**
@@ -100,7 +106,6 @@ public class ClientHandler implements Runnable{
      * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     public synchronized void kill() {
-        deadClientsQueue.add(this);
         if (!socket.isClosed()) {
             try {
                 out.close();
@@ -110,13 +115,36 @@ public class ClientHandler implements Runnable{
                 System.err.println(e.getMessage());
             }
         }
+        deadClientsQueue.add(this);
+
+        if (Constants.DEBUG) {
+            try { checkRep(); }
+            catch (RepInvariantException e) { System.err.println(e.getMessage()); }
+        }
+
     }
 
     /**
      * getter for board name
      * @return the name of the client board
+     *
+     * If we have not received a ClientConnectMessage yet, then name is null.
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * asserts the Rep Invariant
+     *
+     * Rep invariant:
+     * * in and out are bound to socket (there is no way to check this)
+     * * if this is in deadClientsQueue, socket is closed
+     *
+     */
+    private void checkRep() throws RepInvariantException {
+        if (deadClientsQueue.contains(this) && !socket.isClosed()) {
+            throw new RepInvariantException("this is in deadClientsQueue but socket is open");
+        }
     }
 }
