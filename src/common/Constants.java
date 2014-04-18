@@ -16,7 +16,7 @@ public class Constants {
     public static final double DEFAULT_FRICTION2 = 0.025; // per L
     public static final double BALL_RADIUS = 0.5; // in L
     public static final double DEFAULT_GRAVITY = 25; //L/s^2
-    public static final double DEFAULT_CIRCLE_BUMPER_RADIUS = 1; //L
+    public static final double DEFAULT_CIRCLE_BUMPER_RADIUS = 0.5; //L
     public static final int DEFAULT_PORT = 10987;
     public static final int MIN_PORT = 0;
     public static final int MAX_PORT = 65535;

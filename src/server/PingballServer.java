@@ -237,7 +237,7 @@ public class PingballServer {
      * Any board names specified that are not currently connected clients will print to System.err
      */
     private void handleCommand(String command) {
-        Pattern headerPattern = Pattern.compile("^\\s*([hv])\\s*(\\S+)\\s*(\\S+)\\s*$");
+        Pattern headerPattern = Pattern.compile("^\\s*([hv])\\s*([a-zA-Z0-9_]+)\\s*([a-zA-Z0-9_]+)\\s*$");
         Matcher headerMatcher = headerPattern.matcher(command);
         if (! headerMatcher.find()) {
             System.err.println("Bad command: " + command);
