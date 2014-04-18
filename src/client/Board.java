@@ -160,14 +160,6 @@ public class Board {
 
                 ball.setPosition(newPos);
                 ball.setVelocity(newVel);
-
-                System.out.println(" p: " + newPos);
-                System.out.println(" v: " + newVel);
-
-                double kinetic = 0.5 * ball.getVelocity().y()*ball.getVelocity().y();
-                double potential = (25) * (Constants.BOARD_HEIGHT - ball.getPosition().y());
-                System.out.println(" E: " + (kinetic + potential));
-
             }
         }
 
