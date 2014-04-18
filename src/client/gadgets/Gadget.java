@@ -30,6 +30,7 @@ public interface Gadget {
      *
      * @param ball Any legal ball can be handled
      * @return BoardEvent to be queued and handled by the Board class
+     *         returned iff there is a collision with the gadget
      */
     //returns a BoardEvent that will be queued and handled by Board class
     //  after the gadget is hit by a ball

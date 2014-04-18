@@ -101,10 +101,15 @@ public class Board {
     public String step() {
         StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT, " ");
 
+        // Keep track of whether the ball has collided this frame.
+        boolean ballHasCollided = false;
+
         //make sure the ball isn't going to crash into any walls
-        for (Wall wall: walls){
-            for (Ball ball: balls){
-                wall.handleBall(ball);
+        for (Ball ball: balls){
+            for (Wall wall: walls){
+                if (wall.handleBall(ball) != null) {
+                    ballHasCollided = true;
+                }
             }
         }
 
@@ -115,6 +120,7 @@ public class Board {
                 BoardEvent e = gadget.handleBall(ball);
                 if (e != null){
                     eventQueue.add(e);
+                    ballHasCollided = true;
                 }
             }
             boardString.setRect((int)gadget.getPosition().x(), (int)gadget.getPosition().y(), gadget.stringRepresentation());
@@ -130,7 +136,7 @@ public class Board {
             }
         }
 
-        //update every ball for gravity and their velocity
+        // update every ball for gravity and their velocity
         for (Ball ball: balls){
             if (ball.isInPlay() == true) {
                 // vel += gravity * timestep
