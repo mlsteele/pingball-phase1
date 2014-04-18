@@ -87,7 +87,8 @@ public class PingballClient {
                     Constants.BoardSide side = ((BoardFuseMessage) message).getSide();
                     board.disconnectWallFromServer(side);
                 } else if (message instanceof ConnectionRefusedMessage) {
-                    // the serverHandler has already killed itself
+                    // when the serverHandler receives a ConnectionRefusedMessage it
+                    // kills itself (calls this.kill()) and then passes the message to PingballClient.
                     if (Constants.DEBUG) {
                         System.err.println("Connection refused by server. Reason: " + ((ConnectionRefusedMessage) message).getReason());
                     }
