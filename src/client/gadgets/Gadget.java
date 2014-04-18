@@ -63,11 +63,6 @@ public interface Gadget {
      */
     public String stringRepresentation();
 
-    /** debugging String that includes information about the Gadget object
-     *  like size, position, and type
-     */
-    public String toString();
-
     /**
      * Completes an action if Gadget triggers an Action when hit. For example, absorbers
      * absorb the ball upon being hit and release a new Ball if it was contained. Flippers
@@ -80,7 +75,5 @@ public interface Gadget {
      * @throws RepInvariantException indicating failure to adhere to the rep invariant
      */
     public void checkRep();
-
-
 
 }

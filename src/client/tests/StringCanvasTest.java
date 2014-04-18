@@ -26,7 +26,7 @@ public class StringCanvasTest {
      * Testing strategy for setRect(int x, int y, String rep) method
      * -initialized with x and y outside of width/height: throws exception
      * -initialized with rep string that extends beyond bounds of board
-     * - initialized at appropriate x, y. Returns correct string.
+     * -initialized at appropriate x, y. Returns correct string.
      *
      * Testing strategy for toString(
      * -initialized with normal filler and setRects. Returns correct string.

@@ -79,8 +79,8 @@ public class Absorber implements Gadget {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision <= Constants.TIMESTEP) {
                 //position for ball according to specs (bottom right corner)
-                Vect absorberBottom = new Vect(this.getPosition().x() + width - (1) -
-                        0.25, this.getPosition().y() - height + .25);
+                Vect absorberBottom = new Vect(this.getPosition().x() + width -
+                        0.25, this.getPosition().y() + height - .25);
                 //places ball in the right place and updates contained information
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
@@ -103,7 +103,7 @@ public class Absorber implements Gadget {
         String absorber = "";
         for (int i = 0; i < height; i++){
             for (int j = 0; j < width; j++){
-                if (i == 0){ //top and bottom rows of absorber
+                if (i == 0){ //top row of absorber
                     absorber += "=";
                 } else if(i == height-2){
                     if (j == 0 || j == width-1){
