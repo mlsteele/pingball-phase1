@@ -84,7 +84,15 @@ public class StaticBumper implements Gadget {
             }
         } else {
             for (LineSegment line : geometry){
-                if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP) {
+                // Create a circle which acts as an identical proxy for the ball
+                // except with a radius of zero.
+                // This is to fix the bug in timeUntilWallCollision whereby circles
+                // are not said to collide with lines when all of the circle would
+                // not collide with the wall.
+                // The ball itself is not changed and the proxy is used only for
+                // detecting an impending collision.
+                Circle babyBall = new Circle(ball.getCircle().getCenter(), .05);
+                if (Geometry.timeUntilWallCollision(line, babyBall, ball.getVelocity()) <= Constants.TIMESTEP) {
                     hits ++;
                     // TODO what does this mean (below)?
                     //options to make more sensitive: increase radius of ball, increase timestep multiplication,
