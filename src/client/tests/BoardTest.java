@@ -41,7 +41,8 @@ public class BoardTest {
      * -initialized with Gadgets that extend outside the Board
      * -initialized with a regular set of Gadgets
      *
-     * Testing strategy for Gadgets and Walls:
+     * Testing strategy for Gadgets: (to cover handleBall and specialAction
+     *                                  that could not be addressed in GadgetTest)
      * -each Gadget/Wall will underGo a receivesBall Test to make sure it can respond to
      * the trigger of a Ball approaching sufficiently close to it
      * +Absorber            contains no balls
@@ -51,25 +52,6 @@ public class BoardTest {
      * +StaticBumper:       test different coefficients of reflection
      * +Wall                Invisible/visible
      *                      Printing names
-     *
-     * Testing strategy for BoardEvent and BoardEventSubscription activity:
-     * -Each Gadget that can listen for a trigger (it has a special action) will
-     * be tested to see if it can respond to BoardEvents from any type of Gadget
-     * (including its self)
-     *
-     * Testing strategy for sharing Walls/Balls activity:
-     * -Each number of neighboring Boards from 0 to 4 will be tested for general correctness
-     * -General "passing a ball."
-     * -Absorber generating a ball and sending it upward into another Board
-     *
-     * More examples of edge cases we should add:
-     * -null initializations
-     *
-     *Diagnostic printing (not to submit in final):
-     *System.out.println("LINE: " + line);
-                System.out.println("Velocity1: " + ball.getVelocity());
-                System.out.println("XCoord: " + ball.getCircle().getCenter().x());
-                System.out.println("YCoord: " + ball.getCircle().getCenter().y());
      */
 
 
