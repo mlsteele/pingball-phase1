@@ -1,6 +1,5 @@
 package common.netprotocol;
 
-import common.Constants;
 
 /**
  * Server -> Client
@@ -45,7 +44,7 @@ public class ConnectionRefusedMessage extends NetworkMessage {
     public ConnectionRefusedMessage(String reason) {
         this.reason = reason;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**

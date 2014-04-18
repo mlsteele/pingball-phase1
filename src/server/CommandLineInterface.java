@@ -27,6 +27,8 @@ public class CommandLineInterface implements Runnable {
      */
     public CommandLineInterface(BlockingQueue<String> queue) {
         this.cliQueue = queue;
+
+        checkRep();
     }
 
     /**
@@ -49,6 +51,15 @@ public class CommandLineInterface implements Runnable {
             }
         }
 
+    }
+
+    /**
+     * Rep invariant: none
+     *
+     * this is a do-nothing method
+     */
+    private void checkRep() {
+        return;
     }
 
 }

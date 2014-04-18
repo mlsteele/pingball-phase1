@@ -1,6 +1,5 @@
 package common.netprotocol;
 
-import common.Constants;
 import common.Constants.BoardSide;
 
 /**
@@ -47,7 +46,7 @@ public class BoardUnfuseMessage extends NetworkMessage {
     public BoardUnfuseMessage(BoardSide side) {
         this.side = side;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**

@@ -59,7 +59,7 @@ public class BallInMessage extends NetworkMessage {
         this.ballVel = ballVel;
         this.toSide = toSide;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**

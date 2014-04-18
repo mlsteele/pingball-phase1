@@ -61,7 +61,7 @@ public class BallOutMessage extends NetworkMessage {
         this.ballVel = ballVel;
         this.fromSide = fromSide;
 
-        if (Constants.DEBUG) checkRep();
+        checkRep();
     }
 
     /**
