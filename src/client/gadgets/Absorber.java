@@ -33,7 +33,6 @@ import common.Constants;
 
 public class Absorber implements Gadget {
     private final List<Ball> balls;
-    private boolean ballContained;
     private final int width;  //L
     private final int height; //L
     private final Vect startingPoint;
@@ -63,8 +62,6 @@ public class Absorber implements Gadget {
         geometry.add(new LineSegment(startingPoint.x() + width, startingPoint.y() + height, startingPoint.x(), startingPoint.y() + height));
         geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + height, startingPoint.x(), startingPoint.y()));
 
-        ballContained = false;
-
         checkRep();
     }
 
@@ -78,9 +75,11 @@ public class Absorber implements Gadget {
      */
     public BoardEvent handleBall(Ball ball) {
         // Check for ball hit.
+        System.out.println("Velocity1: " + ball.getVelocity());
         for (LineSegment line : geometry) {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision < Constants.TIMESTEP) {
+                System.out.println("Hitting absorber!");
                 //position for ball according to specs (bottom right corner)
                 Vect absorberBottom = new Vect(this.getPosition().x() + width - (1) -
                         0.25, this.getPosition().y() - height + .25);
@@ -88,7 +87,6 @@ public class Absorber implements Gadget {
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
                 ball.setInPlay(false);
-                ballContained = true;
                 balls.add(ball);
                 checkRep();
                 return new BoardEvent(this);
@@ -141,7 +139,7 @@ public class Absorber implements Gadget {
             newBall.setVelocity(Constants.SHOOT_VELOCITY);
             //TODO: add ball to Board
             newBall.setInPlay(true);
-            Vect shootStart = new Vect(startingPoint.x() + .25, startingPoint.y() - .25); //arbitrary to give it room
+            Vect shootStart = new Vect(startingPoint.x() + width, startingPoint.y()); //arbitrary to give it room
             newBall.setPosition(shootStart);
             checkRep();
         }
