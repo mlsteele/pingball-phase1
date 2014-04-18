@@ -79,8 +79,9 @@ public class Absorber implements Gadget {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision <= Constants.TIMESTEP) {
                 //position for ball according to specs (bottom right corner)
-                Vect absorberBottom = new Vect(this.getPosition().x() + width -
-                        0.25, this.getPosition().y() + height - .25);
+                Vect absorberBottom = new Vect(
+                    this.getPosition().x() + width  - 0.25,
+                    this.getPosition().y() + height - 0.25);
                 //places ball in the right place and updates contained information
                 ball.setVelocity(new Vect(0, 0));
                 ball.setPosition(absorberBottom);
@@ -100,44 +101,41 @@ public class Absorber implements Gadget {
      */
     @Override
     public String stringRepresentation() {
-        String absorber = "";
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
-                if (i == 0){ //top row of absorber
-                    absorber += "=";
-                } else if(i == height-2){
-                    if (j == 0 || j == width-1){
-                        absorber += "|";
-                    } else if (j > width-2-balls.size()){
-                        absorber += "*";
-                    } else{
-                        absorber += " ";
-                    }
-                }
-                else{
-                    if (j == 0 || j == width-1){
-                        absorber += "|";
-                    } else{
-                        absorber += " ";
-                    }
+        String stringRep = "";
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (balls.size() > 0 && y == height-1 && x == width-1) {
+                    // Draw a Ball at the bottom right if there is a ball loaded.
+                    stringRep += "*";
+                } else if (y == 0 || y == height-1) {
+                    // Draw the top and bottom rows of the Absorber.
+                    stringRep += "=";
+                } else if (x == 0 || x == width-1) {
+                    // Draw pipes on the left and right columns of the Absorber
+                    stringRep += "|";
+                } else {
+                    // If we're inside the Absorber, leave the space empty.
+                    stringRep += " ";
                 }
             }
-            absorber += "\n";
+            stringRep += "\n";
         }
-        return absorber;
+        return stringRep;
     }
 
-    @Override
     /**
      * Shoots out ball if a ball is contained. Triggered only by Board.
      */
+    @Override
     public void specialAction() {
         if (balls.size() > 0){
             Ball newBall = balls.remove(0);
-            Vect velocityAfterAbsorber = new Vect(0, Constants.SHOOT_VELOCITY);
+            Vect velocityAfterAbsorber = new Vect(0, -Constants.SHOOT_VELOCITY);
             newBall.setVelocity(velocityAfterAbsorber);
             newBall.setInPlay(true);
-            Vect shootStart = new Vect(startingPoint.x() + width - 0.25, startingPoint.y() - 0.25);
+            Vect shootStart = new Vect(
+                startingPoint.x() + width - 0.25,
+                startingPoint.y() - 0.25);
             newBall.setPosition(shootStart);
             checkRep();
         }
