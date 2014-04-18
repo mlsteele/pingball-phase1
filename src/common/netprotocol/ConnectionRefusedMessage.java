@@ -1,5 +1,7 @@
 package common.netprotocol;
 
+import common.Constants;
+
 /**
  * Server -> Client
  * Message sent to notify a client that the server refused its connection.
@@ -7,24 +9,26 @@ package common.netprotocol;
  *
  * ADT:
  * * ConnectionRefusedMessage contains the following data:
- * * * reason: the reason the server refused
+ *      * reason: the reason the server refused
  *
  * Thread Safety Argument:
- * - all data is immutable.
+ * * all data is immutable.
+ *
+ * Rep Invariant:
+ * * all data is immutable (enforced by type system)
+ *
  */
 public class ConnectionRefusedMessage extends NetworkMessage {
-    /**
-     * Rep invariant:
-     * - all data is immutable (enforced by type system)
-     */
+
     private final String reason; // why the server refused
 
     /**
      * Deserialize the message.
      * See NetworkMessage.deserialize for specification.
      * See this NetworkMessage's serialize for specific serialization specification.
-     * @return decoded NetworkMessage
+     *
      * @param body body of the message
+     * @return decoded NetworkMessage
      */
     public static NetworkMessage deserialize(String body) throws DecodeException {
         String units[] = body.split(STD_SEP);
@@ -40,6 +44,8 @@ public class ConnectionRefusedMessage extends NetworkMessage {
 
     public ConnectionRefusedMessage(String reason) {
         this.reason = reason;
+
+        if (Constants.DEBUG) checkRep();
     }
 
     /**
@@ -57,5 +63,14 @@ public class ConnectionRefusedMessage extends NetworkMessage {
      */
     public String getReason() {
         return reason;
+    }
+
+    /**
+     * Our rep invariant is enforced by Java type-checking.
+     *
+     * This is a do-nothing method.
+     */
+    private void checkRep() {
+        return;
     }
 }
