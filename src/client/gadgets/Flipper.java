@@ -77,8 +77,6 @@ public class Flipper implements Gadget{
             if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) < Constants.TIMESTEP) {
                 Vect velocity = Geometry.reflectRotatingWall(line, ball.getCircle().getCenter(), angularRotation, ball.getCircle(), ball.getVelocity(), 0.95);
                 ball.setVelocity(velocity);
-                ball.setPosition(ball.getCircle().getCenter().plus(velocity.times(Constants.TIMESTEP)));
-                specialAction();
                 return new BoardEvent(this);
             }
         }
