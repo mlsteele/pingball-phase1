@@ -52,7 +52,7 @@ public class StaticBumper implements Gadget {
         } else if (type == Constants.BumperType.TRIUP){
             this.isCircle = false;
             //orientation == 0 | 180
-            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x() + 1, startingPoint.y() + 1));
+            geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x() + 1, startingPoint.y()));
         } else if (type == Constants.BumperType.SQUARE) {
             this.isCircle = false;
             //circle or square bumper
