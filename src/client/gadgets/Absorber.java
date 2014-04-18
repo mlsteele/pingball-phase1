@@ -140,7 +140,7 @@ public class Absorber implements Gadget {
             newBall.setVelocity(velocityAfterAbsorber);
             //TODO: add ball to Board
             newBall.setInPlay(true);
-            Vect shootStart = new Vect(startingPoint.x() + width, startingPoint.y()); //arbitrary to give it room
+            Vect shootStart = new Vect(startingPoint.x() + width - 0.25, startingPoint.y() - 0.25);
             newBall.setPosition(shootStart);
             checkRep();
         }
