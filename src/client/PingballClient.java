@@ -11,10 +11,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import client.boardlang.BoardFactory;
 import common.Constants;
-import common.netprotocol.NetworkMessage;
+import common.netprotocol.*;
 
 import java.io.File;
 import java.net.Socket;
+
+import physics.Vect;
 
 
 /**
@@ -44,12 +46,13 @@ public class PingballClient {
      *               if socket is null, server communication is disabled.
      * @throws IOException if the socket can not be created
      */
-    public PingballClient(Board board, Socket socket) {
+    public PingballClient(Board board, Socket socket) throws IOException {
         this.board = board;
         this.socket = socket;
         this.incomingMessages = new LinkedBlockingQueue<NetworkMessage>();
         if (socket != null) {
-            this.serverHandler = new ServerHandler(socket, incomingMessages);
+            serverHandler = new ServerHandler(socket, incomingMessages, board.getName());
+            serverHandler.send(new ClientConnectMessage(board.getName()));
         } else {
             this.serverHandler = null;
         }
@@ -68,8 +71,18 @@ public class PingballClient {
                 Thread.currentThread().interrupt();
             }
 
-            if (socket != null) {
-                // TODO process messages
+            while (!incomingMessages.isEmpty()) {
+                NetworkMessage message = incomingMessages.remove();
+                if (message instanceof BallInMessage) { // TODO the sending board is responsible for making ballPos okay
+                    // TODO it is sketchy to initialize the ball with default radius. maybe the radius should not be a parameter.
+                    Vect ballPos = ((BallInMessage) message).getBallPos();
+                    Vect ballVel = ((BallInMessage) message).getBallVel();
+                    board.addBall(new Ball(Constants.BALL_RADIUS, ballPos, ballVel));
+                } else if (message instanceof BoardFuseMessage) {
+                    Constants.BoardSide side = ((BoardFuseMessage) message).getSide();
+                    String name = ((BoardFuseMessage) message).getBoardName();
+                    board.connectWallToServer(side, name);
+                } // TODO the rest of the messages
             }
 
             String boardView = board.step();
@@ -158,9 +171,9 @@ public class PingballClient {
             }
         }
 
-        PingballClient client = new PingballClient(board, socket);
 
         try {
+            PingballClient client = new PingballClient(board, socket);
             client.startClient();
         } catch (IOException e) {
             e.printStackTrace();

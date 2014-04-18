@@ -1,14 +1,22 @@
 package client;
 
 import common.Constants;
+import common.RepInvariantException;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
 
+/**
+ *
+ *
+ * Rep Invariant:
+ * * if connectedBoardName == null iff visible == false
+ */
 public class Wall {
     private final Constants.BoardSide type;
     private boolean visible;
     private final LineSegment wall;
+    private String connectedBoardName;
 
     /**
      * Ball Constructor
@@ -50,27 +58,36 @@ public class Wall {
 
     /**
      * Called during Board's step function. Each L unit of a sideWall is represented
-     * by "*"
+     * by "." unless it is connected to a board, in which case the connected board's name is also printed
      *
      * @return string representation of sideWall for print out
      */
     public String stringRepresentation() {
+        // TODO lots of copypaste here
         String stringRep = "";
         if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM){
             for (int i = 0; i < Constants.BOARD_WIDTH; i++){
-                stringRep += ".";
+                if (connectedBoardName != null && i-1 > 0 && i-1 < connectedBoardName.length()) {
+                    stringRep += connectedBoardName.substring(i-1, i);
+                } else {
+                    stringRep += ".";
+                }
             }
             stringRep += "\n";
         } else if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT){
             for (int i = 0; i < Constants.BOARD_HEIGHT; i++){
-                stringRep += "." + "\n";
+                if (connectedBoardName != null && i-1 > 0 && i-1 < connectedBoardName.length()) {
+                    stringRep += connectedBoardName.substring(i-1, i);
+                } else {
+                    stringRep += "." + "\n";
+                }
             }
         }
         return stringRep;
     }
 
     /**
-     * @return startingPoint Vector representation of point at the top left corner of the absorber
+     * @return startingPoint Vector representation of point at the top left corner of the wall
      */
     public Vect getPosition() {
         return wall.p1();
@@ -78,5 +95,32 @@ public class Wall {
 
     public Constants.BoardSide getType() {
         return type;
+    }
+
+    /**
+     * Connects this wall to a board over the network
+     * @param name the name of the other board
+     */
+    public void connectToServer(String name) {
+        visible = true;
+        connectedBoardName = name;
+    }
+
+    /**
+     * Disconnects this wall from a board over the network
+     */
+    public void disconnectFromServer() {
+        visible = false;
+        connectedBoardName = null;
+    }
+
+    /**
+     * Rep Invariant:
+     * * if connectedBoardName == null iff visible == false
+     */
+    private void checkRep() {
+        if (visible && connectedBoardName != null || !visible && connectedBoardName == null) {
+            throw new RepInvariantException("visible: " + visible + "; board name: " + connectedBoardName);
+        }
     }
 }
