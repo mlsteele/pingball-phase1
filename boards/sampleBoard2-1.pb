@@ -1,4 +1,3 @@
-
 board name=sampleBoard2_1 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for multiple players. It is a loose 
 # representation of the screenshot in the project handout, with

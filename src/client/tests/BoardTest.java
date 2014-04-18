@@ -49,7 +49,7 @@ public class BoardTest {
      *                      string representation
      * +Flipper:            Proper rotation given initial orientation/type
      * +StaticBumper:       test different coefficients of reflection
-     * +Wall                Invisible/visible
+     * +Wall                Fused / Not Fused
      *                      Printing names
      *
      * Testing strategy for BoardEvent and BoardEventSubscription activity:

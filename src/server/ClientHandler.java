@@ -91,6 +91,7 @@ public class ClientHandler implements Runnable{
      */
     public void send(NetworkMessage message) {
         String strMessage = message.serialize();
+        if (Constants.DEBUG) System.out.println("Sending message: " + strMessage);
         out.println(strMessage);
     }
 

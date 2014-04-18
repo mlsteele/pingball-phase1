@@ -54,7 +54,6 @@ import common.netprotocol.NetworkMessage.DecodeException;
  *      (e.g. "board1" cannot be the left side of a horizontal join to two different boards)
  *
  */
-
 public class PingballServer {
 
     private static final int DEFAULT_PORT = 10987;
@@ -98,18 +97,23 @@ public class PingballServer {
         Thread cliThread = new Thread(new CommandLineInterface(cliQueue));
         cliThread.start();
 
+        if (Constants.DEBUG) System.out.println("Reached main loop.");
         while (true) {
 
             while (!deadClientsQueue.isEmpty()) {
+                if (Constants.DEBUG) System.out.println("Burying dead client.");
                 buryDeadClient(deadClientsQueue.remove());
             }
 
             while (!cliQueue.isEmpty()) {
+                if (Constants.DEBUG) System.out.println("Received CLI command.");
                 handleCommand(cliQueue.remove());
             }
 
             while (!messageQueue.isEmpty()) {
-                handleMessage(messageQueue.remove());
+                AuthoredMessage receivedMessage = messageQueue.remove();
+                if (Constants.DEBUG) System.out.println("Received message: " + receivedMessage.getClientHandler().getName() + receivedMessage.getMessage().serialize());
+                handleMessage(receivedMessage);
             }
         }
     }
@@ -220,7 +224,7 @@ public class PingballServer {
      * Any board names specified that are not currently connected clients will print to System.err
      */
     private void handleCommand(String command) {
-        Pattern headerPattern = Pattern.compile("^\\s*([hv])\\s*(\\S)\\s*(\\S)\\s*$");
+        Pattern headerPattern = Pattern.compile("^\\s*([hv])\\s*(\\S+)\\s*(\\S+)\\s*$");
         Matcher headerMatcher = headerPattern.matcher(command);
         if (! headerMatcher.find()) {
             System.err.println("Bad command: " + command);
@@ -293,6 +297,8 @@ public class PingballServer {
             if (clients.containsKey(ch.getName())) {
                 // don't let the client connect!
                 ch.send(new ConnectionRefusedMessage("Board with this name already connected to server"));
+                // TODO this causes a bug.
+                //      When the client is killed, it causes other boards with the same name to be killed.
                 ch.kill();
             } else {
                 clients.put(ch.getName(), ch);
