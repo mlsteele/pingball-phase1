@@ -46,7 +46,7 @@ public class Absorber implements Gadget {
      *
      * @param name unique String identifier for Absorber object
      * @param startingPoint upper left-hand corner coordinates for the Absorber
-     * @param width width of Absorber, must be less than BOARD_WEIGHT
+     * @param width width of Absorber, must be less than BOARD_WIDTH
      * @param height height of Absorber, must less than BOARD_HEIGHT
      * @param gravity magnitude of gravity of the board the Absorber is on.
      */
