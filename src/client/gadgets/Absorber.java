@@ -81,7 +81,6 @@ public class Absorber implements Gadget {
         for (LineSegment line : geometry) {
             double timeUntilCollision = Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity());
             if (timeUntilCollision <= Constants.TIMESTEP) {
-                System.out.println("Velocity Ball as it hits: " + ball.getVelocity());
                 //position for ball according to specs (bottom right corner)
                 Vect absorberBottom = new Vect(this.getPosition().x() + width -
                         0.25, this.getPosition().y() + height - .25);
