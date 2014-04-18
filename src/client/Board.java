@@ -123,9 +123,9 @@ public class Board {
     public String step() {
         StringCanvas boardString = new StringCanvas(Constants.BOARD_WIDTH + 2, Constants.BOARD_HEIGHT + 2, " ");
         boardString.setRect(0,0,".");
-        boardString.setRect(0,20,".");
-        boardString.setRect(20,0,".");
-        boardString.setRect(20,20,".");
+        boardString.setRect(0,21,".");
+        boardString.setRect(21,0,".");
+        boardString.setRect(21,21,".");
 
         // Keep track of which balls have collided this frame.
         Set<Ball> ballsThatHaveCollided = new HashSet<Ball>();
@@ -152,7 +152,7 @@ public class Board {
                 } else if (wall.getType() == Constants.BoardSide.LEFT){
                     boardString.setRect((int)wall.getPosition().x(), (int)wall.getPosition().y()+1, wall.stringRepresentation());
                 } else if (wall.getType() == Constants.BoardSide.BOTTOM){
-                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+2, wall.stringRepresentation());
+                    boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
                 } else{ //RIGHT
                     boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
                 }
