@@ -1,9 +1,17 @@
 package client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
-import common.netprotocol.NetworkMessage;
+import server.AuthoredMessage;
+
+import common.Constants;
+import common.netprotocol.*;
+import common.netprotocol.NetworkMessage.DecodeException;
 
 /**
  * ServerHandler is a runnable meant to run as a thread.
@@ -19,6 +27,9 @@ import common.netprotocol.NetworkMessage;
 public class ServerHandler implements Runnable {
     private final Socket socket;
     private final BlockingQueue incomingMessages;
+    private final String boardName;
+    private final BufferedReader in;
+    private final PrintWriter out;
 
     /**
      * Create a ServerHandler.
@@ -28,20 +39,43 @@ public class ServerHandler implements Runnable {
      *        the caller must throw away their reference to socket after creating a ServerHandler
      * @param incomingMessages threadsafe queue to receive messages
      */
-    ServerHandler(Socket socket, BlockingQueue incomingMessages) {
+    ServerHandler(Socket socket, BlockingQueue<NetworkMessage> incomingMessages, String boardName) throws IOException {
         this.socket = socket;
         this.incomingMessages = incomingMessages;
+        this.boardName = boardName;
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    //wait and send inputs to serverhandler queue
-    //
-
     /**
-     * Start listening for messages from the server.
+     * Handles the incoming server messages.
+     * Listens for input from the server, and sends it to the client.
+     * Ignores bad input messages, but prints an error to System.err if there is an IOException
      */
     @Override
     public void run() {
-        // TODO listen to and send messages in a loop
+        // handle the client
+        try {
+            for (String line = in.readLine(); line != null; line = in.readLine()) {
+                NetworkMessage message = NetworkMessage.deserialize(line);
+                if (message instanceof ConnectionRefusedMessage) {
+                    this.kill();
+                }
+                incomingMessages.add(message);
+
+            }
+        } catch (IOException e) {
+            if (Constants.DEBUG) {
+                System.err.println(e.getMessage());
+            }
+        } catch (DecodeException e) {
+            // ignore bad input
+            if (Constants.DEBUG) {
+                System.err.println(e.getMessage());
+            }
+        } finally {
+            this.kill();
+        }
     }
 
     /**
@@ -50,6 +84,22 @@ public class ServerHandler implements Runnable {
      */
     public void send(NetworkMessage message) {
         String strMessage = message.serialize();
-        //out.println(strMessage);
+        out.println(strMessage);
+    }
+
+    /**
+     * Terminates the connection to the server.
+     * This also causes the run() method to finish, because in.close() will make run() fail.
+     */
+    private void kill() {
+        if (!socket.isClosed()) {
+            try {
+                out.close();
+                in.close();
+                socket.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }

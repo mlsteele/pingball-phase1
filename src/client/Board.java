@@ -1,6 +1,7 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -79,6 +80,14 @@ public class Board {
     }
 
     /**
+     * get the board name
+     * @return the board name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * Called by the server when a ball from a neighboring board enters this board
      * @param ball Any legal ball can be handled
      */
@@ -92,6 +101,17 @@ public class Board {
      */
     public void addSubscription(BoardEventSubscription s){
         subscriptions.add(s);
+    }
+
+    /**
+     * Connect the wall on side to a board over the network
+     * @param side the side to connect
+     * @param name the name of the connected
+     */
+    public void connectWallToServer(Constants.BoardSide side, String name) {
+        List<Constants.BoardSide> sides = Arrays.asList(Constants.BoardSide.TOP, Constants.BoardSide.BOTTOM, Constants.BoardSide.LEFT, Constants.BoardSide.RIGHT);
+        int wallSideIndex = sides.indexOf(side);
+        walls.get(wallSideIndex).connectToServer(name);
     }
 
     /**
