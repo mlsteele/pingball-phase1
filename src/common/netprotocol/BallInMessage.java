@@ -21,7 +21,7 @@ import common.RepInvariantException;
  *
  * Rep Invariant:
  * * all data is immutable (enforced by type system)
- * * ballPos x and y are between 0 and 20 (inclusive)
+ * * ballPos x and y are between 0 and Constants.BOARD_WIDTH/Constants.BOARD_HEIGHT (inclusive)
  *
  */
 public class BallInMessage extends NetworkMessage {
@@ -99,11 +99,11 @@ public class BallInMessage extends NetworkMessage {
      * asserts the rep invariant.
      *
      * Rep Invariant:
-     * * ballPos x and y are between 0 and 20 (inclusive)
+     * * ballPos x and y are between 0 and Constants.BOARD_WIDTH/Constasts.BOARD_HEIGHT (inclusive)
      */
     private void checkRep() {
-        if (ballPos.x() < 0 || ballPos.x() > 20
-         || ballPos.y() < 0 || ballPos.y() > 20) {
+        if (ballPos.x() < 0 || ballPos.x() > Constants.BOARD_WIDTH
+         || ballPos.y() < 0 || ballPos.y() > Constants.BOARD_HEIGHT) {
             throw new RepInvariantException("The ball's position is out of bounds");
         }
     }
