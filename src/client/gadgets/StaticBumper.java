@@ -84,7 +84,8 @@ public class StaticBumper implements Gadget {
             }
         } else {
             for (LineSegment line : geometry){
-                if (Geometry.timeUntilWallCollision(line, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP) {
+                Circle babyBall = new Circle(ball.getCircle().getCenter(), .05);
+                if (Geometry.timeUntilWallCollision(line, babyBall, ball.getVelocity()) <= Constants.TIMESTEP) {
                     hits ++;
                     // TODO what does this mean (below)?
                     //options to make more sensitive: increase radius of ball, increase timestep multiplication,
