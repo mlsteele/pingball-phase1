@@ -3,7 +3,7 @@ package server;
 import common.netprotocol.NetworkMessage;
 
 /**
- * A NetworkMessage and the ClientHandler who received that message.
+ * A NetworkMessage, and the ClientHandler who received that message.
  *
  * This class will be used to attribute an author to a NetworkMessage,
  * so that the server is able to respond to the client who sent the message.
@@ -11,11 +11,11 @@ import common.netprotocol.NetworkMessage;
  * ADT: {NetworkMessage m, ClientHandler c}
  *
  * Thread Safety:
- * * All fields are final
- *  (though its contents are *not* immutable, they have their own thread safety arguments)
+ * * All fields are final; NetworkMessage is immutable
+ * * See thread safety argument for ClientHandler for its thread safety details
  *
  * Rep Invariant:
- * * ch must be the ClientHandler that produced the message
+ * * ch is the ClientHandler that produced the message (though there is no way to check this)
  *
  */
 public class AuthoredMessage {
@@ -43,9 +43,19 @@ public class AuthoredMessage {
 
     /**
      * getter for client
-     * @return the clientHandler
+     * @return the clientHandler who received message
      */
     public ClientHandler getClientHandler() {
         return ch;
+    }
+
+    /**
+     * Rep invariant:
+     * * ch is the ClientHandler that produced the message (though there is no way to check this)
+     *
+     * this is a do-nothing method
+     */
+    private void checkRep() {
+        return;
     }
 }
