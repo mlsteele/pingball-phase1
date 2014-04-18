@@ -52,11 +52,11 @@ public class PingballClient {
         this.incomingMessages = new LinkedBlockingQueue<NetworkMessage>();
         if (socket != null) {
             serverHandler = new ServerHandler(socket, incomingMessages);
-            System.out.println("Sending initial message.");
+            if (Constants.DEBUG) System.out.println("Sending initial message.");
             serverHandler.send(new ClientConnectMessage(board.getName()));
-            System.out.println("Sent initial message.");
+            if (Constants.DEBUG) System.out.println("Sent initial message.");
             board.setServerHandler(serverHandler);
-            System.out.println("Already set serverHandler.");
+            if (Constants.DEBUG) System.out.println("Already set serverHandler.");
         } else {
             this.serverHandler = null;
         }
@@ -68,7 +68,7 @@ public class PingballClient {
             serverHandlerThread.start();
         }
 
-        System.out.println("Reached main loop.");
+        if (Constants.DEBUG) System.out.println("Reached main loop.");
         while(true){
             try {
                 // Sleep to limit framerate.

@@ -97,22 +97,22 @@ public class PingballServer {
         Thread cliThread = new Thread(new CommandLineInterface(cliQueue));
         cliThread.start();
 
-        System.out.println("Reached main loop.");
+        if (Constants.DEBUG) System.out.println("Reached main loop.");
         while (true) {
 
             while (!deadClientsQueue.isEmpty()) {
-                System.out.println("Burying dead client.");
+                if (Constants.DEBUG) System.out.println("Burying dead client.");
                 buryDeadClient(deadClientsQueue.remove());
             }
 
             while (!cliQueue.isEmpty()) {
-                System.out.println("Received CLI command.");
+                if (Constants.DEBUG) System.out.println("Received CLI command.");
                 handleCommand(cliQueue.remove());
             }
 
             while (!messageQueue.isEmpty()) {
                 AuthoredMessage receivedMessage = messageQueue.remove();
-                System.out.println("Received message: " + receivedMessage.getClientHandler().getName() + receivedMessage.getMessage().serialize());
+                if (Constants.DEBUG) System.out.println("Received message: " + receivedMessage.getClientHandler().getName() + receivedMessage.getMessage().serialize());
                 handleMessage(receivedMessage);
             }
         }
