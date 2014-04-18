@@ -104,7 +104,7 @@ public class Board {
     }
 
     /**
-     * Connect the wall on side to the ether
+     * Connect the wall on side to a board over the network
      * @param side the side to connect
      * @param name the name of the connected
      */
