@@ -1,5 +1,6 @@
 package common.netprotocol;
 
+import common.Constants;
 import common.Constants.BoardSide;
 
 /**
@@ -9,17 +10,17 @@ import common.Constants.BoardSide;
  *
  * ADT:
  * * BoardFuseMessage contains the following data:
- * * * boardName: the name of the board that will fuse to the client board
- * * * side: which side the new board will fuse to on the client
+ *      * boardName: the name of the board that will fuse to the client board
+ *      * side: which side the new board will fuse to on the client
  *
  * Thread Safety Argument:
- * - all data is immutable.
+ * * all data is immutable.
+ *
+ * Rep Invariant:
+ * * all data is immutable (enforced by type system)
  */
 public class BoardFuseMessage extends NetworkMessage {
-    /**
-     * Rep invariant:
-     * - all data is immutable (enforced by type system)
-     */
+
     private final String boardName; // name of board fusing
     private final BoardSide side; // which side to fuse
 
@@ -27,8 +28,9 @@ public class BoardFuseMessage extends NetworkMessage {
      * Deserialize the message.
      * See NetworkMessage.deserialize for specification.
      * See this NetworkMessage's serialize for specific serialization specification.
-     * @return decoded NetworkMessage
+     *
      * @param body body of the message
+     * @return decoded NetworkMessage
      */
     public static NetworkMessage deserialize(String body) throws DecodeException {
         String units[] = body.split(STD_SEP);
@@ -51,6 +53,8 @@ public class BoardFuseMessage extends NetworkMessage {
     public BoardFuseMessage(String boardName, BoardSide side) {
         this.boardName = boardName;
         this.side = side;
+
+        if (Constants.DEBUG) checkRep();
     }
 
     /**
@@ -76,5 +80,14 @@ public class BoardFuseMessage extends NetworkMessage {
      */
     public BoardSide getSide() {
         return side;
+    }
+
+    /**
+     * Our rep invariant is enforced by Java type-checking.
+     *
+     * This is a do-nothing method.
+     */
+    private void checkRep() {
+        return;
     }
 }
