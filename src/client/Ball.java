@@ -91,7 +91,7 @@ public class Ball {
      * Check that the rep invariant is not violated.
      * @throws RepInvariantException to indicate failure.
      */
-    private void checkRep(){
+    public void checkRep(){
         if (!(getPosition().x() >= 0
             && getPosition().x() <= Constants.BOARD_WIDTH
             && getPosition().y() >= 0

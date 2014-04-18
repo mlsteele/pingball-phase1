@@ -15,6 +15,7 @@ import physics.Vect;
 import common.Constants;
 import common.RepInvariantException;
 import client.gadgets.Gadget;
+import client.gadgets.Wall;
 
 /**
  * Board class to contain and run physics and interaction in a pingball board.
@@ -69,10 +70,10 @@ public class Board {
         this.frictionOne = f1;
         this.frictionTwo = f2;
 
-        Wall top = new Wall(true, Constants.BoardSide.TOP);
-        Wall bottom = new Wall(true, Constants.BoardSide.BOTTOM);
-        Wall left = new Wall(true, Constants.BoardSide.LEFT);
-        Wall right = new Wall(true, Constants.BoardSide.RIGHT);
+        Wall top = new Wall(true, Constants.BoardSide.TOP, this);
+        Wall bottom = new Wall(true, Constants.BoardSide.BOTTOM, this);
+        Wall left = new Wall(true, Constants.BoardSide.LEFT, this);
+        Wall right = new Wall(true, Constants.BoardSide.RIGHT, this);
         walls.add(top);
         walls.add(bottom);
         walls.add(left);
@@ -109,9 +110,37 @@ public class Board {
      * @param name the name of the connected
      */
     public void connectWallToServer(Constants.BoardSide side, String name) {
-        List<Constants.BoardSide> sides = Arrays.asList(Constants.BoardSide.TOP, Constants.BoardSide.BOTTOM, Constants.BoardSide.LEFT, Constants.BoardSide.RIGHT);
-        int wallSideIndex = sides.indexOf(side);
-        walls.get(wallSideIndex).connectToServer(name);
+        getWall(side).connectToServer(name);
+    }
+
+    /**
+     * Disconnect the wall on side from this board
+     * @param side the side to disconnect
+     */
+    public void disconnectWallFromServer(Constants.BoardSide side) {
+        getWall(side).disconnectFromServer();
+    }
+
+    /**
+     * sets the server handler so that the walls can connect to the server
+     * @param sh the server handler
+     */
+    public void setServerHandler(ServerHandler sh) {
+        for (Wall wall: walls) {
+            wall.setServerHandler(sh);
+        }
+    }
+
+    /**
+     * get the wall on the given side
+     * @param side the side
+     * @return the wall with type of that side
+     */
+    public Wall getWall(Constants.BoardSide side) {
+        for (Wall wall: walls) {
+            if (wall.getType() == side) return wall;
+        }
+        throw new RuntimeException("Unexpected state: no wall of type " + side);
     }
 
     /**
@@ -129,8 +158,8 @@ public class Board {
         boardString.setRect(21,0,".");
         boardString.setRect(21,21,".");
 
-        // Keep track of which balls have collided this frame.
-        Set<Ball> ballsThatHaveCollided = new HashSet<Ball>();
+        // balls which were taken by absorbers or invisible walls
+        Set<Ball> ballsToRemove = new HashSet<Ball>();
 
         //loop through all gadgets and call handleBall for all balls; add relevant events to boardQueue
         //  then add gadgets to boardString
@@ -139,7 +168,6 @@ public class Board {
                 BoardEvent e = gadget.handleBall(ball);
                 if (e != null){
                     eventQueue.add(e);
-                    ballsThatHaveCollided.add(ball);
                 }
             }
             boardString.setRect((int)gadget.getPosition().x() + 1, (int)gadget.getPosition().y() + 1, gadget.stringRepresentation());
@@ -159,10 +187,14 @@ public class Board {
                     boardString.setRect((int)wall.getPosition().x()+1, (int)wall.getPosition().y()+1, wall.stringRepresentation());
                 }
 
-                if (wall.handleBall(ball) != null) {
-                    ballsThatHaveCollided.add(ball);
+                if (wall.handleBall(ball) != null) { // the wall took the ball
+                    ballsToRemove.add(ball);
                 }
             }
+        }
+
+        for (Ball ball: ballsToRemove) {
+            balls.remove(ball);
         }
 
         // process events in queue
