@@ -1,6 +1,8 @@
 package common.netprotocol;
 
 import physics.Vect;
+import common.Constants;
+import common.RepInvariantException;
 import common.Constants.BoardSide;
 
 /**
@@ -11,18 +13,20 @@ import common.Constants.BoardSide;
  *
  * ADT:
  * * BallOutMessage contains the following data:
- * * * ballPos: the position of the ball
- * * * ballVel: the velocity of the ball
- * * * fromSide: the side of the board that the ball went out
+ *      * ballPos: the position of the ball
+ *      * ballVel: the velocity of the ball
+ *      * fromSide: the side of the board that the ball went out
  *
  * Thread Safety Argument:
- * - all data is immutable.
+ * * all data is immutable.
+ *
+ * Rep Invariant:
+ * * all data is immutable (enforced by type system)
+ * * ballPos x and y are between 0 and Constants.BOARD_WIDTH/Constasts.BOARD_HEIGHT (inclusive)
+ *
  */
 public class BallOutMessage extends NetworkMessage {
-    /**
-     * Rep invariant:
-     * - all data is immutable (enforced by type system)
-     */
+
     private final Vect ballPos; // position of the ball
     private final Vect ballVel; // velocity of the ball
     private final BoardSide fromSide; // which side the ball departs from
@@ -31,8 +35,9 @@ public class BallOutMessage extends NetworkMessage {
      * Deserialize the message.
      * See NetworkMessage.deserialize for specification.
      * See this NetworkMessage's serialize for specific serialization specification.
-     * @return decoded NetworkMessage
+     *
      * @param body body of the message
+     * @return decoded NetworkMessage
      */
     public static NetworkMessage deserialize(String body) throws DecodeException {
         String units[] = body.split(STD_SEP);
@@ -47,7 +52,7 @@ public class BallOutMessage extends NetworkMessage {
 
     /**
      * Create a message.
-     * @param ballPos  position of the ball
+     * @param ballPos  position of the ball. Requires ballPos.x() and ballPos.y() to be between 0 and 20, inclusive.
      * @param ballVel  velocity of the ball
      * @param fromSide which side the ball departs from
      */
@@ -55,6 +60,8 @@ public class BallOutMessage extends NetworkMessage {
         this.ballPos = ballPos;
         this.ballVel = ballVel;
         this.fromSide = fromSide;
+
+        if (Constants.DEBUG) checkRep();
     }
 
     /**
@@ -88,5 +95,18 @@ public class BallOutMessage extends NetworkMessage {
      */
     public BoardSide getFromSide() {
         return fromSide;
+    }
+
+    /**
+     * asserts the rep invariant.
+     *
+     * Rep Invariant:
+     * * ballPos x and y are between 0 and Constants.BOARD_WIDTH/Constasts.BOARD_HEIGHT (inclusive)
+     */
+    private void checkRep() {
+        if (ballPos.x() < 0 || ballPos.x() > Constants.BOARD_WIDTH
+         || ballPos.y() < 0 || ballPos.y() > Constants.BOARD_HEIGHT) {
+            throw new RepInvariantException("The ball's position is out of bounds");
+        }
     }
 }
