@@ -3,17 +3,20 @@
 ## Anna Did
 
 * Warmup: Main, Run, constructor
-* Phase 1 Assignment: Board & Gadgets
-* Phase 1 Specs: Ball, Board, gadgets package, Constants
+* Initial Assignment: Board & Gadgets
+* Specs: Ball, Board, gadgets package, Constants
+* Implemented: Ball, Board, gadgets package, StringCanvas, lots of bug fixing
 
 ## Jess Did
 
 * Warmup: Physics
-* Phase 1 Assignment: Event queue, server
-* Phase 1 Specs: BoardEvent, BoardEventSubscription, server package
+* Initial Assignment: Event queue, server
+* Specs: BoardEvent, BoardEventSubscription, server package
+* Implemented: server package, BoardEvent & BoardEventSubscription, PingballClient, ServerHandler, Wall invisibility
 
 ## Miles Did
 
 * Warmup: toString
-* Phase 1 Assignment: Network & Wire Protocol
-* Phase 1 Specs: Common.netprotocol package, Network Message Tests, Parser, PingballClient, ServerHandler
+* Initial Assignment: Network & Wire Protocol
+* Specs: Common.netprotocol package, Network Message Tests, Parser, PingballClient, ServerHandler
+* Implemented: netprotocol package, Parser, lots of bug fixing
