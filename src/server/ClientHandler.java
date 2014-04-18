@@ -55,10 +55,7 @@ public class ClientHandler implements Runnable{
         this.messageQueue = queue;
         this.deadClientsQueue = deadClientsQueue;
 
-        if (Constants.DEBUG) {
-            try { checkRep(); }
-            catch (RepInvariantException e) { System.err.println(e.getMessage()); }
-        }
+        if (Constants.DEBUG) { checkRep(); }
     }
 
     /**
@@ -142,7 +139,7 @@ public class ClientHandler implements Runnable{
      * * if this is in deadClientsQueue, socket is closed
      *
      */
-    private void checkRep() throws RepInvariantException {
+    private void checkRep() {
         if (deadClientsQueue.contains(this) && !socket.isClosed()) {
             throw new RepInvariantException("this is in deadClientsQueue but socket is open");
         }
