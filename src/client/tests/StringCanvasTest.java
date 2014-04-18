@@ -19,16 +19,17 @@ public class StringCanvasTest {
      *
      * Testing strategy for StringCanvas(int width, int height, String filler) constructor
      * -initialized with filler = "\n": throws exception
-     * -initialized with normal filler
-     * -initialized with square (x,y)
-     * -initialized with rectangular (x,y)
+     * -initialized with normal filler. Returns correct string.
+     * -initialized with square (x,y). Returns correct string.
+     * -initialized with rectangular (x,y). Returns correct string.
      *
      * Testing strategy for setRect(int x, int y, String rep) method
      * -initialized with x and y outside of width/height: throws exception
      * -initialized with rep string that extends beyond bounds of board
-     * if initialized at x, y
+     * - initialized at appropriate x, y. Returns correct string.
      *
-     * Do I need to test getString???
+     * Testing strategy for toString(
+     * -initialized with normal filler and setRects. Returns correct string.
      */
 
     @Test(expected=IllegalArgumentException.class)
@@ -52,6 +53,18 @@ public class StringCanvasTest {
     public void badXorY() throws IllegalArgumentException{
         StringCanvas s = new StringCanvas(20,20," ");
         s.setRect(40, 15, "!");
+    }
+
+    @Test
+    public void toStringTest(){
+        StringCanvas s = new StringCanvas(3,3,"b");
+        String stringA = "a" + "\n" + "a" + "\n" + "a";
+        String stringB = "c" + "\n" + "c" + "\n" + "c";
+        s.setRect(0, 0, stringA);
+        s.setRect(2, 0, stringB);
+
+        System.out.println(s.getString());
+        assertEquals(s.getString(), "abc\n" +"abc\n" + "abc\n");
     }
 
 }
