@@ -59,7 +59,6 @@ public class Flipper implements Gadget{
         this.orientation = orientation;
         geometry = new ArrayList<LineSegment>();
         geometry.add(setFlipperLine());
-
         checkRep();
     }
 
