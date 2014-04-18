@@ -46,8 +46,8 @@ public class Absorber implements Gadget {
      *
      * @param name unique String identifier for Absorber object
      * @param startingPoint upper left-hand corner coordinates for the Absorber
-     * @param width width of Absorber, must be less than 20
-     * @param height height of Absorber, must less than 20
+     * @param width width of Absorber, must be less than BOARD_WEIGHT
+     * @param height height of Absorber, must less than BOARD_HEIGHT
      * @param gravity magnitude of gravity of the board the Absorber is on.
      */
     public Absorber(String name, Vect startingPoint, int width, int height, double gravity){
