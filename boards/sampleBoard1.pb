@@ -1,4 +1,3 @@
-
 board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
 # This board is meant for stand-alone play. It is a loose 
 # representation of the screenshot in the project handout.
@@ -43,9 +42,9 @@ board name=sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020
   
   # add some flippers
   leftFlipper name=FlipL1 x=8 y=2 orientation=0
-  rightFlipper name=FlipR1 x=11 y=2 orientation=0
+  rightFlipper name=FlipR1 x=10 y=2 orientation=0
   leftFlipper name=FlipL2 x=8 y=7 orientation=0
-  rightFlipper name=FlipR2 x=11 y=7 orientation=0
+  rightFlipper name=FlipR2 x=10 y=7 orientation=0
 
   # define an absorber to catch the ball at the bottom
   absorber name=Abs x=0 y=19 width=20 height=1 
