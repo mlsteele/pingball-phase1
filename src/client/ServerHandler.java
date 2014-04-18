@@ -27,7 +27,6 @@ import common.netprotocol.NetworkMessage.DecodeException;
 public class ServerHandler implements Runnable {
     private final Socket socket;
     private final BlockingQueue incomingMessages;
-    private final String boardName;
     private final BufferedReader in;
     private final PrintWriter out;
 
@@ -39,10 +38,9 @@ public class ServerHandler implements Runnable {
      *        the caller must throw away their reference to socket after creating a ServerHandler
      * @param incomingMessages threadsafe queue to receive messages
      */
-    ServerHandler(Socket socket, BlockingQueue<NetworkMessage> incomingMessages, String boardName) throws IOException {
+    ServerHandler(Socket socket, BlockingQueue<NetworkMessage> incomingMessages) throws IOException {
         this.socket = socket;
         this.incomingMessages = incomingMessages;
-        this.boardName = boardName;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
     }
