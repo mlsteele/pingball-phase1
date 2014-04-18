@@ -20,7 +20,6 @@ import physics.Vect;
 
 import common.Constants;
 import common.RepInvariantException;
-
 import common.netprotocol.*;
 
 /**
@@ -30,25 +29,33 @@ import common.netprotocol.*;
  *  * Handles interactions between ClientHandler threads including passing balls
  *  * Listens for System.in commands, parses, and handles commands, including fusing and separating boards.
  *
- *  Thread Safety Argument:
+ *  Concurrency Exposition for the server package:
  *  * Many different threads are used on the Pingball Server. They are:
  *      * The main thread, which gets data from other threads via queues
  *      * The CommandLineInterface thread, which sends commands from System.in to the main thread via a queue
  *      * The SocketAcceptor thread, which creates ClientHandler threads when clients connect
  *      * The ClientHandler threads, which send AuthoredMessages to the main thread via a queue
+ *
+ *  Thread Safety Argument for PingballServer:
  *  * PingballServer calls ClientHandler.send(), but it is the only thread that does so (ClientHandler does not call its own send method)
  *  * PingballServer calls ClientHandler.getName(), but it is the only thread that does so
+ *  * PingballServer accepts data from other threads via threadsafe queues:
+ *      * cliQueue
+ *      * messageQueue
+ *      * deadClientsQueue
  *  * The following fields are confined:
  *      * clients
  *      * horizontalBoardJoins
  *      * verticalBoardJoins
+ *  * The rest of the fields are immutable.
+ *  * The main server thread is the only one to call any PingballServer methods
  *
  *  Rep Invariants:
  *  * MIN_PORT <= port <= MAX_PORT
  *  * for every name -> ClientHandler in clients, client.getName() must be name
  *  * Every list in horizontalBoardJoins and verticalBoardJoins is length 2.
  *  * Every String in the lists of horizontalBoardJoins/verticalBoardJoins is a key in clients.
- *  * No one String is the first more than one pair in a list, or the second of more than one pair in a list
+ *  * No one String is the first of more than one pair in a list, or the second of more than one pair in a list
  *      (e.g. "board1" cannot be the left side of a horizontal join to two different boards)
  *
  */
@@ -68,6 +75,7 @@ public class PingballServer {
 
     /**
      * Instantiate a PingballServer
+     *
      * @param port the port on which to create the socket
      * @throws IOException if the socket can not be created
      */
@@ -84,8 +92,8 @@ public class PingballServer {
     }
 
     /**
-     * Run the server, listening for client connections and handling them.
-     * Never returns unless an exception is thrown.
+     * Run the server, starting the SocketAcceptor thread and the CommandLineInterface thread,
+     * and processes all data input from queues
      *
      * @throws IOException if the main server socket is broken
      */
@@ -123,6 +131,7 @@ public class PingballServer {
     /**
      * "buries" a dead client, i.e. processes the disconnect of a client
      * Unfuses boards that were fused to it
+     *
      * @param ch the dead client
      */
     private void buryDeadClient(ClientHandler ch) {
@@ -264,7 +273,6 @@ public class PingballServer {
             if (p1.equals(b1)) { // overwrite existing board connection
                 pair.set(1, b2);
                 overwrote = true;
-                // TODO Unfuse & Fuse when connection is replaced? or just Fuse?
                 break;
             }
             if (p2.equals(b2)) {
@@ -277,14 +285,14 @@ public class PingballServer {
             boardJoins.add(Arrays.asList(b1, b2));
         }
         // tell the boards they joined
-        clients.get(b1).send(new BoardFuseMessage(b2, b2Pos)); //these are backwards, because if b1 is the LEFT board, then the fuse happens on its RIGHT side.
+        clients.get(b1).send(new BoardFuseMessage(b2, b2Pos)); // if b1 is the LEFT board, then the fuse happens on its RIGHT side.
         clients.get(b2).send(new BoardFuseMessage(b1, b1Pos));
     }
 
     /**
      * handle a NetworkMessage from a ClientHandler
      *
-     * @param message the AuthoredMessage containing the NetworkMessage
+     * @param authoredMessage the AuthoredMessage containing the NetworkMessage
      * and the ClientHandler who received the message.
      *
      * handleMessage knows how to deal with the following types of NetworkMessage:

@@ -104,6 +104,7 @@ public class ClientHandler implements Runnable{
      * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     public synchronized void kill() {
+
         if (!socket.isClosed()) {
             try {
                 out.close();
