@@ -25,55 +25,44 @@ import client.gadgets.Flipper;
 import client.gadgets.Gadget;
 import client.gadgets.StaticBumper;
 
+/**
+ * Tests for Board
+ *
+ * These tests cover the basic functionality of the Board class and the
+ * Gadgets, Walls, and Balls it is equipped with.
+ *
+ * These tests are glass-box in that they know the inner representations
+ * of Gadgets and Board. They know which Gadgets produce special Actions
+ * (absorber and flipper) and how these Gadgets can subscribe to triggers.
+ *
+ * Testing strategy for Board construction
+ * -initialized with overlapping Gadgets
+ * -initialized with Gadgets that extend outside the Board
+ * -initialized with a regular set of Gadgets
+ *
+ * Testing strategy for Gadgets and Walls:
+ * -each Gadget/Wall will underGo a receivesBall Test to make sure it can respond to
+ * the trigger of a Ball approaching sufficiently close to it
+ * +Absorber            contains no balls
+ *                      contains more balls than it has space in its
+ *                      string representation
+ * +Flipper:            Proper rotation given initial orientation/type
+ * +StaticBumper:       test different coefficients of reflection
+ * +Wall                Fused / Not Fused
+ *                      Printing names
+ *
+ * Testing strategy for BoardEvent and BoardEventSubscription activity:
+ * -Each Gadget that can listen for a trigger (it has a special action) will
+ * be tested to see if it can respond to BoardEvents from any type of Gadget
+ * (including its self)
+ *
+ * Testing strategy for sharing Walls/Balls activity:
+ * -Each number of neighboring Boards from 0 to 4 will be tested for general correctness
+ * -General "passing a ball."
+ * -Absorber generating a ball and sending it upward into another Board
+ *
+ */
 public class BoardTest {
-
-    /**
-     * Tests for Board
-     *
-     * These tests cover the basic functionality of the Board class and the
-     * Gadgets, Walls, and Balls it is equipped with.
-     *
-     * These tests are glass-box in that they know the inner representations
-     * of Gadgets and Board. They know which Gadgets produce special Actions
-     * (absorber and flipper) and how these Gadgets can subscribe to triggers.
-     *
-     * Testing strategy for Board construction
-     * -initialized with overlapping Gadgets
-     * -initialized with Gadgets that extend outside the Board
-     * -initialized with a regular set of Gadgets
-     *
-     * Testing strategy for Gadgets and Walls:
-     * -each Gadget/Wall will underGo a receivesBall Test to make sure it can respond to
-     * the trigger of a Ball approaching sufficiently close to it
-     * +Absorber            contains no balls
-     *                      contains more balls than it has space in its
-     *                      string representation
-     * +Flipper:            Proper rotation given initial orientation/type
-     * +StaticBumper:       test different coefficients of reflection
-     * +Wall                Fused / Not Fused
-     *                      Printing names
-     *
-     * Testing strategy for BoardEvent and BoardEventSubscription activity:
-     * -Each Gadget that can listen for a trigger (it has a special action) will
-     * be tested to see if it can respond to BoardEvents from any type of Gadget
-     * (including its self)
-     *
-     * Testing strategy for sharing Walls/Balls activity:
-     * -Each number of neighboring Boards from 0 to 4 will be tested for general correctness
-     * -General "passing a ball."
-     * -Absorber generating a ball and sending it upward into another Board
-     *
-     * More examples of edge cases we should add:
-     * -null initializations
-     *
-     *Diagnostic printing (not to submit in final):
-     *System.out.println("LINE: " + line);
-                System.out.println("Velocity1: " + ball.getVelocity());
-                System.out.println("XCoord: " + ball.getCircle().getCenter().x());
-                System.out.println("YCoord: " + ball.getCircle().getCenter().y());
-     */
-
-
     /**
      * Testing recievesBall for Absorber
      */
