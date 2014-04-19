@@ -11,8 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import common.Constants;
-import physics.Angle;
-import physics.LineSegment;
 import physics.Vect;
 import client.Ball;
 import client.Board;
@@ -199,11 +197,9 @@ public class BoardTest {
         Vect startForCircleC = new Vect(4,8);
         Vect startForSquareD = new Vect(5,8);
         Vect startForSquareE = new Vect(9,9);
-        Vect startForAbsorber = new Vect(0,2);
         double velocityMagnitude = 0; //L/s
         Vect initialBallVelocity = new Vect(1, velocityMagnitude); //falls downward when Velocity is positive
         StaticBumper TriA = new StaticBumper("SquareA", Constants.BumperType.TRIUP, startForTriA);
-        StaticBumper squareB = new StaticBumper("SquareB", Constants.BumperType.SQUARE, startForSquareB);
         StaticBumper circleC = new StaticBumper("SquareA", Constants.BumperType.CIRCLE, startForCircleC);
         StaticBumper squareD = new StaticBumper("SquareB", Constants.BumperType.SQUARE, startForSquareD);
         StaticBumper squareE = new StaticBumper("SquareA", Constants.BumperType.SQUARE, startForSquareE);

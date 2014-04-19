@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import client.StringCanvas;
-import common.netprotocol.NetworkMessage.DecodeException;
 
 public class StringCanvasTest {
     /**

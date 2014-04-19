@@ -1,10 +1,9 @@
 package common;
 
-import physics.Vect;
 
 /**
  * This is a static class containing the constants that need
- * to be used by both the server and the client.
+ * to be used by multiple packages.
  */
 public class Constants {
     public static final int BOARD_WIDTH = 20; // in L
@@ -33,6 +32,5 @@ public class Constants {
         LEFT, RIGHT
     }
 
-    /* TODO set this to false in the final version! */
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 }

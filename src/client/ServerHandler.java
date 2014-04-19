@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 
-import server.AuthoredMessage;
-
 import common.Constants;
 import common.netprotocol.*;
 import common.netprotocol.NetworkMessage.DecodeException;
@@ -26,7 +24,7 @@ import common.netprotocol.NetworkMessage.DecodeException;
  */
 public class ServerHandler implements Runnable {
     private final Socket socket;
-    private final BlockingQueue incomingMessages;
+    private final BlockingQueue<NetworkMessage> incomingMessages;
     private final BufferedReader in;
     private final PrintWriter out;
 
