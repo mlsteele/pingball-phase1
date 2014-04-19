@@ -14,6 +14,12 @@ import physics.Vect;
  * Ball has the ability to revert to a previous position so that
  * can be guaranteed to be in a valid place.
  *
+ * The ball has an in play flag. This determines whether the ball
+ * should be considered a part of the game for the purposes of collisions,
+ * gravity, and other game interction.
+ * This can be set to false to disable the ball if, for example,
+ * it is in the clutches of an Absorber.
+ *
  * Rep invariant:
  * - Ball position.x must be in the range [0, Constants.BOARD_WIDTH]
  * - Ball position.y must be in the range [0, Constants.BOARD_HEIGHT]
@@ -30,9 +36,9 @@ public class Ball {
 
     /**
      * Ball Constructor
-     * @param radius
-     * @param pos
-     * @param vel
+     * @param radius of the ball
+     * @param pos position of the ball
+     * @param vel velocity of the ball
      */
     public Ball(double radius, Vect pos, Vect vel) {
         this.circle = new Circle(pos, radius);
@@ -57,32 +63,61 @@ public class Ball {
         circle = prevCircle;
     }
 
+    /**
+     * Setter for ball velocity.
+     * @param vel new velocity
+     */
     public void setVelocity(Vect vel) {
         this.vel = vel;
     }
 
+    /**
+     * Setter for ball position.
+     * @param pos new position
+     */
     public void setPosition(Vect pos) {
         prevCircle = circle;
         circle = new Circle(pos, radius);
         checkRep();
     }
 
+    /**
+     * Getter for position.
+     * @return centerpoint of the ball
+     */
     public Vect getPosition() {
         return circle.getCenter();
     }
 
+    /**
+     * Getter for Ball's current Circle.
+     * Useful for physics interaction.
+     * @return Circle of the ball at its current state.
+     */
     public Circle getCircle() {
         return this.circle;
     }
 
+    /**
+     * Getter for Ball's current velocity.
+     * @return ball's current velocity
+     */
     public Vect getVelocity() {
         return this.vel;
     }
 
+    /**
+     * Getter for Ball's in play flag.
+     * @return ball's current in play status.
+     */
     public boolean isInPlay() {
         return inPlay;
     }
 
+    /**
+     * Setter for in play flag.
+     * @param inPlay new value for in play flag.
+     */
     public void setInPlay(boolean inPlay) {
         this.inPlay = inPlay;
     }
