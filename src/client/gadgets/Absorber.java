@@ -1,4 +1,5 @@
 package client.gadgets;
+
 import common.Constants;
 import common.RepInvariantException;
 
@@ -8,27 +9,35 @@ import java.util.List;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
+
 import client.Ball;
-import client.Board;
 import client.BoardEvent;
-import common.Constants;
 
 /**
  * Absorber is a mutable class that represents an object on the Pingball board
  * which simulates the ball-return mechanism familiar to us from pinball.
  *
- * A rectangle kL x mL where k and m are positive integers <= 20.
+ * A rectangle kL x mL where k and m are positive integers <= Constants.BOARD_WIDTH and Constants.BOARD_HEIGHT.
+ *
  * Trigger: generated whenever the ball hits it
- * Special Action: shoots out a ball (if one is stored) at velocity 50L/sec
+ * Special Action: shoots out a ball (if one is stored) at Constants.SHOOT_VELOCITY L/sec
  *
  * When a ball hits an absorber, the absorber stops the ball and holds it (unmoving)
  * in the bottom right-hand corner of the absorber. The ball's center is .25L from the
  * bottom of the absorber and .25L from the right side of the absorber.
  *
- * Rep invariant: geometry (the list) must have four lines. The four corners of the lineSegments
- * must occur within the board (their x and y coordinates are less than or equal to 20 and greater than or equal to 0)
+ * Rep invariant:
+ * * geometry (the list) must have four lines.
+ * * The four corners of the lineSegments must occur within the board
+ *   (their x and y coordinates are less than or equal to Constants.BOARD_WIDTH/Constants.BOARD_HEIGHT and greater than or equal to 0)
+ * * width must equal the width of the horizontal LineSegments
+ * * height must equal the height of the vertical LineSegments
+ * * startingPoint.x(), width, and (startingPoint.x() + width) must all be between 0 and Constants.BOARD_WIDTH
+ * * startingPoint.y() , height, and (startingPoint.y() + height) must all be between 0 and Constants.BOARD_HEIGHT
  *
- * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
+ * Thread Safety Argument:
+ * * This class is not thread safe, and is always used in a confined environment.
+ *
  */
 
 public class Absorber implements Gadget {
@@ -44,9 +53,11 @@ public class Absorber implements Gadget {
      * receive a handleBall() call in order to add Ball objects to 'balls' list.
      *
      * @param name unique String identifier for Absorber object
-     * @param startingPoint upper left-hand corner coordinates for the Absorber
-     * @param width width of Absorber, must be less than BOARD_WIDTH
-     * @param height height of Absorber, must less than BOARD_HEIGHT
+     * @param startingPoint upper left-hand corner coordinates for the Absorber.
+     *      Requires 0 <= startingPoint.x() <= Constants.BOARD_WIDTH
+     *      and      0 <= startingPoint.y() <= Constants.BOARD_HEIGHT
+     * @param width width of Absorber, must be between 0 and BOARD_WIDTH
+     * @param height height of Absorber, must be between 0 and BOARD_HEIGHT
      */
     public Absorber(String name, Vect startingPoint, int width, int height){
         this.name = name;
@@ -65,14 +76,15 @@ public class Absorber implements Gadget {
         checkRep();
     }
 
-    @Override
     /**
      * When physics' timeUntilWallCollision method detects that a ball from Board will hit the Absorber,
      * the Absorber absorbs the ball and stores it .25L from its bottom and .25L from its right side. If
      * it contained another ball, it will shoot that ball up toward the board's ceiling.
      *
      * @param ball object from Board
+     * @return BoardEvent if the ball collides with the absorber. Otherwise, returns null.
      */
+    @Override
     public BoardEvent handleBall(Ball ball) {
         // Check for ball hit.
         for (LineSegment line : geometry) {
@@ -95,8 +107,21 @@ public class Absorber implements Gadget {
     }
 
     /**
-     * Called during Board's step function. Each L unit of width for an absorber is represented
-     * by "=". The two side walls are represented by | bars on the left and right boundaries.
+     * Called during Board's step function.
+     * The top and bottom borders of the absorber are represented by "=" characters.
+     * The side borders are represented by "|" characters.
+     * For example, a 4x4 absorber would return:
+     *      ====
+     *      |  |
+     *      |  |
+     *      ====
+     *
+     * If there is a ball in the absorber, it will be printed in the bottom right corner like this:
+     *      ====
+     *      |  |
+     *      |  |
+     *      ===*
+     *
      * @return string representation of absorber for print out
      */
     @Override
@@ -124,7 +149,8 @@ public class Absorber implements Gadget {
     }
 
     /**
-     * Shoots out ball if a ball is contained. Triggered only by Board.
+     * If a ball is currently stored in the absorber, this
+     * shoots out ball upwards at Constants.SHOOT_VELOCITY.
      */
     @Override
     public void specialAction() {
@@ -144,6 +170,7 @@ public class Absorber implements Gadget {
     /**
      * @return height
      */
+    @Override
     public double getHeight(){
         return height;
     }
@@ -151,6 +178,7 @@ public class Absorber implements Gadget {
     /**
      * @return weight
      */
+    @Override
     public double getWidth(){
         return width;
     }
@@ -158,12 +186,13 @@ public class Absorber implements Gadget {
     /**
      * @return startingPoint Vector representation of point at the top left corner of the absorber
      */
+    @Override
     public Vect getPosition() {
         return startingPoint;
     }
 
     /**
-     * @return name unique String Absorber was initialized with
+     * @return name unique String that Absorber was initialized with
      */
     @Override
     public String getName() {
@@ -171,23 +200,48 @@ public class Absorber implements Gadget {
     }
 
     /**
-     * Rep invariant: The four corners of the Absorber must occur within
-     * the board (their x and y coordinates are less than or equal to BOARD_HEIGHT/WIDTH
-     * and greater than or equal to 0)
+     * Asserts the rep invariant by throwing a RepInvariantException if the rep invariant is violated
      *
-     * @return boolean indicating whether the Absorber adheres to the rep invariant
+     * Rep invariant:
+     * * geometry (the list) must have four lines.
+     * * The four corners of the lineSegments must occur within the board
+     *   (their x and y coordinates are less than or equal to Constants.BOARD_WIDTH/Constants.BOARD_HEIGHT and greater than or equal to 0)
+     * * width must equal the width of the horizontal LineSegments
+     * * height must equal the height of the vertical LineSegments
+     * * startingPoint.x(), width, and (startingPoint.x() + width) must all be between 0 and Constants.BOARD_WIDTH
+     * * startingPoint.y() , height, and (startingPoint.y() + height) must all be between 0 and Constants.BOARD_HEIGHT
+     *
      */
     public void checkRep(){
-        if (startingPoint.x() + width > Constants.BOARD_WIDTH ||
-                startingPoint.y() + height > Constants.BOARD_HEIGHT ||
-                startingPoint.x() < 0 ||
-                startingPoint.y() < 0) {
-            throw new RepInvariantException("Rep invariant violated. "
-                + startingPoint.x() + " + " + width + " >=" + Constants.BOARD_WIDTH + " or "
-                + startingPoint.y() + " + " + height + " >=" + Constants.BOARD_HEIGHT);
+
+        if (geometry.size() != 4) {
+            throw new RepInvariantException("There are not four sides!");
         }
+        for (LineSegment line: geometry) {
+            if (line.p1().x() < 0 || line.p1().x() > Constants.BOARD_WIDTH
+                    || line.p1().y() < 0 || line.p1().y() > Constants.BOARD_HEIGHT
+                    || line.p2().x() < 0 || line.p2().x() > Constants.BOARD_WIDTH
+                    || line.p2().y() < 0 || line.p2().y() > Constants.BOARD_HEIGHT) {
+                throw new RepInvariantException("The sides go outside the board!");
+            }
+            if (line.length() != width && line.length() != height)
+                throw new RepInvariantException("A side is not width or height!");
+        }
+        if (width < 0 || width > Constants.BOARD_WIDTH)
+            throw new RepInvariantException("width is invalid");
+        if (height < 0 || height > Constants.BOARD_HEIGHT)
+            throw new RepInvariantException("height is invalid");
+        if (startingPoint.x() + width > Constants.BOARD_WIDTH)
+            throw new RepInvariantException("The absorber goes too wide");
+        if (startingPoint.y() + height > Constants.BOARD_HEIGHT)
+            throw new RepInvariantException("The absorber goes too tall");
     }
 
+
+    /**
+     * How many balls are contained in this absorber?
+     * @return the number of balls contained in the absorber
+     */
     public int ballsContained(){
         return balls.size();
     }
