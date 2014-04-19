@@ -2,15 +2,15 @@ package client;
 import common.RepInvariantException;
 
 /**
- * String Canvas creates a string width X height (according to constructor).
- * Each character is filler
+ * StringCanvas is a utility for manipulating Strings as if they were bitmaps.
  *
- * rep invariant: userBoard cannot have any nulls
+ * Thread Safety:
+ * - not threadsafe
  *
- * Thread Safety: not threadsafe
+ * Rep Invariant:
+ * - userBoard cannot have any nulls
  */
 public class StringCanvas {
-
     private final int columns;
     private final int rows;
     private String[][] userBoard;
@@ -19,9 +19,10 @@ public class StringCanvas {
      * Create a new String Canvas
      * @param width board width
      * @param height board height
-     * @param filler String that goes between gadgets as a placeholder.
-     *          Cannot be null. filler.length() must equal 1.
-     *          " " is recommended
+     * @param filler String used to initialize each cell of the canvas.
+     *               Cannot be null.
+     *               filler.length() must equal 1.
+     *               " " is recommended.
      */
     public StringCanvas(int width, int height, String filler) {
         if (filler.length() > 1 || filler == null){
@@ -41,11 +42,15 @@ public class StringCanvas {
 
     /**
      * Takes string representations and incorporates them
-     * into the board representation
+     * into the board representation.
      *
-     * @param x must be >= 0 and <= columns
-     * @param y must be >= 0 and <= rows
-     * @param rep stringRepresentation must fit within StringCanvas
+     * @param x position to place the string
+     *          must be >= 0 and <= columns
+     * @param y position to place the string
+     *          must be >= 0 and <= rows
+     * @param rep String representation to insert
+     *            Must fit within the StringCanvas
+     *            at the specified location.
      */
     public void setRect(int x, int y, String rep){
         if (x < 0 || y < 0 || x > columns || y > rows){
@@ -63,6 +68,7 @@ public class StringCanvas {
     }
 
     /**
+     * Retrieve the string representation of the StringCanvas.
      * @return String representation of Board
      */
     public String getString(){
@@ -77,7 +83,7 @@ public class StringCanvas {
     }
 
     /**
-     * Rep invariant: userBoard cannot have any nulls
+     * Verify that the rep invariant is not violated.
      */
     public void checkRep() {
         for(int j = 0; j < this.rows; j++){
