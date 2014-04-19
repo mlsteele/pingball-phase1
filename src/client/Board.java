@@ -1,4 +1,4 @@
-package client;
+    package client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +31,12 @@ import client.gadgets.Wall;
  * The board can accept new balls from other clients, and
  * can be notified when it is fused or separated from other boards.
  *
- * Rep Invariant: Gadgets are never added or removed from the list of Board gadgets.
- * No gadgets can overlap.
+ * Rep Invariant:
+ * - Gadgets are never added or removed from the list of Board gadgets.
+ * - No gadgets can overlap.
  *
  * Thread Safety Argument:
- * The instance of Board in a client is confined (with its objects, like
- * StringCanvas and Gadgets) to one thread.
+ * - Not thread safe, used within a confined environment.
  */
 public class Board {
 
@@ -52,12 +52,12 @@ public class Board {
 
     /**
      * Create a new board.
-     * @param name board name
+     * @param name name of the board
      * @param gadgets list of gadgets on the board.
      *                caller must never modify this list.
      * @param gravity force of gravity on ball in L/s^2
-     * @param f1 force of friction on ball in L/s^2
-     * @param f2 force of friction on ball in L/s^2
+     * @param f1 mu1 for friction calculation on ball in L/s^2
+     * @param f2 mu2 for friction calculation on ball in L/s^2
      */
     public Board(String name, List<Gadget> gadgets, double gravity, double f1, double f2) {
         this.name = name;
@@ -81,7 +81,7 @@ public class Board {
     }
 
     /**
-     * get the board name
+     * Get the board name
      * @return the board name
      */
     public String getName() {
@@ -89,7 +89,9 @@ public class Board {
     }
 
     /**
-     * Called by the server when a ball from a neighboring board enters this board
+     * Add a new ball to the Board.
+     * This ball must not already be in the Board.
+     * Called by the server when a ball from a neighboring board enters this board.
      * @param ball Any legal ball can be handled
      */
     public void addBall(Ball ball) {
@@ -97,24 +99,28 @@ public class Board {
     }
 
     /**
-     * Called by the server when a new subscription is created
-     * @param s Any legal subscription can be handled
+     * Add a subsription to the Board.
+     * This subscription must not already be in the Board.
+     * The subscription must refer to Gadgets on the Board.
+     * The subscription represents the intention that a gadget
+     * trigger the action of another gadget.
+     * @param subscription a subscription to add to the ball
      */
-    public void addSubscription(BoardEventSubscription s){
-        subscriptions.add(s);
+    public void addSubscription(BoardEventSubscription subscription){
+        subscriptions.add(subscription);
     }
 
     /**
-     * Connect the wall on side to a board over the network
+     * Connect the wall on one side to a Board over the network.
      * @param side the side to connect
-     * @param name the name of the connected
+     * @param name the name of the connected Board
      */
     public void connectWallToServer(Constants.BoardSide side, String name) {
         getWall(side).connectToServer(name);
     }
 
     /**
-     * Disconnect the wall on side from this board
+     * Disconnect the wall on one side from this Board.
      * @param side the side to disconnect
      */
     public void disconnectWallFromServer(Constants.BoardSide side) {
@@ -122,7 +128,8 @@ public class Board {
     }
 
     /**
-     * sets the server handler so that the walls can connect to the server
+     * Set the server handler so that the walls can inform
+     * other Boards over the network if a ball is transferred.
      * @param sh the server handler
      */
     public void setServerHandler(ServerHandler sh) {
@@ -132,7 +139,7 @@ public class Board {
     }
 
     /**
-     * get the wall on the given side
+     * Get the wall on the given side
      * @param side the side
      * @return the wall with type of that side
      */
@@ -144,10 +151,22 @@ public class Board {
     }
 
     /**
+     * Progress the board state by one timestep.
+     *
+     * This method does the following things:
+     * - Builds and returns a string view of the board for printing.
+     * - Handles physical collisions.
+     * - Handles emission and action on BoardEvents.
+     * - Applies gravity and friction in the physics simulation.
+     *
+     * This is how events work:
      * Receives events from handleBall Gadget methods and adds them to eventQueue.
      * BoardEventSubscription contains a list of the alternate and self triggers
-     * that some BoardEvents generate. eventQueue will always empty because BoardEvents
-     * are only produced in one method (handleBall) by each gadget.
+     * that some BoardEvents should trigger. eventQueue will always empty by the end of the step
+     * because BoardEvents are only produced in one method (handleBall) by each gadget
+     * and are all consumed within step.
+     *
+     * @return String view of the board
      */
     public String step() {
         //String representation of Board
@@ -252,8 +271,7 @@ public class Board {
     }
 
     /**
-     * Rep Invariant: Gadgets are never added or removed from the list of Board gadgets.
-     * No gadgets can overlap.
+     * Verify that the rep invariant has not been violated.
      */
     public void checkRep(){
         for (Gadget gadget: gadgets){
