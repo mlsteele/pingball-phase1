@@ -1,4 +1,5 @@
 package client.gadgets;
+
 import common.Constants;
 import common.RepInvariantException;
 
@@ -9,17 +10,19 @@ import physics.Circle;
 import physics.Geometry;
 import physics.LineSegment;
 import physics.Vect;
+
 import client.Ball;
 import client.BoardEvent;
 
 /**
- * StaticBumper is a stationary geometric bumper. They are composed of
- * LineSegments and will reflect the ball at its same velocity when it hits a lineSegment
- * Could by any of SquareBumper, CircularBumper, TriangularBumper.
+ * StaticBumper is a mutable class representing a stationary geometric bumper.
+ * It can be square, circular, or triangular.
  *
- * Rep invariant: bumper must have a position within the board's boundaries
+ * Rep invariant:
+ * * bumper must have a position within the board's boundaries
  *
- * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
+ * Thread Safety Argument:
+ * * This is not a thread safe data type; StaticBumper must be confined to one thread.
  */
 public class StaticBumper implements Gadget {
     private final Vect startingPoint;
@@ -30,12 +33,14 @@ public class StaticBumper implements Gadget {
     private int hits;
 
     /**
-     * Constructor that indicates the shape and starting point of the bumper.
+     * Create a new StaticBumper of the given type.
      *
      * @param name unique String identifier for this bumper
      * @param type BumperType representing what kind of bumper this is. Used for getting stringRepresentation later
      *        TRIDOWN = triangle bumper with initial orientation 90 || 270
      *        TRIUP   = triangle bumper with initial orientation  0 || 180
+     *        SQUARE  = square bumper
+     *        CIRCLE  = circle bumper
      * @param startingPoint upper left-hand corner coordinates for the bumper
      */
     public StaticBumper(String name, Constants.BumperType type, Vect startingPoint) {
@@ -55,7 +60,6 @@ public class StaticBumper implements Gadget {
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y() + 1, startingPoint.x() + 1, startingPoint.y()));
         } else if (type == Constants.BumperType.SQUARE) {
             this.isCircle = false;
-            //circle or square bumper
             geometry.add(new LineSegment(startingPoint.x(), startingPoint.y(), startingPoint.x() + 1, startingPoint.y()));
             geometry.add(new LineSegment(startingPoint.x() + 1, startingPoint.y(), startingPoint.x() + 1, startingPoint.y() + 1));
             geometry.add(new LineSegment(startingPoint.x() + 1, startingPoint.y() + 1, startingPoint.x(), startingPoint.y() + 1));
@@ -64,15 +68,17 @@ public class StaticBumper implements Gadget {
             // circle bumper
             isCircle = true;
         }
+
+        checkRep();
     }
 
-    @Override
     /**
      * Reflect a ball off of the bumper if there is a collision.
      *
-     * @param Ball object from Board
+     * @param ball the ball that we want to handle
      * @return a BoardEvent if a collision occurred, otherwise null
      */
+    @Override
     public BoardEvent handleBall(Ball ball) {
         if (isCircle) {
             Circle bumperCircle = new Circle(startingPoint, Constants.DEFAULT_CIRCLE_BUMPER_RADIUS);
@@ -84,13 +90,14 @@ public class StaticBumper implements Gadget {
             }
         } else {
             for (LineSegment line : geometry){
-                // Create a circle which acts as an identical proxy for the ball
-                // except with a radius of zero.
-                // This is to fix the bug in timeUntilWallCollision whereby circles
-                // are not said to collide with lines when all of the circle would
-                // not collide with the wall.
-                // The ball itself is not changed and the proxy is used only for
-                // detecting an impending collision.
+                 /* Create a circle which acts as an identical proxy for the ball
+                  * except with a radius of zero.
+                  * This is to fix the bug in timeUntilWallCollision whereby circles
+                  * are not said to collide with lines when all of the circle would
+                  * not collide with the wall.
+                  * The ball itself is not changed and the proxy is used only for
+                  * detecting an impending collision.
+                  */
                 Circle babyBall = new Circle(ball.getCircle().getCenter(), .05);
                 if (Geometry.timeUntilWallCollision(line, babyBall, ball.getVelocity()) <= Constants.TIMESTEP) {
                     hits ++;
@@ -103,21 +110,24 @@ public class StaticBumper implements Gadget {
         return null;
     }
 
-    @Override
     /**
      * @return startingPoint Vector representation of point at the top left corner of the bumper
      */
+    @Override
     public Vect getPosition() {
         return startingPoint;
     }
 
-    @Override
     /**
-     * Called during Board's step function. Each type of bumper has a different
-     * representation. Square = "#"; Triangle = "/" or "\", Circle = "0"
+     * Called during Board's step function. Each type of bumper has a different representation:
      *
-     * @return string representation of absorber for print out
+     * Square   = "#"
+     * Triangle = "/" or "\"
+     * Circle   = "O"
+     *
+     * @return string representation of the bumper for print out
      */
+    @Override
     public String stringRepresentation() {
         String repString = "";
         if (type == Constants.BumperType.SQUARE){
@@ -132,10 +142,10 @@ public class StaticBumper implements Gadget {
         return repString;
     }
 
-    @Override
     /**
-     * Bumpers perform no special action, so this initiates nothing
+     * Bumpers perform no special action, so this does nothing
      */
+    @Override
     public void specialAction() {
 
     }
@@ -143,6 +153,7 @@ public class StaticBumper implements Gadget {
     /**
      * @return 1 height of bumper is always 1
      */
+    @Override
     public double getHeight(){
         return 1;
     }
@@ -150,14 +161,15 @@ public class StaticBumper implements Gadget {
     /**
      * @return 1 width of bumper is always 1
      */
+    @Override
     public double getWidth(){
         return 1;
     }
 
-    @Override
     /**
      * @return unique String representation of bumper
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -167,15 +179,17 @@ public class StaticBumper implements Gadget {
      * Rep invariant: bumper must have a position within the board's boundaries
      */
     public void checkRep(){
-        if(startingPoint.x() + 1 >= Constants.BOARD_WIDTH ||
-                startingPoint.y() + 1 >= Constants.BOARD_HEIGHT ||
+        if(startingPoint.x() + 1 > Constants.BOARD_WIDTH ||
+                startingPoint.y() + 1 > Constants.BOARD_HEIGHT ||
                 startingPoint.x() < 0 ||
                 startingPoint.y() < 0){
-                throw new RepInvariantException("Rep invariant violated.");
-            }
-        throw new RepInvariantException("Rep invariant violated.");
+            throw new RepInvariantException("bumper out of bounds.");
+        }
     }
 
+    /**
+     * @return the number of times the bumper has been hit by a ball
+     */
     public int getHits(){
         return hits;
     }
