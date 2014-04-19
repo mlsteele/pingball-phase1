@@ -9,6 +9,11 @@ import client.gadgets.Gadget;
  * Subscriptions persist for the duration of the board game, unlike
  * BoardEvents which are consumed.
  *
+ * Thread Safety Argument:
+ * * this is an immutable data type.
+ *
+ * Rep invariant: none.
+ *
  */
 public class BoardEventSubscription {
     private final Gadget subscriber;
@@ -16,7 +21,7 @@ public class BoardEventSubscription {
 
     /**
      * Create a new BoardEventSubscription
-     * @param subscriber the Gadget that will do something when triggerer fires a BoardEvent
+     * @param subscriber the Gadget that will perform specialAction when triggerer fires a BoardEvent
      * @param triggerer the Gadget that will fire BoardEvents
      */
     public BoardEventSubscription(Gadget triggerer, Gadget subscriber) {
@@ -26,7 +31,7 @@ public class BoardEventSubscription {
 
     /**
      * get the triggerer
-     * @return the triggerer, i.e. the Gadget whose BoardEvents will cause the subscriber to act.
+     * @return the Gadget whose BoardEvents will cause the subscriber to act.
      */
     public Gadget getTriggerer() {
         return triggerer;
@@ -34,7 +39,7 @@ public class BoardEventSubscription {
 
     /**
      * get the subscriber
-     * @return the subscriber, i.e. the Gadget who was listening for the triggerer's BoardEvents.
+     * @return the Gadget who is listening for the triggerer's BoardEvents.
      */
     public Gadget getSubscriber() {
         return subscriber;
