@@ -12,12 +12,19 @@ import physics.LineSegment;
 import physics.Vect;
 
 /**
- * TODO
+ * Wall is a class for the sidewall of a Board.
  *
- * connectedBoardName is null iff the Wall is not connected to any other Board.
+ * Walls can one of four types representing the left, right, top, and bottom walls.
+ * Walls handle collisions most of the time.
+ * When they are notified that they are fused with another Board,
+ * then they are responsible for displaying the name of the fused Board
+ * and for transporting balls to it using the messaging system.
+ *
+ * Thread Safety Argument:
+ * - Wall is not threadsafe and is used in a confined environment.
  *
  * Rep Invariant:
- * - TODO (none?)
+ * - connectedBoardName can be null if there is no active fuse.
  */
 public class Wall implements Gadget {
     private final Constants.BoardSide type;
