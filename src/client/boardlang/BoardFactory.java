@@ -33,8 +33,6 @@ import client.gadgets.StaticBumper;
  * trailing newline, but that BoardFactory takes
  * care of this detail so that the caller of parse
  * does not need to worry about the end of the string at all.
- *
- * TODO tell syntaxError to throw a more descriptive exception.
  */
 public class BoardFactory {
     /**
@@ -69,41 +67,44 @@ public class BoardFactory {
      *
      * @param  input input board description string.
      * @return a Board
+     * @throws InvalidBoardStringException to indicate bad input.
      */
-    public static Board parse(String input) {
-        input = input + "\n";
+    public static Board parse(String input) throws InvalidBoardStringException {
+        try  {
+            input = input + "\n";
 
-        // Create a stream of tokens using the lexer.
-        CharStream stream = new ANTLRInputStream(input);
-        BoardLexer lexer = new BoardLexer(stream);
-        // TODO report as errors
-        lexer.reportErrorsAsExceptions();
-        TokenStream tokens = new CommonTokenStream(lexer);
+            // Create a stream of tokens using the lexer.
+            CharStream stream = new ANTLRInputStream(input);
+            BoardLexer lexer = new BoardLexer(stream);
+            lexer.reportErrorsAsExceptions();
+            TokenStream tokens = new CommonTokenStream(lexer);
 
-        // Feed the tokens into the parser.
-        BoardParser parser = new BoardParser(tokens);
-        // TODO report as errors
-        parser.reportErrorsAsExceptions();
+            // Feed the tokens into the parser.
+            BoardParser parser = new BoardParser(tokens);
+            parser.reportErrorsAsExceptions();
 
-        // Generate the parse tree using the starter rule.
-        ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
+            // Generate the parse tree using the starter rule.
+            ParseTree tree = parser.boardfile(); // "boardfile" is the starter rule
 
-        // debugging option #1: print the tree to the console
-        // System.err.println(tree.toStringTree(parser));
+            // debugging option #1: print the tree to the console
+            // System.err.println(tree.toStringTree(parser));
 
-        // debugging option #2: show the tree in a window
-        // ((RuleContext)tree).inspect(parser);
+            // debugging option #2: show the tree in a window
+            // ((RuleContext)tree).inspect(parser);
 
-        // debugging option #3: walk the tree with a listener
-        // new ParseTreeWalker().walk(new PrintEverythingListener(), tree);
+            // debugging option #3: walk the tree with a listener
+            // new ParseTreeWalker().walk(new PrintEverythingListener(), tree);
 
-        // Finally, construct an AST value by walking over the parse tree.
-        ParseTreeWalker walker = new ParseTreeWalker();
-        BoardBuilder listener = new BoardBuilder();
-        walker.walk(listener, tree);
+            // Finally, construct an AST value by walking over the parse tree.
+            ParseTreeWalker walker = new ParseTreeWalker();
+            BoardBuilder listener = new BoardBuilder();
+            walker.walk(listener, tree);
 
-        // return the value that the listener created
-        return listener.getBoard();
+            // return the value that the listener created
+            return listener.getBoard();
+        } catch (RuntimeException e) {
+            throw new InvalidBoardStringException("Invalid Board Input.", e);
+        }
     }
 
     /**
@@ -182,7 +183,6 @@ public class BoardFactory {
             } else if (orientation == 90 || orientation == 270) {
                 gadgets.put(name, new StaticBumper(name, Constants.BumperType.TRIDOWN, new Vect(x, y)));
             } else {
-                // TODO throw what exception?
                 throw new RuntimeException("Inexplicably rotated triangleBumper: " + orientation);
             }
         }
@@ -241,7 +241,6 @@ public class BoardFactory {
                 Gadget triggerer = gadgets.get(triggererName);
                 Gadget subscriber = gadgets.get(subscriberName);
                 if (triggerer == null || subscriber == null) {
-                    // TODO what kind of exception?
                     throw new RuntimeException("Board mentions subscription without named gadget: " + triggererName + " -> " + subscriberName);
                 } else {
                     board.addSubscription(new BoardEventSubscription(triggerer, subscriber));
@@ -267,9 +266,8 @@ public class BoardFactory {
             if (v == 0 || v == 90 || v == 180 || v == 270) {
                 return v;
             } else {
-                // TODO what exception?
                 throw new RuntimeException("Invalid orientation: " + orientation);
             }
-            }
+        }
     }
 }

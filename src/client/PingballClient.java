@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import client.boardlang.BoardFactory;
+import client.boardlang.InvalidBoardStringException;
 import common.Constants;
 import common.RepInvariantException;
 import common.netprotocol.*;
@@ -184,6 +185,9 @@ public class PingballClient {
         Board board;
         try {
             board = BoardFactory.parse(SimpleFileReader.readFile(new File(boardFilePath)));
+        } catch (InvalidBoardStringException e) {
+            System.err.println("Invalid board contents from " + boardFilePath);
+            return;
         } catch (FileNotFoundException e) {
             System.err.println("Board file not found at " + boardFilePath);
             return;
