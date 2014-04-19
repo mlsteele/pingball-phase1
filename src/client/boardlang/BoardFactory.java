@@ -39,8 +39,35 @@ import client.gadgets.StaticBumper;
 public class BoardFactory {
     /**
      * Parse a string and return a Board instance.
-     * TODO write full specs for board language
-     * @param  input input string.
+     *
+     * The input must be a valid board description string.
+     * Here is an outline of the board description grammar:
+     * boardfile ::= comments boardinfo (comment | entry)*
+     * boardinfo : entry_board NEWLINE ;
+     * comments ::= comment*
+     * comment ::= '#' <any-comment-string> NEWLINE | NEWLINE ;
+     * entry ::= (entry_ball | entry_squarebumper | entry_circlebumper | entry_trianglebumper | entry_rightflipper | entry_leftflipper | entry_absorber | entry_fire) NEWLINE;
+     *
+     * The entries in a board file are described below:
+     * entry_board          ::= board name=NAME (gravity=FLOAT)? (friction1=FLOAT)? (friction2=FLOAT)?
+     * entry_ball           ::= ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
+     * entry_squareBumper   ::= squareBumper name=NAME x=INTEGER y=INTEGER
+     * entry_circleBumper   ::= circleBumper name=NAME x=INTEGER y=INTEGER
+     * entry_triangleBumper ::= triangleBumper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION
+     * entry_rightFlipper   ::= rightFlipper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION
+     * entry_leftFlipper    ::= leftFlipper name=NAME x=INTEGER y=INTEGER orientation=ORIENTATION
+     * entry_absorber       ::= absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
+     * entry_fire           ::= fire trigger=NAME action=NAME
+     *
+     * Spacing does not matter, even in situations like "fire = Foo".
+     *
+     * A NAME starts with an alphabet character or underscore and
+     * is followed by any number of alphanumeric characters or underscores.
+     *
+     * INTEGER and FLOATS are what you would expect, but floats must
+     * have a '.'
+     *
+     * @param  input input board description string.
      * @return a Board
      */
     public static Board parse(String input) {
