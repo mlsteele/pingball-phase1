@@ -3,12 +3,12 @@ import java.util.List;
 import physics.*;
 
 /**
- * TODO: put documentation for your class here
+ * Warmup exercise for Pingball.
+ * Starts a simple board with a bouncing ball.
  */
 public class Main {
-
     /**
-     * TODO: describe your main function's command line arguments here
+     * Start the board.
      */
     public static void main(String[] args) {
         // make a board and run it
