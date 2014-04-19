@@ -2,8 +2,10 @@ package client.boardlang;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -114,7 +116,7 @@ public class BoardFactory {
     private static class BoardBuilder extends BoardBaseListener {
         private static final boolean DEBUG = false;
 
-        private final Map<String, String> subscriptions = new HashMap<String, String>();
+        private final Map<String, Set<String>> subscriptions = new HashMap<String, Set<String>>();
         private final Map<String, Gadget> gadgets = new HashMap<String, Gadget>();
         private final List<Ball> balls = new ArrayList<Ball>();
         private String boardName;
@@ -223,7 +225,11 @@ public class BoardFactory {
             String firer = ctx.NAME(0).getText();
             String subscriber = ctx.NAME(1).getText();
             if (DEBUG) System.out.println("fire " + firer + " -> " + subscriber);
-            subscriptions.put(firer, subscriber);
+
+            if (subscriptions.get(firer) == null) {
+                subscriptions.put(firer, new HashSet<String>());
+            }
+            subscriptions.get(firer).add(subscriber);
         }
 
         /**
@@ -235,15 +241,17 @@ public class BoardFactory {
             Board board = new Board(boardName, new ArrayList<Gadget>(gadgets.values()), gravity, friction1, friction2);
 
             // Add subscriptions.
-            for (Map.Entry<String, String> entry : subscriptions.entrySet()) {
+            for (Map.Entry<String, Set<String>> entry : subscriptions.entrySet()) {
                 String triggererName = entry.getKey();
-                String subscriberName = entry.getValue();
-                Gadget triggerer = gadgets.get(triggererName);
-                Gadget subscriber = gadgets.get(subscriberName);
-                if (triggerer == null || subscriber == null) {
-                    throw new RuntimeException("Board mentions subscription without named gadget: " + triggererName + " -> " + subscriberName);
-                } else {
-                    board.addSubscription(new BoardEventSubscription(triggerer, subscriber));
+
+                for (String subscriberName : entry.getValue()) {
+                    Gadget triggerer = gadgets.get(triggererName);
+                    Gadget subscriber = gadgets.get(subscriberName);
+                    if (triggerer == null || subscriber == null) {
+                        throw new RuntimeException("Board mentions subscription without named gadget: " + triggererName + " -> " + subscriberName);
+                    } else {
+                        board.addSubscription(new BoardEventSubscription(triggerer, subscriber));
+                    }
                 }
             }
 
