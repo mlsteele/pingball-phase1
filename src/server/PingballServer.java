@@ -307,10 +307,8 @@ public class PingballServer {
 
         if (message instanceof ClientConnectMessage) {
             if (clients.containsKey(ch.getName())) {
-                // don't let the client connect!
+                // don't let the client connect with the same name!
                 ch.send(new ConnectionRefusedMessage("Board with this name already connected to server"));
-                // TODO this causes a bug.
-                //      When the client is killed, it causes other boards with the same name to be killed.
                 ch.kill();
             } else {
                 clients.put(ch.getName(), ch);
