@@ -37,6 +37,7 @@ public class ServerHandler implements Runnable {
      *        socket must already be connected.
      *        the caller must throw away their reference to socket after creating a ServerHandler
      * @param incomingMessages threadsafe queue to receive messages
+     * @throws IOException if an error occurs while initializing the connection
      */
     ServerHandler(Socket socket, BlockingQueue<NetworkMessage> incomingMessages) throws IOException {
         this.socket = socket;
@@ -49,6 +50,7 @@ public class ServerHandler implements Runnable {
      * Handles the incoming server messages.
      * Listens for input from the server, and sends it to the client.
      * Ignores bad input messages, but prints an error to System.err if there is an IOException
+     * Run ensures that a failure is noticed by calling kill() at the end.
      */
     @Override
     public void run() {
@@ -77,7 +79,8 @@ public class ServerHandler implements Runnable {
     }
 
     /**
-     * Send a message to the server. Requires the thread to be running!
+     * Send a message to the server.
+     * Requires the thread to be running!
      * @param message message to send
      */
     public void send(NetworkMessage message) {
@@ -90,7 +93,6 @@ public class ServerHandler implements Runnable {
      * This also causes the run() method to finish, because in.close() will make run() fail.
      */
     private void kill() {
-        // TODO if the server dies, we should probably disconnect all local walls?
         if (!socket.isClosed()) {
             try {
                 out.close();
