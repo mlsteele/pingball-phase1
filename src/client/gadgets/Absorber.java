@@ -119,8 +119,8 @@ public class Absorber implements Gadget {
      * If there is a ball in the absorber, it will be printed in the bottom right corner like this:
      *      ====
      *      |  |
-     *      | *|
-     *      ====
+     *      |  |
+     *      ===*
      *
      * @return string representation of absorber for print out
      */
