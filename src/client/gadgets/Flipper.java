@@ -13,7 +13,7 @@ import client.BoardEvent;
 
 /**
  * Flipper is a mutable class that represents an object on the Pingball board
- * that rotates 90 degrees when struck by a ball.
+ * that rotates 90 degrees when triggered.
  *
  * Rectangular rotating shape with bounding box of size 2Lx2L
  * Trigger: generated whenever the ball hits it
@@ -29,9 +29,12 @@ import client.BoardEvent;
  * The flipper rotates at a constant angular velocity of 1080 degrees per second to
  * a position 90 degrees away from its starting position.
  *
- * Rep invariant: starting position must allow full rotation within board boundaries
+ * Rep invariant:
+ * * the 2Lx2L bounding box of the flipper must be entirely contained within the board
  *
- * Thread Safety Argument: all Gadgets on a Board will be confined to only one Client thread.
+ * Thread Safety Argument:
+ * * This class is not thread safe, and is always used in a confined environment.
+ *
  */
 public class Flipper implements Gadget{
     private final Vect startingPoint;
@@ -45,7 +48,7 @@ public class Flipper implements Gadget{
      * Flipper constructor that initializes a Flipper object according to its rotation.
      *
      * @param name unique String identifier for Flipper object
-     * @param startingPoint upper left-hand corner coordinates for the flipper.
+     * @param startingPoint upper left-hand corner coordinates for the flipper. Coordinates must be between 0 and BOARD_HEIGHT/BOARD_WIDTH
      * @param orientation either 0, 90, 180, or 270. Orientation indicates the degree
      * on the unit circle that you want to draw a line to from the center of the unit circle.
      * That line is your flipper's 'unflipped', !rotated position
@@ -62,11 +65,15 @@ public class Flipper implements Gadget{
         checkRep();
     }
 
-    @Override
-    /** type (left or right) and whether it is already flipped
+    /**
+     * When physics' timeUntilWallCollision method detects that a ball from Board will hit the Flipper,
+     * the flipper will rotate according to its type (left or right) and whether it is already flipped
      * or not. It may impart linear velocity to the Ball that hit it while it rotates
+     *
      * @param Ball object from Board
+     * @return a BoardEvent if the ball hit the flipper. Else returns null
      */
+    @Override
     public BoardEvent handleBall(Ball ball) {
         for (LineSegment line : geometry){
             double angularRotation = Constants.ANGULAR_ROTATION;
@@ -82,13 +89,18 @@ public class Flipper implements Gadget{
         return null;
     }
 
-    @Override
     /**
-     * Called during Board's step function. A horizontal flipper is represented by "--". A vertical
-     * flipper is represented by two | bars directly on top of each other
+     * Called during Board's step function.
+     * A horizontal flipper:
+     *    --
+     *
+     * A vertical flipper:
+     *    |
+     *    |
      *
      * @return string representation of flipper for print out
      */
+    @Override
     public String stringRepresentation() {
         if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))) ||
                 (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))))){
@@ -104,6 +116,9 @@ public class Flipper implements Gadget{
         }
     }
 
+    /**
+     * The flipper rotates
+     */
     @Override
     public void specialAction() {
         rotated = !rotated;
@@ -114,6 +129,7 @@ public class Flipper implements Gadget{
     /**
      * @return 2 height of flipper is always 2
      */
+    @Override
     public double getHeight(){
         return 2;
     }
@@ -121,36 +137,37 @@ public class Flipper implements Gadget{
     /**
      * @return 2 width of flipper is always 2
      */
+    @Override
     public double getWidth(){
         return 2;
     }
 
-    @Override
     /**
      * @return startingPoint Vector representation of point at the top left corner of the flipper
      */
+    @Override
     public Vect getPosition() {
         return startingPoint;
     }
 
-    @Override
     /**
-     * @return name unique String Absorber was initialized with
+     * @return name unique String that Flipper was initialized with
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
-     * Rep invariant: starting position of Flipper must allow full rotation within board boundaries
+     * Rep invariant:
+     * * the 2Lx2L bounding box of the flipper must be entirely contained within the board
      */
     public void checkRep() {
-        //flippers must be allowed to rotate 2 Ls below their rotation point
         if(startingPoint.x() + 2 >= Constants.BOARD_WIDTH ||
             startingPoint.y() + 2 >= Constants.BOARD_HEIGHT ||
             startingPoint.x() < 0 ||
             startingPoint.y() < 0){
-            throw new RepInvariantException("Rep invariant violated.");
+            throw new RepInvariantException("The flipper is outside the bounds of the board.");
         }
     }
 
@@ -177,6 +194,9 @@ public class Flipper implements Gadget{
 
     }
 
+    /**
+     * @return true if the flipper is rotated 90 degrees from its starting position
+     */
     public boolean isRotated(){
         return rotated;
     }
