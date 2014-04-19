@@ -21,8 +21,8 @@ import common.netprotocol.NetworkMessage.DecodeException;
  * - the socket reference is confined to this thread.
  *     - reading from the socket is confined to the ServerHandler thread.
  *     - writing to the socket is confined to the PingballClient thread.
+ *     - sockets support full duplex communication, so this is ok.
  * - incomingMessages is a threadsafe datatype.
- * // TODO update specs in this class
  */
 public class ServerHandler implements Runnable {
     private final Socket socket;
