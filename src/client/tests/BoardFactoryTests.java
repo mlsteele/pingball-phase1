@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import client.boardlang.BoardFactory;
+import client.boardlang.InvalidBoardStringException;
 
 /**
  * Tests for BoardFactory.
@@ -110,75 +111,75 @@ public class BoardFactoryTests {
         assertEquals(expected, buildBF("boardinfo1", "ball1", "fire1", "fire2"));
     }
 
-    @Test public void testParseBoardNoComments() {
+    @Test public void testParseBoardNoComments() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testParseBoardCommentsAtEnd() {
+    @Test public void testParseBoardCommentsAtEnd() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1", "square1", "flipperL1", "fire1", "comment1", "comment2")));
     }
 
-    @Test public void testParseBoardCommentsAfterBoardInfo() {
+    @Test public void testParseBoardCommentsAfterBoardInfo() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "comment2", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testParseBoardCommentsAtStart() {
+    @Test public void testParseBoardCommentsAtStart() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("comment1", "comment2", "boardinfo1", "ball1", "square1", "flipperL1", "fire1")));
     }
 
-    @Test public void testParseBoardCommentsWithEntries() {
+    @Test public void testParseBoardCommentsWithEntries() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "comment1", "ball1", "square1", "fire1", "square2", "flipperL1", "flipperR1", "comment2", "fire2")));
     }
 
-    @Test public void testParseBoardCommentsWithBlankLines() {
+    @Test public void testParseBoardCommentsWithBlankLines() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "blankline", "ball1", "square1", "fire1", "square2", "flipperL1", "flipperR1", "blankline", "blankline", "fire2")));
     }
 
-    @Test public void testParseBallEntry() {
+    @Test public void testParseBallEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball1")));
     }
 
-    @Test public void testParseSquareBumperEntry() {
+    @Test public void testParseSquareBumperEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "square2")));
     }
 
-    @Test public void testParseCircleBumperEntry() {
+    @Test public void testParseCircleBumperEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "circle1")));
     }
 
-    @Test public void testParseTriangleBumperEntry() {
+    @Test public void testParseTriangleBumperEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "triangle1")));
     }
 
-    @Test public void testParseRightFlipperLeftEntry() {
+    @Test public void testParseRightFlipperLeftEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperR1")));
     }
 
-    @Test public void testParseLeftFlipperRightEntry() {
+    @Test public void testParseLeftFlipperRightEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperL1")));
     }
 
-    @Test public void testParseAbsorberEntry() {
+    @Test public void testParseAbsorberEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "absorber1")));
     }
 
-    @Test public void testParseFireEntry() {
+    @Test public void testParseFireEntry() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "flipperR1", "square2", "fire2")));
     }
 
-    @Test public void testParseNoOptionalParams() {
+    @Test public void testParseNoOptionalParams() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo2")));
     }
 
-    @Test public void testParseNoFriction1() {
+    @Test public void testParseNoFriction1() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo3")));
     }
 
-    @Test public void testParseSpacesInFieldAssignment() {
+    @Test public void testParseSpacesInFieldAssignment() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "ball2")));
     }
 
-    @Test public void testParseExtraSpaces() {
+    @Test public void testParseExtraSpaces() throws InvalidBoardStringException {
         assertNotNull(BoardFactory.parse(buildBF("boardinfo1", "square3", "square4")));
     }
 }

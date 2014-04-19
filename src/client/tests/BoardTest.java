@@ -19,6 +19,7 @@ import client.Board;
 import client.BoardEventSubscription;
 import client.SimpleFileReader;
 import client.boardlang.BoardFactory;
+import client.boardlang.InvalidBoardStringException;
 import client.gadgets.Absorber;
 import client.gadgets.Flipper;
 import client.gadgets.Gadget;
@@ -242,8 +243,9 @@ public class BoardTest {
 
     /**
      * sampleBoard1
+     * @throws InvalidBoardStringException
      */
-    public void sampleBoard1(){
+    public void sampleBoard1() throws InvalidBoardStringException{
         try {
             Board board = BoardFactory.parse(SimpleFileReader.readFile(new File("boards/sampleBoard1.pb")));
         } catch (FileNotFoundException e) {
