@@ -1,7 +1,6 @@
 package client.gadgets;
 
 import client.Ball;
-import client.Board;
 import client.BoardEvent;
 import client.ServerHandler;
 import common.Constants;
@@ -15,32 +14,29 @@ import physics.Vect;
  * Wall is a class for the sidewall of a Board.
  *
  * Walls can one of four types representing the left, right, top, and bottom walls.
- * Walls handle collisions most of the time.
- * When they are notified that they are fused with another Board,
- * then they are responsible for displaying the name of the fused Board
- * and for transporting balls to it using the messaging system.
+ * Walls normally reflect the ball when they collide, but if the wall is
+ * connected over the network to another board, then the wall will take the ball
+ * and send it to the server.
  *
  * Thread Safety Argument:
  * - Wall is not threadsafe and is used in a confined environment.
  *
  * Rep Invariant:
  * - connectedBoardName can be null if there is no active fuse.
+ * - if connectedBoardName is not tull, serverHandler must not be null
  */
 public class Wall implements Gadget {
     private final Constants.BoardSide type;
     private final LineSegment wall;
     private String connectedBoardName;
     private ServerHandler serverHandler;
-    private final Board board;
 
     /**
-     * Ball Constructor
-     * @param wallType what kind of Wall this is.
-     * @param board Board that this Wall resides on
+     * make a Wall of the given type
+     * @param wallType what kind of Wall this is. May be TOP, BOTTOM, LEFT, or RIGHT.
      */
-    public Wall(Constants.BoardSide wallType, Board board) {
+    public Wall(Constants.BoardSide wallType) {
         this.type = wallType;
-        this.board = board;
         this.connectedBoardName = null;
         if (type == Constants.BoardSide.TOP){
             wall = new LineSegment(0, 0, Constants.BOARD_WIDTH, 0);
@@ -54,11 +50,13 @@ public class Wall implements Gadget {
     }
 
     /**
-     * When physics' timeUntilWallCollision method detects that a ball from Board will hit a SideWall,
-     * the wall will reflect the ball with the appropriate physics methods
+     * If the ball will collide with the wall in the next timestep, the wall:
+     *  a) takes the ball and sends it to the server, if the wall is connected to another board
+     *  b) reflects the ball if it is not connected to another board over the network
      *
      * @param Ball object from Board
      * @return a BoardEvent if the wall is taking the ball, otherwise null
+     * This is different from most gadgets, because a regular wall collision does not trigger an event.
      */
     public BoardEvent handleBall(Ball ball) {
         if (Geometry.timeUntilWallCollision(wall, ball.getCircle(), ball.getVelocity()) <= Constants.TIMESTEP){
@@ -66,7 +64,7 @@ public class Wall implements Gadget {
                 Vect reboundVelocity = Geometry.reflectWall(wall, ball.getVelocity());
                 ball.setVelocity(reboundVelocity);
             } else {
-                // Transofrm ball position so that it shows up in the correct place on the fused board.
+                // Transform ball position so that it shows up in the correct place on the fused board.
                 Vect newBallPosition = ball.getPosition().plus(ball.getVelocity().times(Constants.TIMESTEP));
                 if (type == Constants.BoardSide.TOP)    newBallPosition = new Vect(newBallPosition.x(), 20d);
                 if (type == Constants.BoardSide.BOTTOM) newBallPosition = new Vect(newBallPosition.x(), 0d);
@@ -144,6 +142,11 @@ public class Wall implements Gadget {
         connectedBoardName = null;
     }
 
+    /**
+     * Sets the serverHandler so that the Wall is able to send
+     * the ball to the server
+     * @param sh the server handler
+     */
     public void setServerHandler(ServerHandler sh) {
         serverHandler = sh;
     }
@@ -158,29 +161,48 @@ public class Wall implements Gadget {
         return null;
     }
 
+    /**
+     * @return the height of the wall.
+     * Walls of type LEFT or RIGHT will return Constants.BOARD_HEIGHT
+     * Walls of type TOP or BOTTOM will return 0.
+     */
     @Override
     public double getHeight() {
         if (type == Constants.BoardSide.LEFT || type == Constants.BoardSide.RIGHT)
-            return 20d;
+            return Constants.BOARD_HEIGHT;
         return 0d;
     }
 
+    /**
+     * @return the width of the wall.
+     * Walls of type LEFT or RIGHT will return 0
+     * Walls of type TOP or BOTTOM will return  Constants.BOARD_WIDTH.
+     */
     @Override
     public double getWidth() {
         if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM)
-            return 20d;
+            return Constants.BOARD_WIDTH;
         return 0d;
     }
 
+    /**
+     * Walls have no special action.
+     */
     @Override
     public void specialAction() {
-        // do nothing
+        return;
     }
 
     /**
      * Verify the rep invariant of the class.
-     * The rep invariant is fully enforced by the java type system.
+     *
+     * Rep Invariant:
+     * - connectedBoardName can be null if there is no active fuse.
+     * - if connectedBoardName is not null, serverHandler must not be null
      */
     @Override
-    public void checkRep() { }
+    public void checkRep() {
+        if (connectedBoardName != null && serverHandler == null)
+            throw new RepInvariantException("The wall seems connected but there is no serverHandler");
+    }
 }

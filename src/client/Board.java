@@ -70,10 +70,10 @@ public class Board {
         this.frictionOne = f1;
         this.frictionTwo = f2;
 
-        Wall top = new Wall(Constants.BoardSide.TOP, this);
-        Wall bottom = new Wall(Constants.BoardSide.BOTTOM, this);
-        Wall left = new Wall(Constants.BoardSide.LEFT, this);
-        Wall right = new Wall(Constants.BoardSide.RIGHT, this);
+        Wall top = new Wall(Constants.BoardSide.TOP);
+        Wall bottom = new Wall(Constants.BoardSide.BOTTOM);
+        Wall left = new Wall(Constants.BoardSide.LEFT);
+        Wall right = new Wall(Constants.BoardSide.RIGHT);
         walls.add(top);
         walls.add(bottom);
         walls.add(left);
