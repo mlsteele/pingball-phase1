@@ -90,21 +90,6 @@ public class Flipper implements Gadget{
      * @return string representation of flipper for print out
      */
     public String stringRepresentation() {
-        /**
-         * TODO: fix here to be RFC and non-repetitive
-         * I want this to not be the worst but right now I want it to work more,
-         * so it will be the worst until other things work
-         *
-        List<String> leftPivot = new ArrayList<String>();
-        leftPivot.add("|" + " " + "\n" + "|" + " ");
-        leftPivot.add("  " + "\n" + "--");
-        leftPivot.add(" " + "/" + "\n" + "/" + " ");
-        List<String> rightPivot = new ArrayList<String>();
-        rightPivot.add(" " + "|" + "\n" + " " + "|");
-        rightPivot.add("--" + "\n" + "  ");
-        rightPivot.add("\\" + " " + "\n" + " " + "\\");
-         */
-
         if (((type == Constants.FlipperType.LEFT) && ((orientation ==  0 && !rotated) || (orientation ==  270 && rotated))) ||
                 (((type == Constants.FlipperType.RIGHT) && ((orientation ==  180 && !rotated) || (orientation ==  270 && rotated))))){
             return "|" + " " + "\n" + "|" + " ";
@@ -173,7 +158,6 @@ public class Flipper implements Gadget{
      * @return LineSegment appropriate to the flipper's orientation and type.
      */
     public LineSegment setFlipperLine(){
-        //TODO: fix here to be RFC and non-repetitive
         int flipLength = 2;
         LineSegment flipperNew;
 

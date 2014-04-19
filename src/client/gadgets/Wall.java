@@ -84,7 +84,6 @@ public class Wall implements Gadget {
      * @return string representation of sideWall for print out
      */
     public String stringRepresentation() {
-        // TODO lots of copypaste here
         String stringRep = "";
         if (type == Constants.BoardSide.TOP || type == Constants.BoardSide.BOTTOM) {
             for (int i = 0; i < Constants.BOARD_WIDTH; i++) {

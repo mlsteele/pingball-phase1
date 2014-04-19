@@ -10,7 +10,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import client.boardlang.BoardFactory;
+import client.boardlang.InvalidBoardStringException;
 import common.Constants;
+import common.RepInvariantException;
 import common.netprotocol.*;
 
 import java.io.File;
@@ -30,7 +32,10 @@ import physics.Vect;
  * Thread Safety Argument:
  * - board is confined to the main thread.
  * - incomingMessages is a threadsafe datatype.
- * // TODO update specs in this class
+ * - serverHandler is a class that is threadsafe and is a thread.
+ *
+ * Rep Invariant:
+ * - socket and serverHandler must either both be null or both be non-null.
  */
 public class PingballClient {
     private final Board board;
@@ -44,7 +49,7 @@ public class PingballClient {
      * @param socket socket to communicate with the server
      *               socket can be null!
      *               if socket is null, server communication is disabled.
-     * @throws IOException if the socket can not be created
+     * @throws IOException if there is a problem establishing a connection.
      */
     public PingballClient(Board board, Socket socket) throws IOException {
         this.board = board;
@@ -60,9 +65,11 @@ public class PingballClient {
         } else {
             this.serverHandler = null;
         }
+        checkRep();
     }
 
     public void startClient() throws IOException {
+        checkRep();
         if (socket != null) {
             Thread serverHandlerThread = new Thread(serverHandler);
             serverHandlerThread.start();
@@ -79,8 +86,8 @@ public class PingballClient {
 
             while (!incomingMessages.isEmpty()) {
                 NetworkMessage message = incomingMessages.remove();
-                if (message instanceof BallInMessage) { // TODO the sending board is responsible for making ballPos okay
-                    // TODO it is sketchy to initialize the ball with default radius. maybe the radius should not be a parameter.
+                if (message instanceof BallInMessage) {
+                    // The sending board is responsible for making ballPos on the correct side of the receiving board.
                     Vect ballPos = ((BallInMessage) message).getBallPos();
                     Vect ballVel = ((BallInMessage) message).getBallVel();
                     board.addBall(new Ball(Constants.BALL_RADIUS, ballPos, ballVel));
@@ -102,6 +109,16 @@ public class PingballClient {
 
             String boardView = board.step();
             System.out.println(boardView);
+        }
+    }
+
+    /**
+     * Verify that the rep invariant is not violated
+     * @throws RepInvariantException indicating a violation.
+     */
+    private void checkRep() throws RepInvariantException {
+        if ((socket == null) != (serverHandler == null)) {
+            throw new RepInvariantException("socket and serverHandler must have the same nullness");
         }
     }
 
@@ -168,6 +185,9 @@ public class PingballClient {
         Board board;
         try {
             board = BoardFactory.parse(SimpleFileReader.readFile(new File(boardFilePath)));
+        } catch (InvalidBoardStringException e) {
+            System.err.println("Invalid board contents from " + boardFilePath);
+            return;
         } catch (FileNotFoundException e) {
             System.err.println("Board file not found at " + boardFilePath);
             return;

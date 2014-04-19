@@ -94,9 +94,6 @@ public class StaticBumper implements Gadget {
                 Circle babyBall = new Circle(ball.getCircle().getCenter(), .05);
                 if (Geometry.timeUntilWallCollision(line, babyBall, ball.getVelocity()) <= Constants.TIMESTEP) {
                     hits ++;
-                    // TODO what does this mean (below)?
-                    //options to make more sensitive: increase radius of ball, increase timestep multiplication,
-                    //go based on center instead of Geometry, accelerate by gravity
                     Vect velocity = Geometry.reflectWall(line, ball.getVelocity());
                     ball.setVelocity(velocity);
                     return new BoardEvent(this);
