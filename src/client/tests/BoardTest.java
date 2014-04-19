@@ -121,7 +121,6 @@ public class BoardTest {
 
         for(int i = 0; i < numIterations; i++){
             String out = testBoardA.step();
-            System.out.println(out);
         }
 
         /*how do I make this an test?*/
@@ -152,7 +151,6 @@ public class BoardTest {
 
         for(int i = 0; i < numIterations; i++){
             String out = testBoardA.step();
-            System.out.println(out);
         }
 
         assertTrue(square.getHits() >= 1);
@@ -178,7 +176,6 @@ public class BoardTest {
 
         for(int i = 0; i < numIterations; i++){
             String out = flipBoardA.step();
-            System.out.println(out);
         }
 
         assertTrue(flipper.isRotated());
@@ -218,7 +215,6 @@ public class BoardTest {
             try {
                 Thread.sleep((int) (Constants.TIMESTEP * 1000));
                 String out = testBoardA.step();
-                System.out.println(out);
             } catch(InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
