@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import client.boardlang.BoardFactory;
 import client.boardlang.InvalidBoardStringException;
+
 import common.Constants;
 import common.RepInvariantException;
 import common.netprotocol.*;
@@ -30,9 +31,9 @@ import physics.Vect;
  * transfers.
  *
  * Thread Safety Argument:
- * - board is confined to the main thread.
+ * - board and gadgets are confined to the main thread.
  * - incomingMessages is a threadsafe datatype.
- * - serverHandler is a class that is threadsafe and is a thread.
+ * - serverHandler is a separate thread that only shares data via incomingMessages.
  *
  * Rep Invariant:
  * - socket and serverHandler must either both be null or both be non-null.
@@ -46,8 +47,8 @@ public class PingballClient {
     /**
      * Instantiate a PingballClient.
      *
+     * @param board the board to start the client with
      * @param socket socket to communicate with the server
-     *               socket can be null!
      *               if socket is null, server communication is disabled.
      * @throws IOException if there is a problem establishing a connection.
      */
@@ -68,7 +69,12 @@ public class PingballClient {
         checkRep();
     }
 
-    public void startClient() throws IOException {
+    /**
+     * startClient starts the serverHandler if necessary, then loops forever
+     * stepping the board, processing incomingMessages, and printing the board
+     *
+     */
+    public void startClient() {
         checkRep();
         if (socket != null) {
             Thread serverHandlerThread = new Thread(serverHandler);
@@ -114,9 +120,8 @@ public class PingballClient {
 
     /**
      * Verify that the rep invariant is not violated
-     * @throws RepInvariantException indicating a violation.
      */
-    private void checkRep() throws RepInvariantException {
+    private void checkRep() {
         if ((socket == null) != (serverHandler == null)) {
             throw new RepInvariantException("socket and serverHandler must have the same nullness");
         }
@@ -135,9 +140,6 @@ public class PingballClient {
      *
      * FILE is a required argument specifying a file pathname
      * of the Pingball board that this client should run.
-     *
-     * If no port is specified, the default port 10987 will be used.
-     * @throws InterruptedException
      *
      */
     public static void main(String[] args) {
@@ -214,13 +216,7 @@ public class PingballClient {
         }
 
         if (client != null) {
-            try {
-                client.startClient();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println("Terminated due to erorr while communicating with server.");
-                return;
-            }
+            client.startClient();
         }
     }
 }
